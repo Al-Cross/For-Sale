@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic:400,700,800" rel="stylesheet">
+
 <link rel="stylesheet" href="{{ asset('frontend/fonts/icomoon/style.css') }}">
 
 <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap.min.css') }}">
@@ -21,15 +22,4 @@
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-<script src="{{ asset('frontend/js/jquery-3.3.1.min.js') }}"></script>
-<script src="{{ asset('frontend/js/jquery-migrate-3.0.1.min.js') }}"></script>
-<script src="{{ asset('frontend/js/jquery-ui.js') }}"></script>
-<script src="{{ asset('frontend/js/popper.min.js') }}"></script>
-<script src="{{ asset('frontend/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('frontend/js/owl.carousel.min.js') }}"></script>
-<script src="{{ asset('frontend/js/jquery.stellar.min.js') }}"></script>
-<script src="{{ asset('frontend/js/jquery.countdown.min.js') }}"></script>
-<script src="{{ asset('frontend/js/jquery.magnific-popup.min.js') }}"></script>
-<script src="{{ asset('frontend/js/bootstrap-datepicker.min.js') }}"></script>
-<script src="{{ asset('frontend/js/aos.js') }}"></script>
-<script src="{{ asset('frontend/js/rangeslider.min.js') }}"></script>
+

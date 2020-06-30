@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ad;
+use App\Section;
 use App\Category;
 use Illuminate\Http\Request;
 
@@ -17,6 +18,11 @@ class AdsController extends Controller
     {
         $ads = Ad::latest()->get();
         $categories = Category::all();
+
+        if (request()->wantsJson()) {
+            $section = Section::where('category_id', '=', request()->id)->get();
+            return $section;
+        }
 
         return view('welcome', compact('ads', 'categories'));
     }
@@ -45,10 +51,10 @@ class AdsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  App\Ad  $ad
      * @return \Illuminate\Http\Response
      */
-    public function show(Ad $ad)
+    public function show($category, $section, Ad $ad)
     {
         return view('ads.show', compact('ad'));
     }

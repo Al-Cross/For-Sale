@@ -21,4 +21,5 @@ Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
 
-Route::get('/{ad:slug}', 'AdsController@show');
+Route::get('/{category:slug}/{section:slug}', 'SectionsController@index')->name('section');
+Route::get('/{category:slug}/{section:slug}/{ad:slug}', 'AdsController@show');

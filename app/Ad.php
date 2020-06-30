@@ -13,6 +13,16 @@ class Ad extends Model
      */
     public function path()
     {
-        return '/' . $this->slug;
+        return "/{$this->section->category->slug}/{$this->section->slug}/{$this->slug}";
+    }
+
+    /**
+    * Define the relationship with App\Section
+    *
+    * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    */
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
     }
 }
