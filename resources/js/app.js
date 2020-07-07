@@ -20,6 +20,7 @@ window.Vue = require('vue');
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('categories-sections', require('./components/ShowSections.vue').default);
+Vue.component('autocomplete', require('./components/Autocomplete.vue').default);
 
 
 /**

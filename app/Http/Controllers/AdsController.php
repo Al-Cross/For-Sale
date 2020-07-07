@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Ad;
+use App\City;
 use App\Section;
 use App\Category;
+use App\AdSearch\AdSearch;
 use Illuminate\Http\Request;
 
 class AdsController extends Controller
@@ -91,5 +93,33 @@ class AdsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Execute the search query.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $query = request()->input('query');
+
+        $results = AdSearch::apply($request, (new Ad)->newQuery());
+
+        return view('ads.search', compact('results', 'query'));
+    }
+
+    /**
+     * Search the desired city.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function findLocation()
+    {
+        $input = request()->input('location');
+
+        $location = City::search($input)->get();
+
+        return response()->json($location);
     }
 }

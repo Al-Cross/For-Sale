@@ -3,6 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Ad;
+use App\City;
 use App\Section;
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
@@ -13,6 +14,9 @@ $factory->define(Ad::class, function (Faker $faker) {
     return [
         'section_id' => function () {
             return factory(Section::class)->create()->id;
+        },
+        'city_id' => function () {
+            return factory(City::class)->create()->id;
         },
         'title' => $title,
         'slug' => Str::slug($title),
