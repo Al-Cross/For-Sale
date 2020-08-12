@@ -4,6 +4,7 @@
 
 use App\Ad;
 use App\City;
+use App\User;
 use App\Section;
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
@@ -15,6 +16,9 @@ $factory->define(Ad::class, function (Faker $faker) {
         'section_id' => function () {
             return factory(Section::class)->create()->id;
         },
+        'user_id' => function () {
+            return factory(User::class)->create()->id;
+        },
         'city_id' => function () {
             return factory(City::class)->create()->id;
         },
@@ -24,6 +28,7 @@ $factory->define(Ad::class, function (Faker $faker) {
         'price' => 29300.00,
         'type' => 'private',
         'condition' => 'used',
+        'delivery' => 'buyer',
         'views' => 0,
         'featured' => 1
     ];

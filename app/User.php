@@ -16,7 +16,7 @@ class User extends \TCG\Voyager\Models\User
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'confirmation_token'
     ];
 
     /**
@@ -35,5 +35,22 @@ class User extends \TCG\Voyager\Models\User
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'confirmed' => 'boolean'
     ];
+
+    /**
+     * Update the confirmation status of the user.
+     *
+     * @return Model
+     */
+    public function confirm()
+    {
+        $this->confirmed = true;
+
+        $this->email_verified_at = now();
+
+        $this->confirmation_token = null;
+
+        return $this->save();
+    }
 }

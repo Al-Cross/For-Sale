@@ -16,6 +16,7 @@ class CreateAdsTable extends Migration
         Schema::create('ads', function (Blueprint $table) {
             $table->id();
             $table->foreignId('section_id');
+            $table->foreignId('user_id');
             $table->foreignId('city_id');
             $table->string('title');
             $table->string('slug');
@@ -23,8 +24,9 @@ class CreateAdsTable extends Migration
             $table->decimal('price', 8, 2);
             $table->enum('type', ['private', 'business']);
             $table->enum('condition', ['new', 'used']);
+            $table->enum('delivery', ['buyer', 'seller', 'personal handover']);
             $table->bigInteger('views')->default(0);
-            $table->boolean('featured');
+            $table->boolean('featured')->default(false);
             $table->timestamps();
         });
     }

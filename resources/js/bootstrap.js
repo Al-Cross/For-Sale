@@ -1,4 +1,5 @@
 window._ = require('lodash');
+window.Vue = require('vue');
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -22,6 +23,12 @@ try {
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+window.events = new Vue(); // Assign a Vue instance as an event
+
+window.flash = function(message, level = 'success') {
+	window.events.$emit('flash', {message, level});
+};
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

@@ -9,6 +9,7 @@ class Ad extends Model
 {
     use SearchableTrait;
 
+    protected $guarded = [];
     /**
      * Searchable rules.
      *
@@ -57,8 +58,37 @@ class Ad extends Model
         return $this->belongsTo(City::class);
     }
 
+    /**
+     * Define the relationship with App\Category
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Define the relationship with App\Image
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
+
+    /**
+     * Get the path to the main image.
+     *
+     * @return string
+     */
+    public function mainImage()
+    {
+        if ($this->images->isEmpty()) {
+            return 'images/default-image.jpg';
+        }
+
+        return $this->images->where('ad_id', $this->id)->first()->path;
     }
 }

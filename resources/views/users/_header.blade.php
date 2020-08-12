@@ -8,10 +8,10 @@
         <div class="site-mobile-menu-body"></div>
     </div>
 
-    <header class="site-navbar container bg-white h-40" role="banner" style="background-image: url({{ asset('frontend/images/hero_2.jpg') }});">
+    <header class="site-navbar container bg-white py-0" role="banner">
+        <div class="row align-items-center">
 
-      <!-- <div class="container"> -->
-        <div class="row d-flex justify-content-center">
+            <!-- <div class="container"> -->
             <div class="col-6 col-xl-2">
                 <h1 class="mb-0 site-logo">
                     <a href="/" class="text-black mb-0">For<span class="text-primary">Sale</span></a>
@@ -53,37 +53,9 @@
                 </nav>
             </div>
 
-            <div>
-                <div class="container">
-                    <div class="row align-items-center justify-content-center text-center">
-                        <div class="col-md-12">
-                            <div class="form-search-wrap mt-5" data-aos="fade-up" data-aos-delay="200">
-                                <form action="/search" method="GET">
-                                    <div class="row align-items-center">
-                                        <div class="col-lg-12 mb-4 mb-xl-0 col-xl-4">
-                                            <input type="text" name="query" class="form-control rounded" placeholder="What are you looking for?">
-                                        </div>
-                                        <autocomplete></autocomplete>
-                                        <div class="col-lg-12 mb-4 mb-xl-0 col-xl-3">
-                                            <div class="select-wrap">
-                                                <span class="icon"><span class="icon-keyboard_arrow_down"></span></span>
-                                                <select class="form-control rounded" name="categorySearch" id="">
-                                                    <option value="">All Categories</option>
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{$category->id}}">{{ $category->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 col-xl-2 ml-auto text-right">
-                                            <input type="submit" class="btn btn-primary btn-block rounded" value="Search">
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="d-inline-block d-xl-none ml-auto py-3 col-6 text-right" style="position: relative; top: 3px;">
+                <a href="#" class="site-menu-toggle js-menu-toggle text-black"><span class="icon-menu h3"></span></a>
             </div>
         </div>
     </header>
+</div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Search results for ' . $query)
+@section('title', 'Search results')
 
 @section('content')
 <div class="site-section" style="margin-top: 200px;">
@@ -15,7 +15,7 @@
 									<div class="d-block d-md-flex listing vertical">
 						                <a href="{{ $ad->path() }}"
 						                    class="img d-block"
-						                    style="background-image: url({{ asset('storage/images/img_1.jpg') }})">
+						                    style="background-image: url({{ asset('storage/' . $ad->mainImage()) }})">
 						                </a>
 						                <div class="lh-content">
 						                    <span class="category">{{ $ad->section->category->name }}</span>
@@ -32,7 +32,7 @@
 								<div class="d-block d-md-flex listing vertical">
 					                <a href="{{ $ad_section->path() }}"
 					                    class="img d-block"
-					                    style="background-image: url({{ asset('storage/images/img_1.jpg') }})">
+					                    style="background-image: url({{ asset('storage/' . $ad_section->mainImage()) }})">
 					                </a>
 					                <div class="lh-content">
 					                    <span class="category">{{ $ad_section->section->category->name }}</span>

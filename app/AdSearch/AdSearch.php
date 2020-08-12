@@ -38,7 +38,8 @@ class AdSearch
                 $query = $decorator::apply($query, $value);
             }
         }
-        return $query;
+
+        return $query->all();
     }
 
     /**

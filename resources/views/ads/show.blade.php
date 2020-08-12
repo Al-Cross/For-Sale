@@ -11,10 +11,9 @@
 
 		        <div class="mb-4">
 			        <div class="slide-one-item home-slider owl-carousel">
-			            <div><img src="{{ asset('storage/images/img_1.jpg') }}" alt="Image" class="img-fluid"></div>
-			            <div><img src="{{ asset('storage/images/img_2.jpg') }}" alt="Image" class="img-fluid"></div>
-			            <div><img src="{{ asset('storage/images/img_3.jpg') }}" alt="Image" class="img-fluid"></div>
-			            <div><img src="{{ asset('storage/images/img_4.jpg') }}" alt="Image" class="img-fluid"></div>
+			        	@foreach ($ad->images as $image)
+			            <div><img src="{{ asset('/storage/' . $image->path) }}" alt="Image" class="img-fluid"></div>
+			            @endforeach
 			        </div>
 		        </div>
 

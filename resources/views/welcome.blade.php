@@ -31,7 +31,7 @@
                             @if (Route::has('login'))
                                 @auth
                                     <li class="ml-xl-3 login">
-                                        <a href="{{ url('/home') }}"><span class="border-left pl-xl-4"></span>Home</a>
+                                        <a href="{{ route('profile') }}"><span class="border-left pl-xl-4"></span>My Profile</a>
                                     </li>
                                     <li>
                                         <a class="border-left pl-xl-4" href="{{ route('logout') }}"
@@ -121,11 +121,33 @@
                 <div class="row">
                     <div class="col-12 block-13">
                         <div class="owl-carousel nonloop-block-13">
+                            @foreach($featured as $feature)
+                                <div class="d-block d-md-flex listing vertical">
+                                    <a href="{{ $feature->path() }}"
+                                        class="img d-block"
+                                        style="background-image: url({{ asset('storage/' . $feature->mainImage()) }})">
+                                    </a>
+                                    <div class="lh-content">
+                                        <span class="category">Cars &amp; Vehicles</span>
+                                        <span class="listings-single">{{ $feature->price }}</span>
+                                        <a href="#" class="bookmark"><span class="icon-heart"></span></a>
+                                        <h3><a href="{{ $feature->path() }}">{{ $feature->title }}</a></h3>
+                                        <address>Don St, Brooklyn, New York</address>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    @foreach($ads->split(2) as $ads)
+                        <div class="col-lg-6">
                             @foreach($ads as $ad)
                                 <div class="d-block d-md-flex listing vertical">
                                     <a href="{{ $ad->path() }}"
                                         class="img d-block"
-                                        style="background-image: url({{ asset('storage/images/img_1.jpg') }})">
+                                        style="background-image: url({{ asset('storage/' . $ad->mainImage()) }})">
                                     </a>
                                     <div class="lh-content">
                                         <span class="category">Cars &amp; Vehicles</span>
@@ -137,7 +159,7 @@
                                 </div>
                             @endforeach
                         </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>

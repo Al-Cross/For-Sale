@@ -21,7 +21,15 @@ Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
 
+
+Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
+    Route::get('/', 'UsersController@index')->name('profile');
+    Route::get('/create', 'AdsController@create')->name('new_ad')->middleware('must-be-confirmed');
+    Route::post('/postad', 'AdsController@store')->name('create_ad')->middleware('must-be-confirmed');
+});
+
 Route::get('/search', 'AdsController@search');
+Route::get('/register/confirm', 'Api\RegisterConfirmationController@index');
 Route::get('/getlocation', 'AdsController@findLocation');
 Route::get('/{category:slug}/{section:slug}', 'SectionsController@index')->name('section');
 Route::get('/{category:slug}/{section:slug}/{ad:slug}', 'AdsController@show');
