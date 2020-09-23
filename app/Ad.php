@@ -69,6 +69,16 @@ class Ad extends Model
     }
 
     /**
+     * Define the relationship with App\User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function owner()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Define the relationship with App\Image
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

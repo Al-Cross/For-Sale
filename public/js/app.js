@@ -2075,6 +2075,40 @@ __webpack_require__.r(__webpack_exports__);
       setTimeout(function () {
         window.scrollTo(0, 500);
       }, 2);
+    },
+    setIcon: function setIcon(name) {
+      var icon;
+
+      switch (name) {
+        case 'Electronics':
+          icon = 'flaticon-innovation';
+          break;
+
+        case 'Fashion':
+          icon = 'flaticon-clothes';
+          break;
+
+        case 'Animals':
+          icon = 'flaticon-house';
+          break;
+
+        case 'Cars':
+          icon = 'flaticon-car';
+          break;
+
+        case 'Real Estate':
+          icon = 'flaticon-house';
+          break;
+
+        case 'Tools And Equipment':
+          icon = 'flaticon-bunk-bed';
+          break;
+
+        case 'Services':
+          icon = 'flaticon-pizza';
+      }
+
+      return icon;
     }
   }
 });
@@ -38432,7 +38466,7 @@ var render = function() {
       _vm._l(_vm.categories, function(category) {
         return _c(
           "div",
-          { staticClass: "col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-2" },
+          { staticClass: "col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-3 d-block" },
           [
             _c("div", [
               _c(
@@ -38447,7 +38481,9 @@ var render = function() {
                   }
                 },
                 [
-                  _vm._m(0, true),
+                  _c("span", { staticClass: "icon" }, [
+                    _c("span", { class: _vm.setIcon(category.name) })
+                  ]),
                   _vm._v(" "),
                   _c("span", {
                     staticClass: "caption mb-2 d-block",
@@ -38499,16 +38535,7 @@ var render = function() {
       : _vm._e()
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("span", { staticClass: "icon" }, [
-      _c("span", { staticClass: "flaticon-house" })
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

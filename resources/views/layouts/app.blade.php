@@ -17,6 +17,8 @@
         <main class="py-4">
             @yield('content')
         </main>
+
+        <flash message="{{ session('flash') }}"></flash>
     </div>
     <script src="{{ mix('/js/app.js') }}"></script>
     @include('partials.footer')

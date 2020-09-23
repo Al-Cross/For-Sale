@@ -2,9 +2,10 @@
 
 namespace App;
 
+use App\User_Messages;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends \TCG\Voyager\Models\User
 {
@@ -38,6 +39,55 @@ class User extends \TCG\Voyager\Models\User
         'confirmed' => 'boolean'
     ];
 
+    /**
+     * Define the relationship with App\Sent
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function sentMessages()
+    {
+        return $this->hasMany(Sent::class);
+    }
+
+    /**
+     * Define the relationship with App\Inbox
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function inbox()
+    {
+        return $this->hasMany(Inbox::class);
+    }
+
+    /**
+     * Define the relationship with App\Ad
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ads()
+    {
+        return $this->hasMany(Ad::class);
+    }
+
+    /**
+     * Define the relationship with App\Message
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'creator_id');
+    }
+
+    /**
+     * Define the relationship with App\Archive
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function archivedMessages()
+    {
+        return $this->hasMany(Archive::class);
+    }
     /**
      * Update the confirmation status of the user.
      *

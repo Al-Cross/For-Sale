@@ -26,6 +26,9 @@ Vue.use(VModal);
 Vue.component('flash', require('./components/Flash.vue').default);
 Vue.component('category-pick', require('./components/CategoryPick.vue').default);
 Vue.component('autocomplete', require('./components/Autocomplete.vue').default);
+Vue.component('reply', require('./components/Reply.vue').default);
+Vue.component('tabs', require('./components/Tabs.vue').default);
+Vue.component('tab', require('./components/Tab.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

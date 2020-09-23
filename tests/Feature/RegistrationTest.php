@@ -61,4 +61,17 @@ class RegistrationTest extends TestCase
             ->assertRedirect('/myaccount')
             ->assertSessionHas('flash', 'Unknown token');
     }
+    /**
+     * @test
+     */
+    public function unauthenticated_users_cannot_send_messages()
+    {
+        $message = make('App\Message');
+
+        $this->get(route('messages'))
+            ->assertRedirect(route('login'));
+
+        $this->post(route('send'), $message->toArray())
+            ->assertRedirect(route('login'));
+    }
 }

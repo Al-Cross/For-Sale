@@ -24,7 +24,10 @@
 
 		        <h4 class="h5 mb-4 text-black">Description</h4>
 		        <p>{{ $ad->description }}</p>
+
+			    @include('partials._message-form')
 		    </div>
+
 		    <div class="col-lg-3 ml-auto">
 		        <div class="mb-5">
 			        <h3 class="h5 text-black mb-3">Filters</h3>
