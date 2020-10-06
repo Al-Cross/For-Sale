@@ -67,8 +67,7 @@ class MessagesController extends Controller
             'body' => $validatedData['body']
         ]);
 
-        $message->sent()->create(['user_id' => $request->user()->id]);
-        $message->inbox()->create(['user_id' => $validatedData['recipient_id']]);
+        $message->distribute($request->user()->id, $validatedData['recipient_id']);
 
         return back()->with('flash', 'Message successfully sent!');
     }

@@ -27,11 +27,13 @@ Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
     Route::get('/create', 'AdsController@create')->name('new_ad')->middleware('must-be-confirmed');
     Route::post('/postad', 'AdsController@store')->name('create_ad')->middleware('must-be-confirmed');
     Route::get('/messages', 'MessagesController@index')->name('messages');
+    Route::get('/notifications', 'NotificationsController@show');
     Route::post('/messages/send', 'MessagesController@store')->name('send')->middleware('must-be-confirmed');
     Route::post('/messages/{message}/archive', 'ArchiveController@store')->name('archive');
     Route::delete('/messages/{message}/delete-received', 'MessagesController@destroyReceived')->name('delete-from-inbox');
     Route::delete('/messages/{message}/delete-sent', 'MessagesController@destroySent')->name('delete-from-sent');
     Route::delete('/messages/{message}/delete-archived', 'ArchiveController@destroy')->name('delete-from-archived');
+    Route::delete('/{notification}', 'NotificationsController@destroy')->name('destroy-notif');
 });
 
 Route::get('/search', 'AdsController@search');

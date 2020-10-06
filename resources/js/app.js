@@ -22,6 +22,7 @@ window.Vue = require('vue');
 Vue.component('categories-sections', require('./components/ShowSections.vue').default);
 Vue.component('autocomplete', require('./components/Autocomplete.vue').default);
 Vue.component('flash', require('./components/Flash.vue').default);
+Vue.component('notifications', require('./components/Notifications.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

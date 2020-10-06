@@ -30,9 +30,12 @@
                         <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                             @if (Route::has('login'))
                                 @auth
-                                    <li class="ml-xl-3 login">
+                                    <notifications></notifications>
+
+                                    <li class="login">
                                         <a href="{{ route('profile') }}"><span class="border-left pl-xl-4"></span>My Profile</a>
                                     </li>
+
                                     <li>
                                         <a class="border-left pl-xl-4" href="{{ route('logout') }}"
                                            onclick="event.preventDefault();
@@ -56,7 +59,7 @@
                                     @endif
                                 @endauth
                             @endif
-                            <li><a href="#" class="cta"><span class="bg-primary text-white rounded">+ Post an Ad</span></a></li>
+                            <li><a href="{{ route('new_ad') }}" class="cta"><span class="bg-primary text-white rounded">+ Post an Ad</span></a></li>
                         </ul>
                     </nav>
                 </div>

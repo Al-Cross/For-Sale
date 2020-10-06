@@ -4,6 +4,7 @@ namespace App;
 
 use App\UserMessages;
 use Illuminate\Database\Eloquent\Model;
+use App\Notifications\NewMessageNotification;
 
 class Message extends Model
 {
@@ -87,5 +88,20 @@ class Message extends Model
         if ($this->sent()->where('user_id', auth()->id())->exists()) {
             $this->sent()->delete();
         }
+    }
+
+    /**
+     * Distribute the message to the respective folders of the correspondents.
+     *
+     * @param int $sender
+     * @param int $recipient
+     */
+    public function distribute($sender, $recipient)
+    {
+        $this->sent()->create(['user_id' => $sender]);
+        $this->inbox()->create(['user_id' => $recipient]);
+
+        $userToBeNotified = $this->recipient()->findOrFail($recipient);
+        $userToBeNotified->notify(new NewMessageNotification($this));
     }
 }
