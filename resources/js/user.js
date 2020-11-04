@@ -9,6 +9,7 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 import VModal from 'vue-js-modal';
+import 'bootstrap/dist/js/bootstrap.bundle';
 
 Vue.use(VModal);
 
@@ -30,6 +31,8 @@ Vue.component('reply', require('./components/Reply.vue').default);
 Vue.component('tabs', require('./components/Tabs.vue').default);
 Vue.component('tab', require('./components/Tab.vue').default);
 Vue.component('notifications', require('./components/Notifications.vue').default);
+Vue.component('profile-sections', require('./components/ProfileSections.vue').default);
+Vue.component('logo-form', require('./components/LogoForm.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

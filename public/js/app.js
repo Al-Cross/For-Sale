@@ -6645,7 +6645,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.alert-flash {\n    position: fixed;\n    right: 25px;\n    bottom: 25px;\n}\n", ""]);
+exports.push([module.i, "\n.alert-flash {\n    position: fixed;\n    right: 25px;\n    bottom: 25px;\n    z-index: 1000;\n}\n", ""]);
 
 // exports
 
@@ -72551,6 +72551,11 @@ window.flash = function (message) {
     message: message,
     level: level
   });
+};
+
+Vue.prototype.authorize = function (handler) {
+  var user = window.App.user;
+  return user ? handler(user) : false;
 };
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

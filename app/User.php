@@ -17,7 +17,7 @@ class User extends \TCG\Voyager\Models\User
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'confirmation_token'
+        'name', 'email', 'password', 'avatar', 'confirmation_token'
     ];
 
     /**
@@ -88,6 +88,17 @@ class User extends \TCG\Voyager\Models\User
     {
         return $this->hasMany(Archive::class);
     }
+
+    /**
+     * Define the relationship with App\NotificationSettings
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function notificationSettings()
+    {
+        return $this->hasOne(NotificationSettings::class);
+    }
+
     /**
      * Update the confirmation status of the user.
      *

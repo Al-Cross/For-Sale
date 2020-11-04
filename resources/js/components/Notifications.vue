@@ -28,32 +28,32 @@
 </template>
 
 <script>
-    var moment = require('moment');
+var moment = require('moment');
 
-	export default {
-		data() {
-			return { notifications: false }
+export default {
+	data() {
+		return { notifications: false }
+	},
+
+	created() {
+        if (window.location.pathname == '/myaccount/messages') {
+           this.notifications = [];
+        } else {
+             axios.get('/myaccount/notifications')
+                .then(response => this.notifications = response.data);
+        }
+	},
+
+	methods: {
+		markAsRead(notification) {
+			axios.delete(`/myaccount/${notification.id}`);
 		},
 
-		created() {
-            if (window.location.pathname == '/myaccount/messages') {
-               this.notifications = [];
-            } else {
-                 axios.get('/myaccount/notifications')
-                    .then(response => this.notifications = response.data);
-            }
-		},
-
-		methods: {
-			markAsRead(notification) {
-				axios.delete(`/myaccount/${notification.id}`);
-			},
-
-            time(created_at) {
-                return 'Received ' + moment(created_at).fromNow();
-            }
-		}
-	};
+        time(created_at) {
+            return 'Received ' + moment(created_at).fromNow();
+        }
+	}
+};
 </script>
 
 <style>

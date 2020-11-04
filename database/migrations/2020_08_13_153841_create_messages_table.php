@@ -22,11 +22,6 @@ class CreateMessagesTable extends Migration
             $table->string('subject');
             $table->text('body');
             $table->timestamps();
-
-            $table->foreign('creator_id')
-                ->references('id')
-                ->on('users')
-                ->onDelete('cascade');
         });
     }
 

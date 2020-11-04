@@ -28,6 +28,11 @@ class CreateAdsTable extends Migration
             $table->bigInteger('views')->default(0);
             $table->boolean('featured')->default(false);
             $table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

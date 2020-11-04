@@ -27,7 +27,6 @@ class AdsTest extends TestCase
      */
     public function users_can_see_an_ad()
     {
-        $this->withoutExceptionHandling();
         $ad = create('App\Ad');
 
         $response = $this->get($ad->path());

@@ -18,6 +18,23 @@ class NotificationsController extends Controller
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @param Request $request
+     */
+    public function update(Request $request)
+    {
+        $value = $request->validate([
+            'newMessage' => 'boolean'
+        ]);
+
+        $request->user()->notificationSettings()->update([
+            'new_message' => $value['newMessage']
+        ]);
+
+        return response([], 204);
+    }
+    /**
      * Mark a notification as read.
      *
      * @param int $id

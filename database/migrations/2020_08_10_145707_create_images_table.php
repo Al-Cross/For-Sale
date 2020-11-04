@@ -18,6 +18,11 @@ class CreateImagesTable extends Migration
             $table->foreignId('ad_id');
             $table->string('path');
             $table->timestamps();
+
+            $table->foreign('ad_id')
+                ->references('id')
+                ->on('ads')
+                ->onDelete('cascade');
         });
     }
 

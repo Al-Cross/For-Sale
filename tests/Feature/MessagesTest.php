@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Message;
 use Tests\TestCase;
+use App\Providers\NewMessageReceived;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class MessagesTest extends TestCase
@@ -30,6 +32,8 @@ class MessagesTest extends TestCase
      */
     public function an_authenticated_user_can_send_a_message_to_another_user()
     {
+        $message = $this->message;
+
         $this->get(route('messages'))
             ->assertSee($this->message->subject);
         $this->assertCount(1, $this->john->sentMessages);
@@ -50,8 +54,7 @@ class MessagesTest extends TestCase
             ]
         );
 
-        $this->post(route('send'), $reply->toArray())
-            ->assertSessionHas('flash', 'Message successfully sent!');
+        $this->post(route('send'), $reply->toArray());
 
         $this->assertDatabaseHas('messages', [
             'subject' => $reply->subject, 'parent_message_id' => $this->message->id

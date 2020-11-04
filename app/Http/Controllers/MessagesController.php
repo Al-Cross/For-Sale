@@ -19,9 +19,9 @@ class MessagesController extends Controller
     {
         $user = User::where('id', auth()->id())->first();
 
-        $inbox = $user->inbox()->latest()->get();
-        $sent = $user->sentMessages()->latest()->get();
-        $archived = $user->archivedMessages()->latest()->get();
+        $inbox = $user->inbox()->with('message')->latest()->get();
+        $sent = $user->sentMessages()->with('message')->latest()->get();
+        $archived = $user->archivedMessages()->with('message')->latest()->get();
 
         return view('users.messages', compact('inbox', 'sent', 'archived'));
     }

@@ -3,8 +3,8 @@
 namespace App;
 
 use App\UserMessages;
+use App\Providers\NewMessageReceived;
 use Illuminate\Database\Eloquent\Model;
-use App\Notifications\NewMessageNotification;
 
 class Message extends Model
 {
@@ -93,6 +93,8 @@ class Message extends Model
     /**
      * Distribute the message to the respective folders of the correspondents.
      *
+     * Notify the recipient.
+     *
      * @param int $sender
      * @param int $recipient
      */
@@ -102,6 +104,6 @@ class Message extends Model
         $this->inbox()->create(['user_id' => $recipient]);
 
         $userToBeNotified = $this->recipient()->findOrFail($recipient);
-        $userToBeNotified->notify(new NewMessageNotification($this));
+        event(new NewMessageReceived($this, $userToBeNotified));
     }
 }

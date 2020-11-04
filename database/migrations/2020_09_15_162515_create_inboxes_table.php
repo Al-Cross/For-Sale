@@ -18,6 +18,11 @@ class CreateInboxesTable extends Migration
             $table->foreignId('message_id');
             $table->foreignId('user_id');
             $table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

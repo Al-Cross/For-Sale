@@ -2,26 +2,27 @@
 
 namespace App\Mail;
 
+use App\Ad;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ConfirmYourEmail extends Mailable implements ShouldQueue
+class NewMessage extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    protected $ad;
 
     /**
      * Create a new message instance.
      *
-     * @param  $user
+     * @param  App\Ad $ad
      * @return void
      */
-    public function __construct($user)
+    public function __construct(Ad $ad)
     {
-        $this->user = $user;
+        $this->ad = $ad;
     }
 
     /**
@@ -31,6 +32,7 @@ class ConfirmYourEmail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->markdown('emails.confirm-email');
+        return $this->markdown('emails.new_message')
+            ->with(['adTitle' => $this->ad->title]);
     }
 }

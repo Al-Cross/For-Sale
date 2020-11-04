@@ -7,21 +7,21 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ConfirmYourEmail extends Mailable implements ShouldQueue
+class DeletionEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    public $user_id;
 
     /**
      * Create a new message instance.
      *
-     * @param  $user
+     * @param  $user_id
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user_id)
     {
-        $this->user = $user;
+        $this->user_id = $user_id;
     }
 
     /**
@@ -31,6 +31,6 @@ class ConfirmYourEmail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->markdown('emails.confirm-email');
+        return $this->markdown('emails.deletion_email');
     }
 }

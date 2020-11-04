@@ -9,7 +9,7 @@ class Archive extends Model
     protected $guarded = [];
 
     /**
-     * Delete from App\Message if the model instance is removed by both users.
+     * Delete App\Message if the model instance is removed by both users.
      */
     protected static function boot()
     {

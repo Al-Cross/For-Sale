@@ -8,7 +8,7 @@
 			<div class="button-container mb-5 border-bottom">
                 <a href="{{ route('profile') }}" class="draw-outline draw-outline--tandem">Ads</a>
                 <a href="{{ route('messages') }}" class="draw-outline draw-outline--tandem"> Messages</a>
-                <a href="#contact" class="draw-outline draw-outline--tandem">Settings</a>
+                <a href="/myaccount/settings" class="draw-outline draw-outline--tandem">Settings</a>
             </div>
 
             <h3 class="font-weight-bold text-center">My Ads</h3>

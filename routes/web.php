@@ -28,12 +28,21 @@ Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
     Route::post('/postad', 'AdsController@store')->name('create_ad')->middleware('must-be-confirmed');
     Route::get('/messages', 'MessagesController@index')->name('messages');
     Route::get('/notifications', 'NotificationsController@show');
+    Route::get('/settings', 'UsersController@edit');
+    Route::get('/settings/email-sent', 'EmailConfirmationsController@index');
+    Route::get('/settings/{user}/delete', 'UsersController@destroy')->name('profile_deletion');
+    Route::patch('/settings/pass', 'UsersController@updatePassword');
+    Route::patch('/settings/update', 'UsersController@update')->name('profile_update');
+    Route::patch('/settings/notifications', 'NotificationsController@update');
+    Route::post('/settings/{user}/logos', 'ImageUploadsController@store')->middleware('must-be-confirmed');
     Route::post('/messages/send', 'MessagesController@store')->name('send')->middleware('must-be-confirmed');
     Route::post('/messages/{message}/archive', 'ArchiveController@store')->name('archive');
+    Route::post('/settings/deletion-email', 'EmailConfirmationsController@destroy')->name('deletion_email');
     Route::delete('/messages/{message}/delete-received', 'MessagesController@destroyReceived')->name('delete-from-inbox');
     Route::delete('/messages/{message}/delete-sent', 'MessagesController@destroySent')->name('delete-from-sent');
     Route::delete('/messages/{message}/delete-archived', 'ArchiveController@destroy')->name('delete-from-archived');
     Route::delete('/{notification}', 'NotificationsController@destroy')->name('destroy-notif');
+    Route::delete('/settings/{user}/logos/delete', 'ImageUploadsController@destroy')->middleware('must-be-confirmed');
 });
 
 Route::get('/search', 'AdsController@search');
