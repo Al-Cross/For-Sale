@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/radio-button.css') }}">
 <link rel="stylesheet" href="{{ asset('css/animate-buttons.css') }}">
+<link rel="stylesheet" href="{{ asset('css/pricing.css') }}">
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 

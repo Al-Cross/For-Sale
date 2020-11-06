@@ -39,6 +39,8 @@ class AdsController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Ad::class);
+
         $categories = Category::with('sections')->get();
 
         return view('ads.create', compact('categories'));
