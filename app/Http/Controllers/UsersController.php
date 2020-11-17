@@ -17,9 +17,10 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $userAds = Ad::where('user_id', '=', auth()->id())->get();
+        $userAds = Ad::where('user_id', '=', auth()->id())->latest()->get();
+        $balance = auth()->user()->balance->getBalance();
 
-        return view('users.index', compact('userAds'));
+        return view('users.index', compact('userAds', 'balance'));
     }
 
     /**

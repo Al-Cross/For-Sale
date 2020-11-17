@@ -29,6 +29,10 @@ Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
     Route::get('/messages', 'MessagesController@index')->name('messages');
     Route::get('/notifications', 'NotificationsController@show');
     Route::get('/settings', 'UsersController@edit');
+    Route::get('/wallet/load-account', 'PaymentsController@index');
+    Route::get('/wallet/advanced', 'AddAdsController@advanced')->name('3_additional_ads');
+    Route::get('/wallet/premium', 'AddAdsController@premium')->name('10_additional_ads');
+    Route::post('/wallet/complete-payment', 'PaymentsController@create')->name('process_payment');
     Route::get('/settings/email-sent', 'EmailConfirmationsController@index');
     Route::get('/settings/{user}/delete', 'UsersController@destroy')->name('profile_deletion');
     Route::patch('/settings/pass', 'UsersController@updatePassword');
@@ -37,6 +41,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
     Route::post('/settings/{user}/logos', 'ImageUploadsController@store')->middleware('must-be-confirmed');
     Route::post('/messages/send', 'MessagesController@store')->name('send')->middleware('must-be-confirmed');
     Route::post('/messages/{message}/archive', 'ArchiveController@store')->name('archive');
+    Route::post('/wallet/fill', 'PaymentsController@store')->name('add_to_balance');
     Route::post('/settings/deletion-email', 'EmailConfirmationsController@destroy')->name('deletion_email');
     Route::delete('/messages/{message}/delete-received', 'MessagesController@destroyReceived')->name('delete-from-inbox');
     Route::delete('/messages/{message}/delete-sent', 'MessagesController@destroySent')->name('delete-from-sent');

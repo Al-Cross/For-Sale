@@ -76,7 +76,7 @@
                     <div class="col-md-12">
                         <div class="row justify-content-center mb-4">
                             <div class="col-md-8 text-center">
-                                <h1 class="" data-aos="fade-up">Find What You Are Looking For In An Instant</h1>
+                                <h1 class="" data-aos="fade-up">Find Anything In An Instant</h1>
                                 <p data-aos="fade-up" data-aos-delay="100">You can buy, sell anything you want.</p>
                             </div>
                         </div>

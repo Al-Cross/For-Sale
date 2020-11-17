@@ -21,7 +21,7 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
             SendEmailConfirmationRequest::class,
-            CreateNotificationSettings::class
+            CreateProfileData::class
         ],
         NewMessageReceived::class => [
             SendNewMessageNotification::class

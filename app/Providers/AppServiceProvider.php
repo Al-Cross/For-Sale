@@ -24,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        \View::composer(['errors::403', 'users.messages', 'users.settings'],
+            'App\Http\Composers\Error403Composer');
+
         \View::composer('partials.header', function ($view) {
             $view->with('categories', Category::all());
         });

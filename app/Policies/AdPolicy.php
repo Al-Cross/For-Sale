@@ -27,6 +27,6 @@ class AdPolicy
      */
     public function create(User $user)
     {
-        return $user->ads()->count() < 3;
+        return $user->ad_limit !== 0;
     }
 }

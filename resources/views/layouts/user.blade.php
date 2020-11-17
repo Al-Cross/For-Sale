@@ -15,12 +15,13 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     @include('partials._head')
+    @yield('extra-css')
 </head>
 <body>
     <div id="user">
         @include('users._header')
 
-        <main class="pt-4">
+        <main class="pt-5">
             @yield('content')
         </main>
 
@@ -31,5 +32,6 @@
 
     <script src="{{ asset('frontend/js/main.js') }}"></script>
     @include('partials._scripts')
+    @yield('scripts')
 </body>
 </html>

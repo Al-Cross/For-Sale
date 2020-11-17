@@ -183,8 +183,8 @@
                 </div>
                 <br>
                 <div class="form-group row">
-                    <div class="col-md-12">
-                        <button type="submit" class="btn btn-primary">Create</button>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary rounded-lg">Create</button>
                     </div>
                 </div>
             </form>

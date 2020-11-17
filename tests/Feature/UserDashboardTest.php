@@ -18,7 +18,8 @@ class UserDashboardTest extends TestCase
      */
     public function users_can_visit_their_dashboard()
     {
-        $this->signIn();
+        $this->signIn($user = create('App\User'));
+        $user->balance()->create(['amount' => '1000']);
 
         $this->get(route('profile'))
             ->assertStatus(200)
@@ -29,7 +30,8 @@ class UserDashboardTest extends TestCase
      */
     public function an_authenticated_user_can_visit_their_profile_settings_page()
     {
-        $this->signIn();
+        $this->signIn($user = create('App\User'));
+        $user->balance()->create(['amount' => '1000']);
 
         $this->get('/myaccount/settings')
             ->assertStatus(200);

@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Jobs\RemoveOldAds;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdsTest extends TestCase
@@ -91,7 +93,7 @@ class AdsTest extends TestCase
                         1 => $file2 = UploadedFile::fake()->image('AdPhoto2.jpg')]
         ]);
 
-        $response = $this->post(route('create_ad'), $ad->toArray());
+        $this->post(route('create_ad'), $ad->toArray());
 
         Storage::disk('public')->assertExists('images/' . $file1->hashName());
         $this->get('/')
@@ -111,8 +113,11 @@ class AdsTest extends TestCase
      */
     public function a_user_cannot_create_more_than_three_ads()
     {
-        $this->signIn();
-        create('App\Ad', ['user_id' => auth()->id()], 3);
+        $this->signIn($user = create('App\User'));
+        create('App\Ad', ['user_id' => $user->id], 3);
+        $user->ad_limit = 0;
+        $user->save();
+        $user->balance()->create(['amount' => '1000']);
 
         $this->get(route('new_ad'))->assertStatus(403);
     }

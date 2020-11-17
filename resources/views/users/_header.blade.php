@@ -50,6 +50,13 @@
                                 @endif
                             @endauth
                         @endif
+                        @if(Auth::user() && Auth::user()->type !== 'basic')
+                            <li>
+                                <a href="#" class="cta">
+                                    <span class="bg-primary text-white cta rounded">{{ strtoupper(Auth::user()->type) }}</span>
+                                </a>
+                            </li>
+                        @endif
                         <li><a href="{{ route('new_ad') }}" class="cta"><span class="bg-primary text-white rounded">+ Post an Ad</span></a></li>
                     </ul>
                 </nav>

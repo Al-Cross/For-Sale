@@ -56,7 +56,7 @@ class AdsController extends Controller
     {
         $data = $request->validate([
             'section_id' => 'required',
-            'city' => 'required',
+            'city' => ['required', 'exists:cities'],
             'title' => ['required', 'string'],
             'description' => ['required', 'min:10'],
             'price' => ['required', 'numeric'],
@@ -65,9 +65,14 @@ class AdsController extends Controller
             'delivery' => ['required', 'string', 'in:seller,buyer,personal handover'],
             'image' => 'array',
             'image.*' => ['image', 'mimes:jpeg,jpg,png']
-        ]);
+        ],
+            [
+                'city.exists' => 'We do not operate in the selected city.'
+            ]
+        );
 
-        $city_id = City::whereCity($data['city'])->first()->id;
+        $city_id = City::whereCity($data['city'])->firstOrFail()->id;
+
 
         $ad = Ad::create([
             'section_id' => $data['section_id'],
@@ -81,6 +86,8 @@ class AdsController extends Controller
             'condition' => $data['condition'],
             'delivery' => $data['delivery']
         ]);
+
+        auth()->user()->updateAdLimit();
 
         if (request()->has('image')) {
             $this->saveImages($ad->id, request()->file('image'));

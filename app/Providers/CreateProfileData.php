@@ -6,7 +6,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class CreateNotificationSettings
+class CreateProfileData
 {
     /**
      * Create the event listener.
@@ -27,5 +27,6 @@ class CreateNotificationSettings
     public function handle(Registered $event)
     {
         $event->user->notificationSettings()->create();
+        $event->user->balance()->create();
     }
 }
