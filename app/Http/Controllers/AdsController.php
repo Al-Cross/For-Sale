@@ -104,41 +104,85 @@ class AdsController extends Controller
      */
     public function show($category, $section, Ad $ad)
     {
+        $ad->with('images')->get();
         return view('ads.show', compact('ad'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  App\Ad  $ad
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Ad $ad)
     {
-        //
+        $this->authorize('update', $ad);
+
+        return view('ads.edit', compact('ad'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  App\Ad  $ad
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Ad $ad)
     {
-        //
+        $this->authorize('update', $ad);
+
+        $data = $request->validate([
+            'city' => ['required', 'exists:cities'],
+            'title' => ['required', 'string'],
+            'description' => ['required', 'min:10'],
+            'price' => ['required', 'numeric'],
+            'type' => ['required', 'string', 'in:private,business'],
+            'condition' => ['required', 'string', 'in:new,used'],
+            'delivery' => ['required', 'string', 'in:seller,buyer,personal handover'],
+            'image' => 'array',
+            'image.*' => ['image', 'mimes:jpeg,jpg,png']
+        ],
+            [
+                'city.exists' => 'We do not operate in the selected city.'
+            ]
+        );
+
+        $city_id = City::whereCity($data['city'])->firstOrFail()->id;
+
+        $ad->update([
+            'city_id' => $city_id,
+            'title' => $data['title'],
+            'slug' => Str::slug($data['title']),
+            'description' => $data['description'],
+            'price' => $data['price'],
+            'type' => $data['type'],
+            'condition' => $data['condition'],
+            'delivery' => $data['delivery']
+        ]);
+
+        if (request()->has('image')) {
+            $this->saveImages($ad->id, request()->file('image'));
+        }
+
+        return redirect(
+            route('show_ad', [$ad->section->category->slug, $ad->section->slug, $ad->slug]))
+                ->with('flash', 'Your ad has been successfully updated!');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  App\Ad  $ad
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Ad $ad)
     {
-        //
+        $this->authorize('delete', $ad);
+
+        $ad->delete();
+
+        return back()->with('flash', 'Ad successfully removed!');
     }
 
     /**

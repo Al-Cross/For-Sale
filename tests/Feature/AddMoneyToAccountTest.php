@@ -42,9 +42,5 @@ class AddMoneyToAccountTest extends TestCase
     	$this->postJson(route('add_to_balance'), $status);
 
     	$this->assertDatabaseHas('balances', ['amount' => '2000']);
-
-    	$this->postJson(route('add_to_balance'), $status);
-
-    	$this->assertDatabaseHas('balances', ['amount' => '4000']);
     }
 }

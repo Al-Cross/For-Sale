@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Ad;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Jobs\RemoveOldAds;
@@ -117,7 +118,6 @@ class AdsTest extends TestCase
         create('App\Ad', ['user_id' => $user->id], 3);
         $user->ad_limit = 0;
         $user->save();
-        $user->balance()->create(['amount' => '1000']);
 
         $this->get(route('new_ad'))->assertStatus(403);
     }
@@ -132,6 +132,110 @@ class AdsTest extends TestCase
         $job->handle();
 
         $this->assertDatabaseMissing('ads', ['id' => $ad->id]);
+    }
+    /**
+     * @test
+     */
+    public function unauthorized_users_may_not_update_ads()
+    {
+        $this->signIn();
+        $ad = create('App\Ad', ['user_id' => create('App\User')->id]);
+
+        $this->get(route('edit_ad', $ad->slug))
+            ->assertStatus(403);
+
+        $this->patch(route('update_ad', $ad->id), [])
+            ->assertStatus(403);
+    }
+    /**
+     * @test
+     */
+    public function authorized_users_can_visit_the_ad_edit_page()
+    {
+        $this->signIn();
+        $ad = create('App\Ad', ['user_id' => auth()->id()]);
+
+        $this->get(route('edit_ad', $ad->slug))
+            ->assertStatus(200)
+            ->assertSee($ad->title);
+    }
+    /**
+     * @test
+     */
+    public function users_can_edit_their_ads()
+    {
+        $this->signIn();
+        $ad = create('App\Ad', ['user_id' => auth()->id()]);
+        $city = create('App\City');
+
+        $this->patch(route('update_ad', $ad->id), [
+            'title' => 'Changed',
+            'description' => 'Changed description.',
+            'city' => $city->city,
+            'price' => 2900,
+            'type' => 'business',
+            'condition' => 'used',
+            'delivery' => 'buyer'
+        ]);
+
+        tap($ad->fresh(), function($ad) use ($city) {
+            $this->assertEquals('Changed', $ad->title);
+            $this->assertEquals('Changed description.', $ad->description);
+            $this->assertEquals($city->id, $ad->city_id);
+            $this->assertEquals(2900, $ad->price);
+        });
+    }
+    /**
+     * @test
+     */
+    public function users_may_delete_ad_images()
+    {
+        $this->signIn();
+        $ad = make('App\Ad', [
+            'city' => create('App\City')->city,
+            'image' => [0 => $file1 = UploadedFile::fake()->image('AdPhoto1.jpg'),
+                        1 => $file2 = UploadedFile::fake()->image('AdPhoto2.jpg')]
+        ]);
+        $this->postJson(route('create_ad'), $ad->toArray());
+        $postedAd = Ad::whereTitle($ad->title)->first();
+
+        Storage::disk('public')->assertExists('images/' . $file2->hashName());
+
+        $this->delete(route('delete_ad_image', $postedAd->images[1]->id));
+
+        Storage::disk('public')->assertMissing('images/' . $file2->hashName());
+        $this->assertDatabaseMissing('images', ['id' => $postedAd->images[1]->id]);
+    }
+    /**
+     * @test
+     */
+    public function unauthorized_users_may_not_delete_ads()
+    {
+        $this->signIn();
+        $ad = create('App\Ad', ['user_id' => create('App\User')->id]);
+
+        $this->delete(route('delete_ad', $ad->id))
+            ->assertStatus(403);
+    }
+    /**
+     * @test
+     */
+    public function authorized_users_may_delete_their_ads()
+    {
+        $this->signIn();
+        $ad = make('App\Ad', [
+            'city' => create('App\City')->city,
+            'image' => [0 => $file1 = UploadedFile::fake()->image('AdPhoto1.jpg'),
+                        1 => $file2 = UploadedFile::fake()->image('AdPhoto2.jpg')]
+        ]);
+        $this->postJson(route('create_ad'), $ad->toArray());
+        $postedAd = Ad::whereTitle($ad->title)->first();
+        $image = $postedAd->images[1];
+
+        $this->delete(route('delete_ad', $postedAd->id));
+
+        $this->assertDatabaseMissing('ads', ['title' => $postedAd->title]);
+        $this->assertDatabaseMissing('images', ['id' => $image->id]);
     }
 
     /**

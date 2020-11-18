@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,6 +40,21 @@ class ImageUploadsController extends Controller
 
         $user->avatar = 'users/default.png';
         $user->save();
+
+        return response([], 204);
+    }
+
+    /**
+     * Remove the ad associated image from storage.
+     *
+     * @param  App\Image  $image
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteAdImage(Image $image)
+    {
+        Storage::disk('public')->delete($image->path);
+
+        $image->delete();
 
         return response([], 204);
     }

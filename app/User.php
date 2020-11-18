@@ -149,24 +149,6 @@ class User extends \TCG\Voyager\Models\User
     }
 
     /**
-     * Calculate the remainig postings in the upgrade package.
-     * If the limit has been exceeded, reverse the user type to Basic.
-     *
-     * @return int
-     */
-    public function postingLimit()
-    {
-        $limit = $this->ad_limit - config('for-sale.membership.basic.ad_limit');
-
-        if ($limit === 0) {
-            $this->type = 'basic';
-            $this->save();
-        }
-
-        return $limit;
-    }
-
-    /**
      * Store the ad posting limit in the database.
      *
      * @param str $membershipType
@@ -184,5 +166,10 @@ class User extends \TCG\Voyager\Models\User
 
         $this->ad_limit = $this->ad_limit - 1;
         $this->save();
+
+        if (! $membershipType && $this->ad_limit == config('for-sale.membership.basic.ad_limit')) {
+            $this->type = 'basic';
+            $this->save();
+        }
     }
 }

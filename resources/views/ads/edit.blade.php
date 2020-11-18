@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', 'Post Ad')
+@section('title', 'Edit ' . $ad->title)
 
 @section('content')
 	<div class="site-section bg-secondary">
@@ -11,7 +11,9 @@
                 <a href="#contact" class="draw-outline draw-outline--tandem">Settings</a>
             </div>
 
-            <h3 class="font-weight-bold text-center">Post A New Ad</h3>
+            <h3 class="font-weight-bold text-center">Make Changes To Your Ad</h3>
+
+            <delete-image :data="{{ json_encode($ad->images) }}"></delete-image>
 
             @if (isset($errors) && count($errors))
                         @foreach($errors->all() as $error)
@@ -21,19 +23,15 @@
                         @endforeach
             @endif
 
-            <form action="{{ route('create_ad') }}" method="POST" enctype="multipart/form-data" class="mt-4">
+            <form action="{{ route('update_ad', $ad->id) }}" method="POST" enctype="multipart/form-data" class="mt-4">
                 @csrf
-
-
-                <a href="" @click.prevent="$modal.show('category-pick')">Click to pick a category</a>
-                <category-pick :categories="{{ json_encode($categories) }}"></category-pick>
-
+                @method('PATCH')
                 <div class="form-group row">
                     <div class="col-md-12">
                         <label for="title">Title</label>
                         <input type="text"
                                 class="form-control @error('title') is-invalid @enderror"
-                                name="title" value="{{ old('title') }}"
+                                name="title" value="{{ $ad->title }}"
                                 required
                                 autocomplete="title"
                                 autofocus>
@@ -52,7 +50,7 @@
                         <input type="text"
                                 class="form-control @error('price') is-invalid @enderror"
                                 name="price"
-                                value="{{ old('price') }}"
+                                value="{{ $ad->price }}"
                                 required
                                 autocomplete="price"
                                 autofocus>
@@ -75,14 +73,14 @@
                                     id="radioNew"
                                     value="new"
                                     autofocus
-                                    {{ old('condition') === 'new' ? 'checked' : '' }}><label for="radioNew">New</label>
+                                    {{ $ad->condition === 'new' ? 'checked' : '' }}><label for="radioNew">New</label>
                             <input type="radio"
                                     class="form-control btn btn-success @error('condition') is-invalid @enderror"
                                     name="condition"
                                     id="radioUsed"
                                     value="used"
                                     autofocus
-                                    {{ old('condition') === 'used' ? 'checked' : '' }}><label for="radioUsed">Used</label>
+                                    {{ $ad->condition === 'used' ? 'checked' : '' }}><label for="radioUsed">Used</label>
                         </div>
                         @error('condition')
                             <span class="invalid-feedback" role="alert">
@@ -102,14 +100,14 @@
                                     id="radioPrivate"
                                     value="private"
                                     autofocus
-                                    {{ old('type') === 'private' ? 'checked' : '' }}><label for="radioPrivate">Private</label>
+                                    {{ $ad->type === 'private' ? 'checked' : '' }}><label for="radioPrivate">Private</label>
                             <input type="radio"
                                     class="form-control btn btn-success @error('type') is-invalid @enderror"
                                     name="type"
                                     id="radioBusiness"
                                     value="business"
                                     autofocus
-                                    {{ old('type') === 'business' ? 'checked' : '' }}><label for="radioBusiness">Business</label>
+                                    {{ $ad->delivery === 'business' ? 'checked' : '' }}><label for="radioBusiness">Business</label>
                         </div>
                         @error('type')
                             <span class="invalid-feedback" role="alert">
@@ -129,21 +127,21 @@
                                     id="radioSeller"
                                     value="seller"
                                     autofocus
-                                    {{ old('delivery') === 'seller' ? 'checked' : '' }}><label for="radioSeller">Seller</label>
+                                    {{ $ad->delivery === 'seller' ? 'checked' : '' }}><label for="radioSeller">Seller</label>
                             <input type="radio"
                                     class="form-control btn btn-success @error('delivery') is-invalid @enderror"
                                     name="delivery"
                                     id="radioBuyer"
                                     value="buyer"
                                     autofocus
-                                    {{ old('delivery') === 'buyer' ? 'checked' : '' }}><label for="radioBuyer">Buyer</label>
+                                    {{ $ad->delivery === 'buyer' ? 'checked' : '' }}><label for="radioBuyer">Buyer</label>
                             <input type="radio"
                                     class="form-control btn btn-success @error('delivery') is-invalid @enderror"
                                     name="delivery"
                                     id="handover"
                                     value="personal handover"
                                     autofocus
-                                    {{ old('delivery') === 'personal handover' ? 'checked' : '' }}><label for="handover">Personal Handover</label>
+                                    {{ $ad->delivery === 'personal handover' ? 'checked' : '' }}><label for="handover">Personal Handover</label>
                         </div>
                         @error('delivery')
                             <span class="invalid-feedback" role="alert">
@@ -161,7 +159,7 @@
                                 name="description"
                                 required
                                 autocomplete="description"
-                                autofocus>{{ old('description') }}</textarea>
+                                autofocus>{{ $ad->description }}</textarea>
 
                         @error('description')
                             <span class="invalid-feedback" role="alert">
@@ -193,7 +191,7 @@
                 <br>
                 <div class="form-group row">
                     <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary rounded-lg">Create</button>
+                        <button type="submit" class="btn btn-primary rounded-lg">Submit Changes</button>
                     </div>
                 </div>
             </form>

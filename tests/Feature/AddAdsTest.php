@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Ad;
 use Tests\TestCase;
+use App\Jobs\RemoveOldAds;
+use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AddAdsTest extends TestCase
@@ -16,7 +19,6 @@ class AddAdsTest extends TestCase
     {
         $this->signIn($user = create('App\User'));
         create('App\Ad', ['user_id' => $user->id], 3);
-        $user->balance()->create(['amount' => '1000']);
 
         $this->get(route('3_additional_ads'))
             ->assertSessionHas('flash', 'Unsufficient funds. First load your account.');
@@ -30,7 +32,7 @@ class AddAdsTest extends TestCase
     {
     	$this->signIn($user = create('App\User'));
     	create('App\Ad', ['user_id' => $user->id], 3);
-    	$user->balance()->create(['amount' => '3000']);
+    	$user->balance()->update(['amount' => '3000']);
 
     	$this->get(route('3_additional_ads'))
     		->assertSessionHas('flash', 'You can now post three additional ads!');
@@ -45,7 +47,7 @@ class AddAdsTest extends TestCase
     public function user_type_changes_when_buying_additional_ads()
     {
         $this->signIn($user = create('App\User'));
-        $user->balance()->create(['amount' => '3000']);
+        $user->balance()->update(['amount' => '3000']);
 
         $this->get(route('3_additional_ads'));
 
@@ -58,7 +60,7 @@ class AddAdsTest extends TestCase
     {
         $this->signIn($user = create('App\User'));
         create('App\Ad', ['user_id' => $user->id], 3);
-        $user->balance()->create(['amount' => '8000']);
+        $user->balance()->update(['amount' => '8000']);
 
         $this->get(route('10_additional_ads'))
             ->assertSessionHas('flash', 'You can now post ten additional ads!');
@@ -77,7 +79,7 @@ class AddAdsTest extends TestCase
 
         $ad = make('App\Ad', ['user_id' => $user->id, 'city' => $city->city]);
 
-        $response = $this->post(route('create_ad'), $ad->toArray());
+        $this->post(route('create_ad'), $ad->toArray());
 
         $this->assertEquals(2, $user->fresh()->ad_limit);
     }
@@ -87,12 +89,32 @@ class AddAdsTest extends TestCase
     public function buying_two_ad_packages_combines_their_ads()
     {
         $this->signIn($user = create('App\User'));
-        $user->balance()->create(['amount' => '11000']);
+        $user->balance()->update(['amount' => '11000']);
 
         $this->get(route('3_additional_ads'));
         $this->get(route('10_additional_ads'));
 
         $this->assertEquals(17, $user->ad_limit);
         $this->assertEquals(0, $user->balance->getBalance());
+    }
+    /**
+     * @test
+     */
+    public function expired_ads_increase_the_ad_limit_on_basic()
+    {
+        $this->signIn($user = create('App\User'));
+        $city = create('App\City');
+
+        $ad = make('App\Ad', ['user_id' => $user->id, 'city' => $city->city]);
+
+        $this->post(route('create_ad'), $ad->toArray());
+        $postedAd = Ad::whereTitle($ad->title)->first();
+
+        $postedAd->update(['created_at' => Carbon::now()->subMonth()]);
+
+        $job = new RemoveOldAds();
+        $job->handle();
+
+        $this->assertEquals(3, auth()->user()->fresh()->ad_limit);
     }
 }

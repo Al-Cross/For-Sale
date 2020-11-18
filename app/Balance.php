@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Balance extends Model
 {
 	protected $guarded = [];
+    protected $casts = ['amount' => 'integer'];
 
 	/**
      * Retrieve and format the amount on the user's account.

@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Ad;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,8 +31,14 @@ class RemoveOldAds implements ShouldQueue
      */
     public function handle()
     {
-        DB::table('ads')
-            ->where('created_at', '<=', Carbon::now()->subMonth())
-            ->delete();
+        $ads = Ad::where('created_at', '<=', Carbon::now()->subMonth())
+            ->with('owner:id,ad_limit')
+            ->get();
+
+        foreach ($ads as $ad) {
+            $ad->owner->ad_limit++;
+            $ad->owner->save();
+            $ad->delete();
+        }
     }
 }

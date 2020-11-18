@@ -33,3 +33,7 @@ $factory->define(User::class, function (Faker $faker) {
 $factory->state(User::class, 'unconfirmed', function () {
     return ['confirmed' => false];
 });
+
+$factory->afterCreating(User::class, function($user, $faker) {
+    $user->balance()->create();
+});

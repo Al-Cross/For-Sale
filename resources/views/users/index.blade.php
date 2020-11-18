@@ -11,6 +11,10 @@
                     <a href="{{ route('messages') }}" class="draw-outline draw-outline--tandem"> Messages</a>
                     <a href="/myaccount/settings" class="draw-outline draw-outline--tandem">Settings</a>
                 </div>
+
+                @if(Auth::user()->ad_limit !== 0)
+                    <span class="text-center">Ad Slots Remaining: {{ Auth::user()->ad_limit }}</span>
+                @endif
                 <div class="d-md-flex">
                     <p class="mr-1">Your Balance: {{ config('for-sale.currency') }}{{ $balance }}</p>
                     <a href="myaccount/wallet/load-account" class="btn bg-white btn-sm rounded-lg" style="height: fit-content;">Increase Balance</a>
@@ -19,10 +23,7 @@
 
             <h3 class="font-weight-bold text-center">My Ads</h3>
             <a href="{{ route('new_ad') }}" class="btn btn-primary rounded" style="position: fixed;">New Ad</a><br>
-
-             @if(Auth::user()->type !== 'basic')
-                <span class="text-center">{{ ucwords(Auth::user()->type) }} Ads Remaining: {{ Auth::user()->postingLimit() }}</span>
-            @else
+            @if(Auth::user()->ad_limit == 0)
                 <h3 class="font-weight-bold text-center"><a href="#">You have reached your ad limit. Get more slots here!</a></h3>
             @endif
 
@@ -37,8 +38,17 @@
                                 </a>
                                 <div class="lh-content">
                                     <span class="category">Cars &amp; Vehicles</span>
-                                    <span class="listings-single">{{ $ad->price }}</span>
-                                    <a href="#" class="bookmark"><span class="icon-heart"></span></a>
+                                    <span class="listings-single">{{ config('for-sale.currency') }}{{ $ad->price }}</span>
+                                    <div>
+                                        <a href="{{ route('edit_ad', $ad->slug) }}"
+                                            class="btn btn-warning btn-sm rounded"
+                                            style="position: absolute; right: 20%;">Edit</a>
+                                        <form action="{{ route('delete_ad', $ad->id) }}" method="POST" style="position: absolute; right: 4%;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <confirm-delete></confirm-delete>
+                                        </form>
+                                    </div>
                                     <h3><a href="{{ $ad->path() }}">{{ $ad->title }}</a></h3>
                                     <address>Don St, Brooklyn, New York</address>
                                 </div>

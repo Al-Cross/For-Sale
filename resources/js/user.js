@@ -33,6 +33,8 @@ Vue.component('tab', require('./components/Tab.vue').default);
 Vue.component('notifications', require('./components/Notifications.vue').default);
 Vue.component('profile-sections', require('./components/ProfileSections.vue').default);
 Vue.component('logo-form', require('./components/LogoForm.vue').default);
+Vue.component('delete-image', require('./components/DeleteImage.vue').default);
+Vue.component('confirm-delete', require('./components/ConfirmDelete.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

@@ -48,11 +48,7 @@ class PaymentsController extends Controller
         $amount = $request['result']['paymentIntent']['amount'];
 
         if ($status === 'succeeded') {
-            if (! auth()->user()->balance()->exists()) {
-                auth()->user()->balance()->create(['amount' => $amount]);
-            } else {
-                $this->update($amount);
-            }
+            $this->update($amount);
         }
     }
 
