@@ -30,6 +30,7 @@ $factory->define(Ad::class, function (Faker $faker) {
         'condition' => 'used',
         'delivery' => 'buyer',
         'views' => 0,
-        'featured' => 1
+        'featured' => 1,
+        'archived' => false
     ];
 });

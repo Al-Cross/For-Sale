@@ -1749,3 +1749,13 @@ h1, h2, h3, h4, h5,
   .newsletter .btn:hover {
     color: #fff;
     background: #000; }
+
+.category-profile {
+  font-size: 11px;
+    display: inline-block;
+    padding: 5px 20px;
+    background: #e9ecef;
+    border-radius: 30px;
+    color: #000;
+    font-weight: bold;
+}

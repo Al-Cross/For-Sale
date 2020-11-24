@@ -110,7 +110,7 @@ class AddAdsTest extends TestCase
         $this->post(route('create_ad'), $ad->toArray());
         $postedAd = Ad::whereTitle($ad->title)->first();
 
-        $postedAd->update(['created_at' => Carbon::now()->subMonth()]);
+        $postedAd->update(['created_at' => Carbon::now()->subMonths(6)]);
 
         $job = new RemoveOldAds();
         $job->handle();

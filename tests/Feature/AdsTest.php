@@ -6,6 +6,7 @@ use App\Ad;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Jobs\RemoveOldAds;
+use App\Jobs\ArchiveExpiredAds;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -79,22 +80,11 @@ class AdsTest extends TestCase
             ->assertSee('Post A New Ad')
             ->assertStatus(200);
 
-        $ad = make('App\Ad', [
-            'section_id' => create('App\Section')->id,
-            'user_id' => auth()->id(),
+        $ad = $this->postAd([
             'city' => $city->city,
-            'title' => 'Some Ad',
-            'slug' => 'some-ad',
-            'description' => 'Some description',
-            'price' => 9.99,
-            'type' => 'private',
-            'condition' => 'new',
-            'delivery' => 'seller',
             'image' => [0 => $file1 = UploadedFile::fake()->image('AdPhoto1.jpg'),
                         1 => $file2 = UploadedFile::fake()->image('AdPhoto2.jpg')]
         ]);
-
-        $this->post(route('create_ad'), $ad->toArray());
 
         Storage::disk('public')->assertExists('images/' . $file1->hashName());
         $this->get('/')
@@ -106,7 +96,13 @@ class AdsTest extends TestCase
      */
     public function an_ad_requires_a_title()
     {
-        $this->postAd(['title' => null])
+        $this->signIn();
+        $ad = make('App\Ad', [
+            'city' => create('App\City')->city,
+            'title' => null
+        ]);
+
+        $this->postJson(route('create_ad'), $ad->toArray())
             ->assertStatus(422);
     }
     /**
@@ -120,18 +116,6 @@ class AdsTest extends TestCase
         $user->save();
 
         $this->get(route('new_ad'))->assertStatus(403);
-    }
-    /**
-     * @test
-     */
-    public function an_ad_older_than_30_days_gets_deleted()
-    {
-        $ad = create('App\Ad', ['created_at' => Carbon::now()->subMonth()]);
-
-        $job = new RemoveOldAds();
-        $job->handle();
-
-        $this->assertDatabaseMissing('ads', ['id' => $ad->id]);
     }
     /**
      * @test
@@ -188,23 +172,105 @@ class AdsTest extends TestCase
     /**
      * @test
      */
+    public function users_may_archive_their_ads()
+    {
+        $this->signIn();
+        $ad = $this->postAd(['city' => create('App\City')->city]);
+
+        $this->assertEquals(2, auth()->user()->fresh()->ad_limit);
+
+        $this->patch(route('archive-ad', $ad->id))
+            ->assertSessionHas('flash', 'Ad has been archived.');
+
+        $this->assertTrue($ad->fresh()->archived);
+        $this->assertEquals(3, auth()->user()->fresh()->ad_limit);
+    }
+    /**
+     * @test
+     */
     public function users_may_delete_ad_images()
     {
         $this->signIn();
-        $ad = make('App\Ad', [
+        $ad = $this->postAd([
             'city' => create('App\City')->city,
             'image' => [0 => $file1 = UploadedFile::fake()->image('AdPhoto1.jpg'),
                         1 => $file2 = UploadedFile::fake()->image('AdPhoto2.jpg')]
         ]);
-        $this->postJson(route('create_ad'), $ad->toArray());
-        $postedAd = Ad::whereTitle($ad->title)->first();
 
         Storage::disk('public')->assertExists('images/' . $file2->hashName());
 
-        $this->delete(route('delete_ad_image', $postedAd->images[1]->id));
+        $this->delete(route('delete_ad_image', $ad->images[1]->id));
 
         Storage::disk('public')->assertMissing('images/' . $file2->hashName());
-        $this->assertDatabaseMissing('images', ['id' => $postedAd->images[1]->id]);
+        $this->assertDatabaseMissing('images', ['id' => $ad->images[1]->id]);
+    }
+    /**
+     * @test
+     */
+    public function ads_expire_after_30_days_and_get_archived()
+    {
+        $ad = create('App\Ad', ['created_at' => Carbon::now()->subMonth()]);
+
+        $this->assertFalse($ad->archived);
+
+        $job = new ArchiveExpiredAds();
+        $job->handle();
+
+        $this->assertTrue($ad->fresh()->archived);
+    }
+    /**
+     * @test
+     */
+    public function users_may_reactivate_ads_3_days_before_expiring()
+    {
+        $this->signIn($john = create('App\User'));
+        $extendableAd = create('App\Ad', [
+            'user_id' => $john->id,
+            'created_at' => Carbon::now()->subDays(27)
+        ]);
+        $nonExtendableAd = create('App\Ad');
+        $newExpirationDate = $extendableAd->created_at->addMonth();
+        $balance = $john->balance()->update(['amount' => 3000]);
+
+        $this->patch(route('extend-ad', $extendableAd->id))
+            ->assertSessionHas('flash', 'Ad has been extended!');
+
+        $this->assertEquals($newExpirationDate, $extendableAd->fresh()->created_at);
+        $this->assertFalse($extendableAd->fresh()->archived);
+        $this->assertEquals(2801, $john->balance->fresh()->amount);
+
+        $this->patch(route('extend-ad', $nonExtendableAd->id))
+            ->assertSessionHas('flash', 'This ad is not eligible for extention.');
+
+        $this->assertEquals(
+            Carbon::now()->toDateString(),
+            $nonExtendableAd->fresh()->created_at->toDateString()
+        );
+    }
+    /**
+     * @test
+     */
+    public function users_can_reactivate_expired_ads()
+    {
+        $this->signIn();
+        $ad = create('App\Ad', ['archived' => true]);
+
+        $this->patch(route('activate-ad', $ad->id))
+            ->assertSessionHas('flash', 'Ad has been activated!');
+
+        $this->assertFalse($ad->fresh()->archived);
+    }
+    /**
+     * @test
+     */
+    public function an_ad_older_than_6_months_gets_deleted()
+    {
+        $ad = create('App\Ad', ['created_at' => Carbon::now()->subMonths(6)]);
+
+        $job = new RemoveOldAds();
+        $job->handle();
+
+        $this->assertDatabaseMissing('ads', ['id' => $ad->id]);
     }
     /**
      * @test
@@ -223,18 +289,16 @@ class AdsTest extends TestCase
     public function authorized_users_may_delete_their_ads()
     {
         $this->signIn();
-        $ad = make('App\Ad', [
+        $ad = $this->postAd([
             'city' => create('App\City')->city,
             'image' => [0 => $file1 = UploadedFile::fake()->image('AdPhoto1.jpg'),
                         1 => $file2 = UploadedFile::fake()->image('AdPhoto2.jpg')]
         ]);
-        $this->postJson(route('create_ad'), $ad->toArray());
-        $postedAd = Ad::whereTitle($ad->title)->first();
-        $image = $postedAd->images[1];
+        $image = $ad->images[1];
 
-        $this->delete(route('delete_ad', $postedAd->id));
+        $this->delete(route('delete_ad', $ad->id));
 
-        $this->assertDatabaseMissing('ads', ['title' => $postedAd->title]);
+        $this->assertDatabaseMissing('ads', ['title' => $ad->title]);
         $this->assertDatabaseMissing('images', ['id' => $image->id]);
     }
 
@@ -250,6 +314,8 @@ class AdsTest extends TestCase
 
         $ad = make('App\Ad', $overrides);
 
-        return $this->postJson(route('create_ad'), $ad->toArray());
+        $this->postJson(route('create_ad'), $ad->toArray());
+
+        return Ad::whereTitle($ad->title)->first();
     }
 }

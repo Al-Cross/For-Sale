@@ -27,6 +27,7 @@ class CreateAdsTable extends Migration
             $table->enum('delivery', ['buyer', 'seller', 'personal handover']);
             $table->bigInteger('views')->default(0);
             $table->boolean('featured')->default(false);
+            $table->boolean('archived')->default(false);
             $table->timestamps();
 
             $table->foreign('user_id')

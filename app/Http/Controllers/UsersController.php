@@ -6,7 +6,9 @@ use App\Ad;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Builder;
 
 class UsersController extends Controller
 {
@@ -17,7 +19,14 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $userAds = Ad::where('user_id', '=', auth()->id())->latest()->get();
+        // Retrieve the user's ads and get the count of the messages
+        // they received for each ad
+        $userAds = Ad::where('user_id', '=', auth()->id())
+            ->latest()
+            ->withCount(['messages' => function(Builder $query) {
+                    $query->where('recipient_id', '=', auth()->id());
+                }])
+            ->get();
         $balance = auth()->user()->balance->getBalance();
 
         return view('users.index', compact('userAds', 'balance'));

@@ -22,43 +22,109 @@
             </div>
 
             <h3 class="font-weight-bold text-center">My Ads</h3>
-            <a href="{{ route('new_ad') }}" class="btn btn-primary rounded" style="position: fixed;">New Ad</a><br>
-            @if(Auth::user()->ad_limit == 0)
-                <h3 class="font-weight-bold text-center"><a href="#">You have reached your ad limit. Get more slots here!</a></h3>
-            @endif
-
-            <div class="tab-content" style="width: 645px; margin: 100px auto; position: relative;">
-            	<div class="tab-pane-fade" role="tabpanel" style="text-align: center;">
-                    @if ($userAds->count() > 0)
-                        @foreach ($userAds as $ad)
-                            <div class="d-block d-md-flex listing vertical">
-                                <a href="{{ $ad->path() }}"
-                                    class="img d-block"
-                                    style="background-image: url({{ asset('storage/' . $ad->mainImage()) }})">
-                                </a>
-                                <div class="lh-content">
-                                    <span class="category">Cars &amp; Vehicles</span>
-                                    <span class="listings-single">{{ config('for-sale.currency') }}{{ $ad->price }}</span>
-                                    <div>
-                                        <a href="{{ route('edit_ad', $ad->slug) }}"
-                                            class="btn btn-warning btn-sm rounded"
-                                            style="position: absolute; right: 20%;">Edit</a>
-                                        <form action="{{ route('delete_ad', $ad->id) }}" method="POST" style="position: absolute; right: 4%;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <confirm-delete></confirm-delete>
-                                        </form>
-                                    </div>
-                                    <h3><a href="{{ $ad->path() }}">{{ $ad->title }}</a></h3>
-                                    <address>Don St, Brooklyn, New York</address>
-                                </div>
-                                </div>
-                        @endforeach
-                    @else
-                		<h3 class="mb-5">You don't have active ads</h3>
+            <tabs>
+                <tab name="Active" :selected="true">
+                    <a href="{{ route('new_ad') }}" class="btn btn-primary rounded" style="position: fixed;">New Ad</a><br>
+                    @if(Auth::user()->ad_limit == 0)
+                        <h3 class="font-weight-bold text-center"><a href="#">You have reached your ad limit. Get more slots here!</a></h3>
                     @endif
-            	</div>
-            </div>
+
+                    <div class="tab-content" style="width: 645px; margin: 100px auto; position: relative;">
+                        <div class="tab-pane-fade" role="tabpanel" style="text-align: center;">
+                            @if ($userAds->count() > 0)
+                                @foreach ($userAds as $ad)
+                                    @if (! $ad->archived)
+                                        <div class="d-block d-md-flex listing vertical">
+                                            <div class="lh-content">
+                                                <span><a href="{{ $ad->path() }}">{{ $ad->title }}</a></span>
+                                                <span class="category-profile">{{ $ad->section->category->name }}</span>
+                                                <span class="listings-single">{{ config('for-sale.currency') }}{{ $ad->price }}</span><br>
+                                                <small class="text-muted">
+                                                    From: {{ $ad->created_at->calendar() }} till:
+                                                    {{ $ad->created_at->addMonth()->format('Y-m-d h:s A') }}
+                                                </small>
+                                                <address>{{ $ad->city->city }}</address>
+                                                <div class="d-md-flex justify-content-end">
+                                                    <div class="bg-gray border mr-2 pl-1 pr-1 rounded">
+                                                        <i class="far fa-comment"></i> {{ $ad->messages_count }}
+                                                    </div>
+                                                    @if ($ad->created_at < \Carbon\Carbon::now()->subDays(27))
+                                                        <form action="{{ route('extend-ad', $ad->id) }}" method="POST" class="mr-2">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button class="btn btn-dark btn-sm rounded">
+                                                                Renew for {{ config('for-sale.currency') }}
+                                                                {{ config('for-sale.prices.ad_extention')}}
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    <form action="{{ route('archive-ad', $ad->id) }}" method="POST" class="mr-2">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button class="btn btn-warning btn-sm rounded">Archive</button>
+                                                    </form>
+                                                    <a href="{{ route('edit_ad', $ad->slug) }}"
+                                                        class="btn btn-warning btn-sm rounded mr-2">Edit</a>
+                                                    <form action="{{ route('delete_ad', $ad->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <confirm-delete></confirm-delete>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <h3 class="mb-5">You don't have any active ads yet</h3>
+                                    @endif
+                                @endforeach
+                            @else
+                                <h3 class="mb-5">You don't have any ads yet</h3>
+                            @endif
+                        </div>
+                    </div>
+                </tab>
+
+                <tab name="Archived">
+                    <div class="tab-content" style="width: 645px; margin: 100px auto; position: relative;">
+                        <div class="tab-pane-fade" role="tabpanel" style="text-align: center;">
+                            @if ($userAds->count() > 0 && $ad->archived)
+                                @foreach ($userAds as $ad)
+                                    <div class="d-block d-md-flex listing vertical">
+                                        <div class="lh-content">
+                                            <span><a href="{{ $ad->path() }}">{{ $ad->title }}</a></span>
+                                            <span class="category-profile">{{ $ad->section->category->name }}</span>
+                                            <span class="listings-single">{{ config('for-sale.currency') }}{{ $ad->price }}</span><br>
+                                            <small class="text-muted">
+                                                From: {{ $ad->created_at->calendar() }} till: {{ $ad->created_at->format('Y-m-d h:s A') }}
+                                            </small>
+                                            <address>{{ $ad->city->city }}</address>
+                                            <div class="d-md-flex justify-content-end">
+                                                <div class="bg-gray border mr-2 pl-1 pr-1 rounded">
+                                                    <i class="far fa-comment"></i> {{ $ad->messages_count }}
+                                                </div>
+                                                <form action="{{ route('activate-ad', $ad->id) }}" method="POST" class="mr-2">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button class="btn btn-warning btn-sm rounded">Activate</button>
+                                                </form>
+                                                <a href="{{ route('edit_ad', $ad->slug) }}"
+                                                    class="btn btn-warning btn-sm rounded mr-2">Edit</a>
+                                                <form action="{{ route('delete_ad', $ad->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <confirm-delete></confirm-delete>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <h3 class="mb-5">You don't have archived ads</h3>
+                            @endif
+                        </div>
+                    </div>
+                </tab>
+            </tabs>
 		</div>
 	</div>
 @endsection

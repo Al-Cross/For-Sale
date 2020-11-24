@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Nicolaslopezj\Searchable\SearchableTrait;
 
@@ -10,6 +11,7 @@ class Ad extends Model
     use SearchableTrait;
 
     protected $guarded = [];
+    protected $casts = ['archived' => 'boolean'];
     /**
      * Searchable rules.
      *
@@ -28,6 +30,7 @@ class Ad extends Model
             'ads.description' => 5
         ]
     ];
+
     /**
      * The URL to the resource.
      *
@@ -59,16 +62,6 @@ class Ad extends Model
     }
 
     /**
-     * Define the relationship with App\Category
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-    /**
      * Define the relationship with App\User
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -76,6 +69,16 @@ class Ad extends Model
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Define the relationship with App\Message
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
     }
 
     /**
@@ -100,5 +103,50 @@ class Ad extends Model
         }
 
         return $this->images->where('ad_id', $this->id)->first()->path;
+    }
+
+    /**
+     * Mark the ad as archived.
+     *
+     * @return void
+     */
+    public function archive()
+    {
+        $this->update(['archived' => true]);
+        $this->owner->ad_limit = ++$this->owner->ad_limit;
+        $this->owner->save();
+    }
+
+    /**
+     * Reactivate the ad.
+     *
+     * @return void
+     */
+    public function activate()
+    {
+        $this->update([
+            'archived' => false,
+            'created_at' => Carbon::now()
+        ]);
+        $this->owner->updateAdLimit();
+    }
+
+    /**
+     * Extend the expiration period of the ad.
+     *
+     * @return void
+     */
+    public function activateBeforeExpiry()
+    {
+        $this->update([
+            'archived' => false,
+            'created_at' => $this->created_at->addMonth()
+        ]);
+
+        $this->owner->balance()->update([
+            'amount' => $this->owner->balance->amount - config('for-sale.prices.ad_extention')
+        ]);
+
+        $this->owner->updateAdLimit();
     }
 }

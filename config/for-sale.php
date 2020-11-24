@@ -14,5 +14,8 @@ return [
     		'price' => 8000,
     		'ad_limit' => 10
     	]
+    ],
+    'prices' => [
+        'ad_extention' => 199
     ]
 ];

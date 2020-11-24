@@ -36,7 +36,8 @@ class User extends \TCG\Voyager\Models\User
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'confirmed' => 'boolean'
+        'confirmed' => 'boolean',
+        'ad_limit' => 'integer'
     ];
 
     /**
@@ -164,7 +165,7 @@ class User extends \TCG\Voyager\Models\User
             return;
         }
 
-        $this->ad_limit = $this->ad_limit - 1;
+        $this->ad_limit = --$this->ad_limit;
         $this->save();
 
         if (! $membershipType && $this->ad_limit == config('for-sale.membership.basic.ad_limit')) {

@@ -3,14 +3,14 @@
 namespace App\Jobs;
 
 use App\Ad;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Carbon;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class RemoveOldAds implements ShouldQueue
+class ArchiveExpiredAds implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -31,14 +31,10 @@ class RemoveOldAds implements ShouldQueue
      */
     public function handle()
     {
-        $ads = Ad::where('created_at', '<=', Carbon::now()->subMonths(6))
-            ->with('owner:id,ad_limit')
-            ->get();
+        $ads = Ad::where('created_at', '<=', Carbon::now()->subMonth())->get();
 
         foreach ($ads as $ad) {
-            $ad->owner->ad_limit++;
-            $ad->owner->save();
-            $ad->delete();
+            $ad->archive();
         }
     }
 }
