@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
     Route::patch('/{ad}/archive', 'ArchiveController@archiveAd')->name('archive-ad');
     Route::patch('/{ad}/activate', 'ArchiveController@activateAd')->name('activate-ad');
     Route::patch('/{ad}/extend', 'ArchiveController@extend')->name('extend-ad');
+    Route::patch('/{ad}/promote', 'FeaturedAdsController@index')->name('promote');
     Route::post('/settings/{user}/logos', 'ImageUploadsController@store')->middleware('must-be-confirmed');
     Route::post('/messages/send', 'MessagesController@store')->name('send')->middleware('must-be-confirmed');
     Route::post('/messages/{message}/archive', 'ArchiveController@archiveMessage')->name('archive');

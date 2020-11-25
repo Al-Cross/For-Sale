@@ -11,7 +11,10 @@ class Ad extends Model
     use SearchableTrait;
 
     protected $guarded = [];
-    protected $casts = ['archived' => 'boolean'];
+    protected $casts = [
+        'archived' => 'boolean',
+        'featured' => 'boolean'
+    ];
     /**
      * Searchable rules.
      *
@@ -148,5 +151,20 @@ class Ad extends Model
         ]);
 
         $this->owner->updateAdLimit();
+    }
+
+    /**
+     * Promote the ad.
+     *
+     * @return void
+     */
+    public function feature()
+    {
+        $this->owner->balance()->update([
+            'amount' => auth()->user()->balance->amount - config('for-sale.prices.featured')
+        ]);
+
+        $this->featured = true;
+        $this->save();
     }
 }

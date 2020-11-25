@@ -6,6 +6,47 @@
 <div class="site-section" style="margin-top: 200px;">
 	<div class="container">
 		<div class="row">
+            <div class="col-12 block-13">
+                @foreach($featured as $feature)
+                	@if ($featured->count() > 3)
+		                <div class="owl-carousel nonloop-block-13">
+	                        <div class="d-block d-md-flex listing vertical">
+	                            <a href="{{ $feature->path() }}"
+	                                class="img d-block"
+	                                style="background-image: url({{ asset('storage/' . $feature->mainImage()) }})">
+	                            </a>
+	                            <div class="lh-content">
+	                                <span class="category">{{ $feature->section->category->name }}</span><br>
+	                                <span class="listings-single">{{ config('for-sale.currency') }}{{ $feature->price }}</span>
+	                                <a href="#" class="bookmark"><span class="icon-heart"></span></a>
+	                                <h3><a href="{{ $feature->path() }}">{{ $feature->title }}</a></h3>
+	                                <address>{{ $feature->city->city }}</address>
+	                            </div>
+	                        </div>
+	                    </div>
+                    @else
+                    	<div class="col-lg-6">
+						<div class="d-block d-md-flex listing">
+			                <a href="{{ $feature->path() }}"
+			                    class="img d-block"
+			                    style="background-image: url({{ asset('storage/images/img_1.jpg') }})">
+			                </a>
+			                <span class="badge badge-info rounded">FEATURED</span>
+			                <div class="lh-content">
+			                    <span class="category">{{ $section->category->name }}</span><br>
+			                    <span class="listings-single">{{ $feature->price }}</span>
+			                    <a href="#" class="bookmark"><span class="icon-heart"></span></a>
+			                    <h3><a href="{{ $feature->path() }}">{{ $feature->title }}</a></h3>
+			                    <address>{{ $feature->city->city }}</address>
+			                </div>
+			            </div>
+					</div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+
+		<div class="row">
 			<div class="col-lg-8">
 				<div class="row">
 					@foreach($adsInSection as $ad)
@@ -20,7 +61,7 @@
 				                    <span class="listings-single">{{ $ad->price }}</span>
 				                    <a href="#" class="bookmark"><span class="icon-heart"></span></a>
 				                    <h3><a href="{{ $ad->path() }}">{{ $ad->title }}</a></h3>
-				                    <address>Don St, Brooklyn, New York</address>
+				                    <address>{{ $ad->city->city }}</address>
 				                </div>
 				            </div>
 						</div>

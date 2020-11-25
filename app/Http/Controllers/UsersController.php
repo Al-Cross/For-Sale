@@ -28,8 +28,13 @@ class UsersController extends Controller
                 }])
             ->get();
         $balance = auth()->user()->balance->getBalance();
+        $promotionPrice = number_format(config('for-sale.prices.featured') / 100, 2);
+        $extentionPrice = number_format(config('for-sale.prices.ad_extention') / 100, 2);
 
-        return view('users.index', compact('userAds', 'balance'));
+        return view(
+            'users.index',
+            compact('userAds', 'balance', 'promotionPrice', 'extentionPrice')
+        );
     }
 
     /**

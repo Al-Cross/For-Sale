@@ -19,7 +19,8 @@ class SectionsController extends Controller
     public function index(Category $category, Section $section)
     {
         $adsInSection = $section->ads()->latest()->get();
+        $featured = $section->ads()->whereFeatured(true)->get();
 
-        return view('section', compact('adsInSection', 'section'));
+        return view('section', compact('adsInSection', 'section', 'featured'));
     }
 }

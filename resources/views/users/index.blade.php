@@ -38,7 +38,8 @@
                                             <div class="lh-content">
                                                 <span><a href="{{ $ad->path() }}">{{ $ad->title }}</a></span>
                                                 <span class="category-profile">{{ $ad->section->category->name }}</span>
-                                                <span class="listings-single">{{ config('for-sale.currency') }}{{ $ad->price }}</span><br>
+                                                <span class="listings-single">{{ config('for-sale.currency') }}{{ $ad->price }}</span>
+                                                <span class="badge badge-info rounded">FEATURED</span><br>
                                                 <small class="text-muted">
                                                     From: {{ $ad->created_at->calendar() }} till:
                                                     {{ $ad->created_at->addMonth()->format('Y-m-d h:s A') }}
@@ -48,13 +49,23 @@
                                                     <div class="bg-gray border mr-2 pl-1 pr-1 rounded">
                                                         <i class="far fa-comment"></i> {{ $ad->messages_count }}
                                                     </div>
+                                                    @if (! $ad->featured)
+                                                        <form action="{{ route('promote', $ad->id) }}" method="POST" class="mr-2">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button class="btn btn-dark btn-sm rounded">
+                                                                Promote for {{ config('for-sale.currency') }}
+                                                                {{ $promotionPrice }}
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                     @if ($ad->created_at < \Carbon\Carbon::now()->subDays(27))
                                                         <form action="{{ route('extend-ad', $ad->id) }}" method="POST" class="mr-2">
                                                             @csrf
                                                             @method('PATCH')
                                                             <button class="btn btn-dark btn-sm rounded">
                                                                 Renew for {{ config('for-sale.currency') }}
-                                                                {{ config('for-sale.prices.ad_extention')}}
+                                                                {{ $extentionPrice }}
                                                             </button>
                                                         </form>
                                                     @endif
