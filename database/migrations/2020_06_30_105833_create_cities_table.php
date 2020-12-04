@@ -18,6 +18,7 @@ class CreateCitiesTable extends Migration
             $table->string('city');
             $table->float('latitude', 10, 6);
             $table->float('longitude', 10, 6);
+            $table->point('location', 4326)->nullable();
             $table->string('country');
             $table->string('iso2');
             $table->string('admin');

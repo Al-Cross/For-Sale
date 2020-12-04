@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Nicolaslopezj\Searchable\SearchableTrait;
+use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 
 class City extends Model
 {
-    use SearchableTrait;
+    use SearchableTrait, SpatialTrait;
 
     /**
      * Searchable rules.
@@ -27,6 +28,12 @@ class City extends Model
             'cities.admin' => 5
         ]
     ];
+    /**
+     * Contains the names of the MySQL spatial data fields.
+     *
+     * @var array
+     */
+    protected $spatialFields = ['location'];
 
     /**
      * Define the relationship with App\Ad

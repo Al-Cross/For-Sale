@@ -1,4 +1,4 @@
-<div class="card mt-5 bg-light">
+<div id="message-form" class="card mt-5 bg-light">
 	<form action="{{ route('send') }}" method="POST">
 		@csrf
 

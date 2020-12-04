@@ -62,23 +62,41 @@
                             <div class="form-search-wrap mt-5" data-aos="fade-up" data-aos-delay="200">
                                 <form action="/search" method="GET">
                                     <div class="row align-items-center">
-                                        <div class="col-lg-12 mb-4 mb-xl-0 col-xl-4">
-                                            <input type="text" name="query" class="form-control rounded" placeholder="What are you looking for?">
+                                        <div class="col-lg-12 mb-4 mb-xl-0 col-xl-3">
+                                            <input type="text"
+                                                    name="query"
+                                                    class="form-control rounded"
+                                                    placeholder="Just type it..."
+                                                    value="{{ app('request')->input('query') }}">
                                         </div>
                                         <autocomplete></autocomplete>
+                                        <div class="col-lg-12 mb-4 mb-xl-0 col-xl-2">
+                                            <select name="distance" class="form-control rounded">
+                                                <option value="{{ null }}">+0 km</option>
+                                                <option value="10" {{ app('request')->input('distance') == 10 ? 'selected' : '' }}>+10 km</option>
+                                                <option value="30" {{ app('request')->input('distance') == 30 ? 'selected' : '' }}>+30 km</option>
+                                                <option value="50" {{ app('request')->input('distance') == 50 ? 'selected' : '' }}>+50 km</option>
+                                            </select>
+                                        </div>
                                         <div class="col-lg-12 mb-4 mb-xl-0 col-xl-3">
                                             <div class="select-wrap">
                                                 <span class="icon"><span class="icon-keyboard_arrow_down"></span></span>
                                                 <select class="form-control rounded" name="categorySearch" id="">
                                                     <option value="">All Categories</option>
                                                     @foreach ($categories as $category)
-                                                        <option value="{{$category->id}}">{{ $category->name }}</option>
+                                                        <option value="{{ $category->id }}"
+                                                                {{ app('request')->input('categorySearch') == $category->id ? 'selected' : '' }}
+                                                        >
+                                                            {{ $category->name }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-lg-12 col-xl-2 ml-auto text-right">
-                                            <input type="submit" class="btn btn-primary btn-block rounded" value="Search">
+                                        <div class="col-lg-12 col-xl-1 ml-auto text-right">
+                                            <button type="submit" class="btn btn-primary text-center rounded">
+                                                <i class="fas fa-search"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </form>

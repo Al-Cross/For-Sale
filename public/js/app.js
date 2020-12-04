@@ -1924,7 +1924,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      query: '',
+      query: new URL(location.href).searchParams.get('city'),
       results: [],
       displayResults: false
     };

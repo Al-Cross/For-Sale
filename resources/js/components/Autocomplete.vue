@@ -15,7 +15,7 @@
 export default{
     data(){
         return {
-            query: '',
+            query: new URL(location.href).searchParams.get('city'),
             results: [],
             displayResults: false
         };

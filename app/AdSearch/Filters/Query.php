@@ -10,12 +10,15 @@ class Query implements Filter
     /**
      * Apply a given search value to the builder instance.
      *
-     * @param  Builder $builder
-     * @param  mixed $value
+     * @param Builder $builder
+     * @param mixed $value
+     *
      * @return Builder $builder
      */
     public static function apply(Builder $builder, $value)
     {
-        return $builder->search($value);
+        return isset($value)
+            ? $builder->search($value)->addBinding($value)
+            : $builder->search($value);
     }
 }

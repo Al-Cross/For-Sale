@@ -85,7 +85,7 @@
                             <form action="/search" method="GET">
                                 <div class="row align-items-center">
                                     <div class="col-lg-12 mb-4 mb-xl-0 col-xl-4">
-                                        <input type="text" name="query" class="form-control rounded" placeholder="What are you looking for?">
+                                        <input type="text" name="query" class="form-control rounded" placeholder="Just type it...">
                                     </div>
                                     <autocomplete></autocomplete>
                                     <div class="col-lg-12 mb-4 mb-xl-0 col-xl-3">

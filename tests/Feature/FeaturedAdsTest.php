@@ -14,7 +14,7 @@ class FeaturedAdsTest extends TestCase
     function users_can_promote_their_ads()
     {
     	$this->signIn();
-        $ad = create('App\Ad');
+        $ad = create('App\Ad', ['user_id' => auth()->id()]);
         auth()->user()->balance()->update(['amount' => 3000]);
 
         $this->patch(route('promote', $ad->id))
