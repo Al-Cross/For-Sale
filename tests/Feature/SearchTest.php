@@ -21,7 +21,7 @@ class SearchTest extends TestCase
 
         $this->get("/search?query={$query}")
             ->assertSee($query)
-            ->assertdontSee($adNotInquery);
+            ->assertDontSee($adNotInquery);
     }
     /**
      * @test

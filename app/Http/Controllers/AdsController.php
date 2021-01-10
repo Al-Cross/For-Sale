@@ -20,16 +20,15 @@ class AdsController extends Controller
      */
     public function index()
     {
-        $ads = Ad::latest()->get();
-        $featured = Ad::where('featured', true)->get();
-        $categories = Category::all();
+        $ads = Ad::excludeFeatured()->latest()->paginate(20);
+        $featured = Ad::featured()->get();
 
         if (request()->wantsJson()) {
             $section = Section::where('category_id', '=', request()->id)->get();
             return $section;
         }
 
-        return view('welcome', compact('ads', 'featured', 'categories'));
+        return view('welcome', compact('ads', 'featured'));
     }
 
     /**
@@ -104,7 +103,6 @@ class AdsController extends Controller
      */
     public function show($category, $section, Ad $ad)
     {
-        $ad->with('images')->get();
         return view('ads.show', compact('ad'));
     }
 
@@ -192,9 +190,18 @@ class AdsController extends Controller
      */
     public function search(Request $request)
     {
-        $results = AdSearch::apply($request, (new Ad)->newQuery());
+        $request->validate(['city' => ['exists:cities', 'nullable']],
+            [
+                'city.exists' => 'City not found.'
+            ]
+        );
 
-        return view('ads.search', compact('results'));
+        $results = AdSearch::apply($request, (new Ad)->newQuery());
+        $private = $results->privateAds();
+        $business = $results->businessAds();
+        $count = $results->count();
+
+        return view('ads.search', compact('private', 'business', 'count'));
     }
 
     /**

@@ -23,6 +23,9 @@ Vue.component('categories-sections', require('./components/ShowSections.vue').de
 Vue.component('autocomplete', require('./components/Autocomplete.vue').default);
 Vue.component('flash', require('./components/Flash.vue').default);
 Vue.component('notifications', require('./components/Notifications.vue').default);
+Vue.component('tabs', require('./components/Tabs.vue').default);
+Vue.component('tab', require('./components/Tab.vue').default);
+Vue.component('filters', require('./components/Filters.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

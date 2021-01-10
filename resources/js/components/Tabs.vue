@@ -8,7 +8,7 @@
 					:aria-selected="tab.isActive"
 			        :aria-controls="'tabpanel-' + tab.id"
 					:tabindex="tab.isActive ? '-1' : '0'"
-					:class="{ 'active': tab.isActive }"
+					:class="{ 'active background shadow': tab.isActive }"
 					@click="selectTab(tab)">{{ tab.name }}</a>
 			</li>
 		</ul>
@@ -52,6 +52,8 @@ export default {
 			}
 
 			if (tab.isActive) {
+				this.$emit('active', tab.name, false);
+
 				return this.currentIndex = index;
 			}
 		});
@@ -62,6 +64,8 @@ export default {
 			this.tabs.forEach(tab => {
 				tab.isActive = (tab.name == selectedTab.name);
 			});
+
+			this.$emit('active', selectedTab.name, true);
 		},
 
 		switchTabs(event) {
@@ -98,3 +102,9 @@ export default {
 	}
 };
 </script>
+
+<style>
+	.background {
+		background-color: rgb(177, 225, 225) !important;
+	}
+</style>

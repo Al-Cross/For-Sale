@@ -15,6 +15,7 @@ class Ad extends Model
         'archived' => 'boolean',
         'featured' => 'boolean'
     ];
+    protected $with = ['section', 'section.category:id,name,slug', 'images', 'city:id,city'];
     /**
      * Searchable rules.
      *
@@ -166,5 +167,29 @@ class Ad extends Model
 
         $this->featured = true;
         $this->save();
+    }
+
+    /**
+     * Scope a query to exclude featured ads.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeExcludeFeatured($query)
+    {
+        return $query->where('featured', false);
+    }
+
+    /**
+     * Scope a query to only include featured ads.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFeatured($query)
+    {
+        return $query->where('featured', true);
     }
 }

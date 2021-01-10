@@ -61,5 +61,6 @@ Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
 Route::get('/search', 'AdsController@search');
 Route::get('/register/confirm', 'Api\RegisterConfirmationController@index');
 Route::get('/getlocation', 'AdsController@findLocation');
-Route::get('/{category:slug}/{section:slug}', 'SectionsController@index')->name('section');
+Route::get('/{category:slug}', 'SectionsController@index');
+Route::get('/{category:slug}/{section:slug}', 'SectionsController@show')->name('section');
 Route::get('/{category:slug}/{section:slug}/{ad:slug}', 'AdsController@show')->name('show_ad');

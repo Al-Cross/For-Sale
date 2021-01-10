@@ -2,6 +2,11 @@
 
 @section('title', 'Post Ad')
 
+@section('extra-css')
+    <link rel="stylesheet" href="{{ asset('css/radio-button.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/animate-buttons.css') }}">
+@endsection
+
 @section('content')
 	<div class="site-section bg-secondary">
 		<div class="container">

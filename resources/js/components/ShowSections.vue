@@ -3,17 +3,17 @@
         <div class="row align-items-stretch no-gutters d-md-flex justify-content-center">
             <div class="col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-3 d-block" v-for="category in categories">
                 <div>
-                    <a href="#" class="popular-category h-100" @click="fillTable(category)">
+                    <a href="#category" class="popular-category h-100" @click="fillTable(category)">
                         <span class="icon"><span :class="setIcon(category.name)"></span></span>
                         <span class="caption mb-2 d-block" v-text="category.name"></span>
-                        <span class="number">3,921</span>
+                        <span class="number" v-text="category.ads_count"></span>
                     </a>
                 </div>
             </div>
         </div>
         <div v-if="showTable">
-            <table class="w-100">
-                <thead>See all in > <a href="#" v-text="category.name"></a></thead>
+            <table id="category" class="w-100">
+                <thead>See all in > <a :href="'/' + category.slug" v-text="category.name"></a></thead>
                 <hr>
                 <tbody class="d-md-flex justify-content-between">
                     <tr v-for="section in sections">
@@ -42,14 +42,10 @@ export default {
             axios.get('/', {
                 params: {"id": category.id}
             })
-                .then(response => this.sections = response.data);
+            .then(response => this.sections = response.data);
 
             this.category = category;
             this.showTable = true;
-
-            setTimeout(function () {
-                window.scrollTo(0, 500);
-            },2);
         },
 
         setIcon(name) {

@@ -20,8 +20,9 @@
 
         <flash message="{{ session('flash') }}"></flash>
     </div>
-    <script src="{{ mix('/js/app.js') }}"></script>
     @include('partials.footer')
+
+    <script src="{{ mix('/js/app.js') }}"></script>
 
     <script src="{{ asset('frontend/js/main.js') }}"></script>
     @include('partials._scripts')

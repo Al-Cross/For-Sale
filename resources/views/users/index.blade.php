@@ -2,6 +2,10 @@
 
 @section ('title', 'My Profile')
 
+@section ('extra-css')
+    <link rel="stylesheet" href="{{ asset('css/animate-buttons.css') }}">
+@endsection
+
 @section ('content')
 	<div class="site-section bg-secondary">
 		<div class="container">
@@ -38,8 +42,10 @@
                                             <div class="lh-content">
                                                 <span><a href="{{ $ad->path() }}">{{ $ad->title }}</a></span>
                                                 <span class="category-profile">{{ $ad->section->category->name }}</span>
-                                                <span class="listings-single">{{ config('for-sale.currency') }}{{ $ad->price }}</span>
-                                                <span class="badge badge-info rounded">FEATURED</span><br>
+                                                <span class="listings-single">{{ config('for-sale.currency') }}{{ $ad->price }}</span><br>
+                                                @if ($ad->featured)
+                                                    <span class="badge badge-info rounded">FEATURED</span><br>
+                                                @endif
                                                 <small class="text-muted">
                                                     From: {{ $ad->created_at->calendar() }} till:
                                                     {{ $ad->created_at->addMonth()->format('Y-m-d h:s A') }}

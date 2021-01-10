@@ -16,7 +16,7 @@ class FeaturedAdsController extends Controller
 	 */
     public function index(Ad $ad)
     {
-    	if (auth()->user()->balance->amount > config('for-sale.prices.featured')) {
+    	if (auth()->user()->balance->amount >= config('for-sale.prices.featured')) {
     		$ad->feature();
 
             return back()->with('flash', 'This ad is now featured!');

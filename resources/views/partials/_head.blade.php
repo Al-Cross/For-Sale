@@ -8,13 +8,12 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <link rel="stylesheet" href="{{ asset('frontend/fonts/icomoon/style.css') }}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js">
 <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ asset('frontend/css/magnific-popup.css') }}">
 <link rel="stylesheet" href="{{ asset('frontend/css/jquery-ui.css') }}">
 <link rel="stylesheet" href="{{ asset('frontend/css/owl.carousel.min.css') }}">
 <link rel="stylesheet" href="{{ asset('frontend/css/owl.theme.default.min.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ asset('css/stripe.css') }}">
 
 <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap-datepicker.css') }}">
 
@@ -24,5 +23,3 @@
 <link rel="stylesheet" href="{{ asset('frontend/css/rangeslider.css') }}">
 
 <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
-<link rel="stylesheet" href="{{ asset('css/radio-button.css') }}">
-<link rel="stylesheet" href="{{ asset('css/animate-buttons.css') }}">

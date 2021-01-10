@@ -30,7 +30,7 @@ class Category extends Model
         return $this->hasManyThrough(Ad::class, Section::class);
     }
 
-    /**
+     /**
      * Check if the category contains the given ad.
      *
      * @param  App\Ad  $ad

@@ -64,14 +64,15 @@
                                     <div class="row align-items-center">
                                         <div class="col-lg-12 mb-4 mb-xl-0 col-xl-3">
                                             <input type="text"
-                                                    name="query"
+                                                    name="searchTerm"
+                                                    id="term"
                                                     class="form-control rounded"
                                                     placeholder="Just type it..."
-                                                    value="{{ app('request')->input('query') }}">
+                                                    value="{{ app('request')->input('searchTerm') }}">
                                         </div>
-                                        <autocomplete></autocomplete>
+                                        <autocomplete :errors="{{ $errors }}"></autocomplete>
                                         <div class="col-lg-12 mb-4 mb-xl-0 col-xl-2">
-                                            <select name="distance" class="form-control rounded">
+                                            <select name="distance" id="distance" class="form-control rounded">
                                                 <option value="{{ null }}">+0 km</option>
                                                 <option value="10" {{ app('request')->input('distance') == 10 ? 'selected' : '' }}>+10 km</option>
                                                 <option value="30" {{ app('request')->input('distance') == 30 ? 'selected' : '' }}>+30 km</option>

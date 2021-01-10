@@ -20,20 +20,22 @@ class Distance implements Filter
     public static function apply(Builder $builder, $value)
     {
         if ($value != null) {
-            $distance = (new self)->getAttributes($builder, $value)->get('distance');
-            $searchTerm = (new self)->getAttributes($builder, $value)->get('searchInput');
-            $location =  (new self)->getAttributes($builder, $value)->get('location');
+            $attributes = (new self)->getAttributes($builder, $value);
 
             $cities = City::whereRaw(
                 "ST_Distance(cities.location, ST_SRID(POINT(?, ?), 4326)) < ?",
-                [$location->getLng(), $location->getLat(), $distance]
+                [
+                    $attributes['location']->getLng(),
+                    $attributes['location']->getLat(),
+                    $attributes['distance']
+                ]
             )
                 ->has('ads')
                 ->pluck('id');
 
-            $builder = $searchTerm
+            $builder = $attributes['searchInput']
                 ? Ad::whereIn('city_id', $cities)
-                    ->search($searchTerm, null, null, true)
+                    ->search($attributes['searchInput'], null, null, true)
                 : Ad::whereIn('city_id', $cities);
 
             return $builder;
@@ -45,7 +47,6 @@ class Distance implements Filter
     private function getAttributes($query, $distance)
     {
         $distance = $distance * 1000;
-        $query->get();
         $bindings = $query->getBindings();
         $city_id = end($bindings);
         $searchTerm = prev($bindings);

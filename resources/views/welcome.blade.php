@@ -22,7 +22,7 @@
             <div class="row align-items-center">
                 <div class="col-6 col-xl-2">
                     <h1 class="mb-0 site-logo">
-                        <a href="index.html" class="text-black mb-0">For<span class="text-primary">Sale</span></a>
+                        <a href="/" class="text-black mb-0">For<span class="text-primary">Sale</span></a>
                     </h1>
                 </div>
                 <div class="col-12 col-md-10 d-none d-xl-block">
@@ -85,12 +85,12 @@
                             <form action="/search" method="GET">
                                 <div class="row align-items-center">
                                     <div class="col-lg-12 mb-4 mb-xl-0 col-xl-4">
-                                        <input type="text" name="query" class="form-control rounded" placeholder="Just type it...">
+                                        <input type="text" name="searchTerm" id="term" class="form-control rounded" placeholder="Just type it...">
                                     </div>
-                                    <autocomplete></autocomplete>
+                                    <autocomplete :errors="{{ $errors }}"></autocomplete>
                                     <div class="col-lg-12 mb-4 mb-xl-0 col-xl-3">
                                         <div class="select-wrap">
-                                            <span class="icon"><span class="icon-keyboard_arrow_down"></span></span>
+                                            <span id="distance" class="icon"><span class="icon-keyboard_arrow_down"></span></span>
                                             <select class="form-control rounded" name="categorySearch">
                                                 <option value="">All Categories</option>
                                                 @foreach ($categories as $category)
@@ -124,47 +124,20 @@
 
                 <div class="row">
                     <div class="col-12 block-13">
-                        <div class="owl-carousel nonloop-block-13">
+                         <div class="owl-carousel nonloop-block-13">
                             @foreach($featured as $feature)
-                                <div class="d-block d-md-flex listing vertical">
-                                    <a href="{{ $feature->path() }}"
-                                        class="img d-block"
-                                        style="background-image: url({{ asset('storage/' . $feature->mainImage()) }})">
-                                    </a>
-                                    <div class="lh-content">
-                                        <span class="category">{{ $feature->section->category->name }}</span><br>
-                                        <span class="listings-single">{{ config('for-sale.currency') }}{{ $feature->price }}</span>
-                                        <a href="#" class="bookmark"><span class="icon-heart"></span></a>
-                                        <h3><a href="{{ $feature->path() }}">{{ $feature->title }}</a></h3>
-                                        <address>{{ $feature->city->city }}</address>
-                                    </div>
-                                </div>
+                                <x-featured :collection="$featured" :ad="$feature"></x-featured>
                             @endforeach
                         </div>
                     </div>
                 </div>
 
                 <div class="row mt-5">
-                    @foreach($ads->split(2) as $ads)
-                        <div class="col-lg-6">
-                            @foreach($ads as $ad)
-                                <div class="d-block d-md-flex listing vertical">
-                                    <a href="{{ $ad->path() }}"
-                                        class="img d-block"
-                                        style="background-image: url({{ asset('storage/' . $ad->mainImage()) }})">
-                                    </a>
-                                    <div class="lh-content">
-                                        <span class="category">{{ $ad->section->category->name }}</span>
-                                        <span class="listings-single">{{ $ad->price }}</span>
-                                        <a href="#" class="bookmark"><span class="icon-heart"></span></a>
-                                        <h3><a href="{{ $ad->path() }}">{{ $ad->title }}</a></h3>
-                                        <address>{{ $ad->city->city }}</address>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+                    @foreach($ads as $ad)
+                       <x-ad-card :ad="$ad"></x-ad-card>
                     @endforeach
                 </div>
+                {{ $ads->links() }}
             </div>
         </div>
     </div>

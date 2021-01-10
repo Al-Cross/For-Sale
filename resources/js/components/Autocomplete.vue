@@ -4,6 +4,7 @@
         <span class="icon icon-room"></span>
         <input type="text" placeholder="Location" name="city" v-model="query" v-on:keyup="autoComplete" class="form-control rounded">
     </div>
+    <small v-if="validationMessage" class="text-danger position-absolute" style="left: 30%" v-text="validationMessage"></small>
     <div v-if="displayResults" id="results">
         <div v-for="result in results.slice(0, 3)">
             <span v-text="result.city" class="item" @click="fillLocation(result.city)"></span>
@@ -12,13 +13,23 @@
 </div>
 </template>
 <script>
-export default{
-    data(){
+export default {
+    props: ['errors'],
+
+    data() {
         return {
             query: new URL(location.href).searchParams.get('city'),
             results: [],
-            displayResults: false
+            displayResults: false,
+            validationMessage: false
         };
+    },
+
+    mounted() {
+        if (Object.keys(this.errors).length !== 0) {
+            this.validationMessage = this.errors.city[0];
+        }
+        document.getElementById('distance').disabled = true;
     },
 
     methods: {
@@ -29,12 +40,15 @@ export default{
                     this.results = response.data;
                     this.displayResults = true;
                 });
+            } else {
+                document.getElementById('distance').disabled = true;
             }
         },
 
         fillLocation(city) {
             this.query = city;
             this.displayResults = false;
+            document.getElementById('distance').disabled = false;
         }
     }
  };
@@ -52,8 +66,5 @@ export default{
         line-height: 1em;
         background-color: white;
         border-radius: 5px;
-    }
-    span:hover {
-        background-color: #30e3ca;
     }
 </style>

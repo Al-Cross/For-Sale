@@ -5,7 +5,7 @@ namespace App\AdSearch\Filters;
 use App\AdSearch\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
-class Query implements Filter
+class SearchTerm implements Filter
 {
     /**
      * Apply a given search value to the builder instance.

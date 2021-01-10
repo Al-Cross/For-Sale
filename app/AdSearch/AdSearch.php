@@ -5,6 +5,7 @@ namespace App\AdSearch;
 use App\Ad;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AdSearch
 {
@@ -19,7 +20,7 @@ class AdSearch
     {
         $query = static::applyDecoratorsFromRequest($filters, (new Ad)->newQuery());
 
-        return $query;
+        return (new self)->paginate($filters, $query);
     }
 
     /**
@@ -65,5 +66,28 @@ class AdSearch
     private static function isValidDecorator($decorator)
     {
         return class_exists($decorator);
+    }
+
+    /**
+     * Create the pagination for the search results.
+     *
+     * @param Request $request The filters from the request
+     * @param array  $query The results from the search
+     *
+     * @return Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function paginate(Request $request, $query)
+    {
+        $currentPage = $request->page ?: 1;
+        $results = array_slice($query, 10 * ($currentPage - 1), 10);
+
+        return new LengthAwarePaginator($results,
+            count($query),
+            10,
+            $request->page ?: 1,
+            ['path' => 'search?searchTerm=' . $request->searchTerm
+                . '&city=' . $request->city
+                . '&categorySearch=' . $request->categorySearch]
+        );
     }
 }

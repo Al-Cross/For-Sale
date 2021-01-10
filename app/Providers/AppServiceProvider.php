@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Category;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,8 +28,20 @@ class AppServiceProvider extends ServiceProvider
         \View::composer(['errors::403', 'users.messages', 'users.settings'],
             'App\Http\Composers\Error403Composer');
 
-        \View::composer('partials.header', function ($view) {
-            $view->with('categories', Category::all());
+        \View::composer(['partials.header', 'welcome'], function ($view) {
+            $view->with('categories', Category::withCount('ads')->get());
+        });
+
+        Collection::macro('privateAds', function() {
+            return $this->filter(function($ad) {
+                return $ad->type === 'private';
+            });
+        });
+
+        Collection::macro('businessAds', function() {
+            return $this->filter(function($ad) {
+                return $ad->type === 'business';
+            });
         });
     }
 }

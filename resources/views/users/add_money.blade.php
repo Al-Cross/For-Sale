@@ -2,6 +2,10 @@
 
 @section ('title', 'Load Your Account')
 
+@section ('extra-css')
+	<link rel="stylesheet" href="{{ asset('css/stripe.css') }}">
+@endsection
+
 @section ('content')
 	<div class="site-section bg-secondary">
 		<div class="container d-flex justify-content-center">
