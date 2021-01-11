@@ -1,32 +1,51 @@
 <template>
-	<div class="row">
-		<div class="col-lg-6" v-for="ad in ads">
-			<div class="d-block d-md-flex listing vertical">
-                <a :href="'/' + ad.section.category.slug + '/' + ad.section.slug + '/' + ad.slug"
-                    class="img d-block"
-                    :style="{ 'background-image': 'url(/storage/' + mainImage(ad.images) + ')' }">
-                </a>
-                <div class="lh-content">
-                    <span class="category">{{ ad.section.category.name }}</span>
-                    <span class="listings-single">€{{ ad.price }}</span>
-                    <a href="#" class="bookmark"><span class="icon-heart"></span></a>
-                    <h3><a :href="'/' + ad.section.category.slug + '/' + ad.section.slug + '/' + ad.slug">
-	                    {{ ad.title }}
-	                </a></h3>
-                    <address>{{ ad.city.city }}</address>
-                </div>
-            </div>
+	<div>
+		<div class="row">
+			<div class="col-lg-6" v-for="ad in paginatedData">
+				<div class="d-block d-md-flex listing vertical">
+	                <a :href="'/' + ad.section.category.slug + '/' + ad.section.slug + '/' + ad.slug"
+	                    class="img d-block"
+	                    :style="{ 'background-image': 'url(/storage/' + mainImage(ad.images) + ')' }">
+	                </a>
+	                <div class="lh-content">
+	                    <span class="category">{{ ad.section.category.name }}</span>
+	                    <span class="listings-single">€{{ ad.price }}</span>
+	                    <a href="#" class="bookmark"><span class="icon-heart"></span></a>
+	                    <h3><a :href="'/' + ad.section.category.slug + '/' + ad.section.slug + '/' + ad.slug">
+		                    {{ ad.title }}
+		                </a></h3>
+	                    <address>{{ ad.city.city }}</address>
+	                </div>
+	            </div>
+			</div>
+		</div>
+		<div v-if="ads.length > perPage">
+			<button :disabled="pageNumber === 0" @click="prevPage" class="btn btn-sm btn-primary rounded">Previous</button>
+			<button v-for="index in pageCount" @click="indexing(index)" class="btn btn-sm btn-primary rounded mr-1" v-text="index"></button>
+			<button :disabled="pageNumber >= pageCount - 1" @click="nextPage" class="btn btn-sm btn-primary rounded">Next</button>
 		</div>
 	</div>
 </template>
 
 <script>
+import pagination from '../../mixins/pagination';
+
 export default {
 	props: ['ads'],
+
+	mixins: [pagination],
+
+	data() {
+		return { perPage: 20 };
+	},
 
 	methods: {
 		mainImage(images) {
 			return images.length == 0 ? 'images/default-image.jpg' : images[0].path;
+		},
+
+		indexing(index) {
+			this.pageNumber = index - 1;
 		}
 	}
 };

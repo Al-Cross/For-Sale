@@ -2591,6 +2591,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _mixins_pagination__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mixins/pagination */ "./resources/js/mixins/pagination.js");
 //
 //
 //
@@ -2613,11 +2614,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['ads'],
+  mixins: [_mixins_pagination__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  data: function data() {
+    return {
+      perPage: 20
+    };
+  },
   methods: {
     mainImage: function mainImage(images) {
       return images.length == 0 ? 'images/default-image.jpg' : images[0].path;
+    },
+    indexing: function indexing(index) {
+      this.pageNumber = index - 1;
     }
   }
 });
@@ -2633,6 +2651,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _mixins_pagination__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mixins/pagination */ "./resources/js/mixins/pagination.js");
 //
 //
 //
@@ -2662,61 +2681,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['collection'],
+  mixins: [_mixins_pagination__WEBPACK_IMPORTED_MODULE_0__["default"]],
   data: function data() {
     return {
-      preview: [],
-      expanded: [],
-      seeAll: false,
-      btnText: 'See All'
+      perPage: 5
     };
-  },
-  created: function created() {
-    this.setCollections();
-  },
-  watch: {
-    collection: function collection() {
-      this.setCollections();
-    }
   },
   methods: {
     mainImage: function mainImage(images) {
       return images.length == 0 ? 'images/default-image.jpg' : images[0].path;
-    },
-    setCollections: function setCollections() {
-      this.preview = this.collection.slice(0, 5);
-      this.expanded = this.collection.slice(5);
-    },
-    toggleExpansion: function toggleExpansion() {
-      if (!this.seeAll) {
-        this.seeAll = true;
-        this.btnText = 'See Less';
-      } else {
-        this.seeAll = false;
-        this.btnText = 'See All';
-      }
     }
   }
 });
@@ -61348,71 +61324,113 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "row" },
-    _vm._l(_vm.ads, function(ad) {
-      return _c("div", { staticClass: "col-lg-6" }, [
-        _c("div", { staticClass: "d-block d-md-flex listing vertical" }, [
-          _c("a", {
-            staticClass: "img d-block",
-            style: {
-              "background-image":
-                "url(/storage/" + _vm.mainImage(ad.images) + ")"
-            },
-            attrs: {
-              href:
-                "/" +
-                ad.section.category.slug +
-                "/" +
-                ad.section.slug +
-                "/" +
-                ad.slug
-            }
-          }),
-          _vm._v(" "),
-          _c("div", { staticClass: "lh-content" }, [
-            _c("span", { staticClass: "category" }, [
-              _vm._v(_vm._s(ad.section.category.name))
-            ]),
+  return _c("div", [
+    _c(
+      "div",
+      { staticClass: "row" },
+      _vm._l(_vm.paginatedData, function(ad) {
+        return _c("div", { staticClass: "col-lg-6" }, [
+          _c("div", { staticClass: "d-block d-md-flex listing vertical" }, [
+            _c("a", {
+              staticClass: "img d-block",
+              style: {
+                "background-image":
+                  "url(/storage/" + _vm.mainImage(ad.images) + ")"
+              },
+              attrs: {
+                href:
+                  "/" +
+                  ad.section.category.slug +
+                  "/" +
+                  ad.section.slug +
+                  "/" +
+                  ad.slug
+              }
+            }),
             _vm._v(" "),
-            _c("span", { staticClass: "listings-single" }, [
-              _vm._v("€" + _vm._s(ad.price))
-            ]),
-            _vm._v(" "),
-            _vm._m(0, true),
-            _vm._v(" "),
-            _c("h3", [
-              _c(
-                "a",
-                {
-                  attrs: {
-                    href:
-                      "/" +
-                      ad.section.category.slug +
-                      "/" +
-                      ad.section.slug +
-                      "/" +
-                      ad.slug
-                  }
-                },
-                [
-                  _vm._v(
-                    "\n\t                    " +
-                      _vm._s(ad.title) +
-                      "\n\t                "
-                  )
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("address", [_vm._v(_vm._s(ad.city.city))])
+            _c("div", { staticClass: "lh-content" }, [
+              _c("span", { staticClass: "category" }, [
+                _vm._v(_vm._s(ad.section.category.name))
+              ]),
+              _vm._v(" "),
+              _c("span", { staticClass: "listings-single" }, [
+                _vm._v("€" + _vm._s(ad.price))
+              ]),
+              _vm._v(" "),
+              _vm._m(0, true),
+              _vm._v(" "),
+              _c("h3", [
+                _c(
+                  "a",
+                  {
+                    attrs: {
+                      href:
+                        "/" +
+                        ad.section.category.slug +
+                        "/" +
+                        ad.section.slug +
+                        "/" +
+                        ad.slug
+                    }
+                  },
+                  [
+                    _vm._v(
+                      "\n\t                    " +
+                        _vm._s(ad.title) +
+                        "\n\t                "
+                    )
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("address", [_vm._v(_vm._s(ad.city.city))])
+            ])
           ])
         ])
-      ])
-    }),
-    0
-  )
+      }),
+      0
+    ),
+    _vm._v(" "),
+    _vm.ads.length > _vm.perPage
+      ? _c(
+          "div",
+          [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-primary rounded",
+                attrs: { disabled: _vm.pageNumber === 0 },
+                on: { click: _vm.prevPage }
+              },
+              [_vm._v("Previous")]
+            ),
+            _vm._v(" "),
+            _vm._l(_vm.pageCount, function(index) {
+              return _c("button", {
+                staticClass: "btn btn-sm btn-primary rounded mr-1",
+                domProps: { textContent: _vm._s(index) },
+                on: {
+                  click: function($event) {
+                    return _vm.indexing(index)
+                  }
+                }
+              })
+            }),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-primary rounded",
+                attrs: { disabled: _vm.pageNumber >= _vm.pageCount - 1 },
+                on: { click: _vm.nextPage }
+              },
+              [_vm._v("Next")]
+            )
+          ],
+          2
+        )
+      : _vm._e()
+  ])
 }
 var staticRenderFns = [
   function() {
@@ -61446,174 +61464,103 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row mt-4" }, [
-    _c("div", { staticClass: "col-12 block-13 mb-5" }, [
+    _c("div", { staticClass: "col-12 mb-5" }, [
       _c(
         "div",
         { staticClass: "col-lg-9" },
-        [
-          _vm._l(_vm.preview, function(feature) {
-            return _c("div", { staticClass: "d-block d-md-flex listing" }, [
-              _c("a", {
-                staticClass: "img d-block",
-                style: {
-                  "background-image":
-                    "url(/storage/" + _vm.mainImage(feature.images) + ")"
-                },
-                attrs: {
-                  href:
-                    "/" +
-                    feature.section.category.slug +
-                    "/" +
-                    feature.section.slug +
-                    "/" +
-                    feature.slug
-                }
-              }),
+        _vm._l(_vm.paginatedData, function(feature) {
+          return _c("div", { staticClass: "d-block d-md-flex listing" }, [
+            _c("a", {
+              staticClass: "img d-block",
+              style: {
+                "background-image":
+                  "url(/storage/" + _vm.mainImage(feature.images) + ")"
+              },
+              attrs: {
+                href:
+                  "/" +
+                  feature.section.category.slug +
+                  "/" +
+                  feature.section.slug +
+                  "/" +
+                  feature.slug
+              }
+            }),
+            _vm._v(" "),
+            _c("span", { staticClass: "badge badge-info rounded" }, [
+              _vm._v("FEATURED")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "lh-content" }, [
+              _c("span", { staticClass: "category" }, [
+                _vm._v(_vm._s(feature.condition))
+              ]),
+              _c("br"),
               _vm._v(" "),
-              _c("span", { staticClass: "badge badge-info rounded" }, [
-                _vm._v("FEATURED")
+              _c("span", { staticClass: "listings-single" }, [
+                _vm._v("€" + _vm._s(feature.price))
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "lh-content" }, [
-                _c("span", { staticClass: "category" }, [
-                  _vm._v(_vm._s(feature.section.category.name))
-                ]),
-                _c("br"),
-                _vm._v(" "),
-                _c("span", { staticClass: "listings-single" }, [
-                  _vm._v("€" + _vm._s(feature.price))
-                ]),
-                _vm._v(" "),
-                _vm._m(0, true),
-                _vm._v(" "),
-                _c("h3", [
-                  _c(
-                    "a",
-                    {
-                      attrs: {
-                        href:
-                          "/" +
-                          feature.section.category.slug +
-                          "/" +
-                          feature.section.slug +
-                          "/" +
-                          feature.slug
-                      }
-                    },
-                    [
-                      _vm._v(
-                        "\n\t\t                " +
-                          _vm._s(feature.title) +
-                          "\n\t\t            "
-                      )
-                    ]
-                  )
-                ]),
-                _vm._v(" "),
-                _c("address", [_vm._v(_vm._s(feature.city.city))])
-              ])
+              _vm._m(0, true),
+              _vm._v(" "),
+              _c("h3", [
+                _c(
+                  "a",
+                  {
+                    attrs: {
+                      href:
+                        "/" +
+                        feature.section.category.slug +
+                        "/" +
+                        feature.section.slug +
+                        "/" +
+                        feature.slug
+                    }
+                  },
+                  [
+                    _vm._v(
+                      "\n\t\t                " +
+                        _vm._s(feature.title) +
+                        "\n\t\t            "
+                    )
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("address", [_vm._v(_vm._s(feature.city.city))])
             ])
-          }),
-          _vm._v(" "),
-          _vm.seeAll
-            ? _c(
-                "div",
-                _vm._l(_vm.expanded, function(feature) {
-                  return _c(
-                    "div",
-                    { staticClass: "d-block d-md-flex listing" },
-                    [
-                      _c("a", {
-                        staticClass: "img d-block",
-                        style: {
-                          "background-image":
-                            "url(/storage/" +
-                            _vm.mainImage(feature.images) +
-                            ")"
-                        },
-                        attrs: {
-                          href:
-                            "/" +
-                            feature.section.category.slug +
-                            "/" +
-                            feature.section.slug +
-                            "/" +
-                            feature.slug
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "badge badge-info rounded" }, [
-                        _vm._v("FEATURED")
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "lh-content" }, [
-                        _c("span", { staticClass: "category" }, [
-                          _vm._v(_vm._s(feature.condition))
-                        ]),
-                        _c("br"),
-                        _vm._v(" "),
-                        _c("span", { staticClass: "listings-single" }, [
-                          _vm._v("€" + _vm._s(feature.price))
-                        ]),
-                        _vm._v(" "),
-                        _vm._m(1, true),
-                        _vm._v(" "),
-                        _c("h3", [
-                          _c(
-                            "a",
-                            {
-                              attrs: {
-                                href:
-                                  "/" +
-                                  feature.section.category.slug +
-                                  "/" +
-                                  feature.section.slug +
-                                  "/" +
-                                  feature.slug
-                              }
-                            },
-                            [
-                              _vm._v(
-                                "\n\t\t\t                " +
-                                  _vm._s(feature.title) +
-                                  "\n\t\t\t            "
-                              )
-                            ]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("address", [_vm._v(_vm._s(feature.city.city))])
-                      ])
-                    ]
-                  )
-                }),
-                0
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.collection.length > 5
-            ? _c("button", {
-                staticClass: "btn btn-primary rounded",
-                attrs: { type: "button" },
-                domProps: { textContent: _vm._s(_vm.btnText) },
-                on: { click: _vm.toggleExpansion }
-              })
-            : _vm._e()
-        ],
-        2
-      )
+          ])
+        }),
+        0
+      ),
+      _vm._v(" "),
+      _vm.collection.length > _vm.perPage
+        ? _c("div", [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-primary rounded",
+                attrs: { disabled: _vm.pageNumber === 0 },
+                on: { click: _vm.prevPage }
+              },
+              [_vm._v("Previous")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-primary rounded",
+                attrs: { disabled: _vm.pageNumber >= _vm.pageCount - 1 },
+                on: { click: _vm.nextPage }
+              },
+              [_vm._v("Next")]
+            )
+          ])
+        : _vm._e()
     ])
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("a", { staticClass: "bookmark", attrs: { href: "#" } }, [
-      _c("span", { staticClass: "icon-heart" })
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -74709,6 +74656,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FeaturedAdCard_vue_vue_type_template_id_73720124___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
+
+/***/ }),
+
+/***/ "./resources/js/mixins/pagination.js":
+/*!*******************************************!*\
+  !*** ./resources/js/mixins/pagination.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      pageNumber: 0
+    };
+  },
+  computed: {
+    pageCount: function pageCount() {
+      var size = this.ads.length,
+          perPage = this.perPage;
+      return Math.ceil(size / perPage);
+    },
+    paginatedData: function paginatedData() {
+      var start = this.pageNumber * this.perPage;
+      var end = start + this.perPage;
+      return this.ads.slice(start, end);
+    }
+  },
+  methods: {
+    prevPage: function prevPage() {
+      this.pageNumber--;
+    },
+    nextPage: function nextPage() {
+      this.pageNumber++;
+    }
+  }
+});
 
 /***/ }),
 

@@ -1444,7 +1444,7 @@ h1, h2, h3, h4, h5,
 
 .form-search-wrap {
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 7px;
+  border-radius: 17px;
   padding: 20px; }
   .form-search-wrap .form-control {
     border: none; }

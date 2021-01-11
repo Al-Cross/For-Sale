@@ -197,6 +197,7 @@ class AdsController extends Controller
         );
 
         $results = AdSearch::apply($request, (new Ad)->newQuery());
+        $results = collect($results);
         $private = $results->privateAds();
         $business = $results->businessAds();
         $count = $results->count();
