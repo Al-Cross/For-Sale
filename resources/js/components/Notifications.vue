@@ -1,6 +1,7 @@
 <template>
-	<li class="dropdown" v-cloak>
-        <a href="#" data-toggle="dropdown" aria-label="Show notifications">
+	<div class="dropdown" v-cloak>
+        <a href="#" data-toggle="dropdown" aria-label="Show notifications" class="text-black" style="font-size: smaller;">
+            <span class="border-left pl-xl-4"></span>
             Notifications
             <i id="bell" :data-count="notifications.length" class="fas icon-red circle"></i>
         </a>
@@ -24,7 +25,7 @@
                 </li>
             </div>
         </ul>
-    </li>
+    </div>
 </template>
 
 <script>

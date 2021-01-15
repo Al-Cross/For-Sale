@@ -48,7 +48,7 @@
 		<div class="lds-hourglass mt-5" v-if="isLoading"></div>
 		<tabs @active="toggleCollections" v-show="!isLoading">
 			<tab name="Private" :selected="true">
-				<featured-ad-card :collection="filter.filteredFeaturedPrivate ? filter.filteredFeaturedPrivate : filter.privateFeatured">
+				<featured-ad-card :ads="filter.filteredFeaturedPrivate ? filter.filteredFeaturedPrivate : filter.privateFeatured">
 				</featured-ad-card>
 
 		        <div class="row">
@@ -58,7 +58,7 @@
 				</div>
 			</tab>
 			<tab name="Business">
-				<featured-ad-card :collection="filter.filteredFeaturedBusiness ? filter.filteredFeaturedBusiness : filter.businessFeatured">
+				<featured-ad-card :ads="filter.filteredFeaturedBusiness ? filter.filteredFeaturedBusiness : filter.businessFeatured">
 				</featured-ad-card>
 
 		       <div class="row">

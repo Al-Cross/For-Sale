@@ -22,15 +22,22 @@
                     <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                         @if (Route::has('login'))
                             @auth
-                                <notifications></notifications>
+                                <li class="login">
+                                    <a href="/observed"><span class="pl-xl-4"></span>Favourites</a>
+                                </li>
+
+                                <li>
+                                    <notifications></notifications>
+                                </li>
 
                                 <li class="ml-xl-3 login">
                                     <a href="{{ route('profile') }}"><span class="border-left pl-xl-4"></span>My Profile</a>
                                 </li>
                                 <li>
-                                    <a class="border-left pl-xl-4" href="{{ route('logout') }}"
+                                    <a href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
+                                        <span class="border-left pl-xl-4"></span>
                                         {{ __('Logout') }}
                                     </a>
 

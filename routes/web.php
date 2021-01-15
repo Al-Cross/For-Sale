@@ -59,6 +59,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
 });
 
 Route::get('/search', 'AdsController@search');
+Route::get('/observed', 'ObservedAdsController@index');
+Route::post('/favourite', 'ObservedAdsController@store');
+Route::delete('/unfavourite', 'ObservedAdsController@destroy');
 Route::get('/register/confirm', 'Api\RegisterConfirmationController@index');
 Route::get('/getlocation', 'AdsController@findLocation');
 Route::get('/{category:slug}', 'SectionsController@index');

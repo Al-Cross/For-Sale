@@ -5,6 +5,7 @@
  */
 
 require('./bootstrap');
+import 'bootstrap/dist/js/bootstrap.bundle';
 
 window.Vue = require('vue');
 
@@ -26,6 +27,7 @@ Vue.component('notifications', require('./components/Notifications.vue').default
 Vue.component('tabs', require('./components/Tabs.vue').default);
 Vue.component('tab', require('./components/Tab.vue').default);
 Vue.component('filters', require('./components/Filters.vue').default);
+Vue.component('favourite', require('./components/Favourite.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

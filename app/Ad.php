@@ -34,7 +34,24 @@ class Ad extends Model
             'ads.description' => 5
         ]
     ];
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['isBeingObserved'];
 
+    /**
+     * Boot the model
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('observed', function($builder) {
+            $builder->with('observed');
+        });
+    }
     /**
      * The URL to the resource.
      *
@@ -95,6 +112,15 @@ class Ad extends Model
         return $this->hasMany(Image::class);
     }
 
+    /**
+     * Define the relationship with App\ObservedAd
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function observed()
+    {
+        return $this->hasMany(ObservedAd::class);
+    }
     /**
      * Get the path to the main image.
      *
@@ -191,5 +217,25 @@ class Ad extends Model
     public function scopeFeatured($query)
     {
         return $query->where('featured', true);
+    }
+
+    /**
+     * Check if the current user observes the ad.
+     *
+     * @return boolean
+     */
+    public function isBeingObserved()
+    {
+        return !! $this->observed->where('user_id', auth()->id())->count();
+    }
+
+    /**
+     * Get the observed value.
+     *
+     * @return boolean
+     */
+    public function getIsBeingObservedAttribute()
+    {
+        return $this->isBeingObserved();
     }
 }

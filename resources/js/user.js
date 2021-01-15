@@ -35,6 +35,8 @@ Vue.component('profile-sections', require('./components/ProfileSections.vue').de
 Vue.component('logo-form', require('./components/LogoForm.vue').default);
 Vue.component('delete-image', require('./components/DeleteImage.vue').default);
 Vue.component('confirm-delete', require('./components/ConfirmDelete.vue').default);
+Vue.component('favourite', require('./components/Favourite.vue').default);
+Vue.component('observed-ads', require('./components/ObservedAds.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

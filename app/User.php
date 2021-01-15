@@ -63,11 +63,22 @@ class User extends \TCG\Voyager\Models\User
     /**
      * Define the relationship with App\Ad
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function ads()
     {
         return $this->hasMany(Ad::class);
+    }
+
+    /**
+     * Define the relationship with App\ObservedAd.
+     * 'id' is the local key on the 'ads' table
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function observed()
+    {
+        return $this->hasMany(ObservedAd::class);
     }
 
     /**

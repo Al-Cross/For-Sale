@@ -7,7 +7,10 @@
 	<div class="container">
 	    <div class="row" style="margin-top: 200px;">
 		    <div class="col-lg-8">
-		        <h2 class="h5 mb-4 text-black">{{ $ad->title }}</h2>
+		    	<div class="d-flex justify-content-between">
+		    		<h2 class="h5 mb-4 text-black">{{ $ad->title }}</h2>
+					<favourite :ad="{{ $ad }}"></favourite>
+		    	</div>
 
 		        <div class="mb-4">
 			        <div class="slide-one-item home-slider owl-carousel">
@@ -17,9 +20,19 @@
 			        </div>
 		        </div>
 
-				<div class="d-flex justify-content-between">
-					<span class="category">{{ $ad->condition }}</span>
-			        <h4 class="h5 mb-4 text-black">{{ config('for-sale.currency') }}{{ $ad->price }}</h4>
+				<div class="d-flex justify-content-end">
+			        <h4 class="h5 mb-4 text-black font-weight-bold">{{ config('for-sale.currency') }}{{ $ad->price }}</h4>
+				</div>
+				<div class="d-flex justify-content-between mb-4">
+					<div class="d-flex justify-content-center border border-4 rounded w-25">
+						Condition: {{ $ad->condition }}
+					</div>
+					<div class="d-flex justify-content-center border border-4 rounded w-25">
+						Type: {{ $ad->type }}
+					</div>
+					<div class="d-flex justify-content-center border border-4 rounded w-25">
+						Delivery on: {{ $ad->delivery }}
+					</div>
 				</div>
 
 		        <h4 class="h5 mb-4 text-black">Description</h4>
