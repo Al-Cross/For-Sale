@@ -103,6 +103,8 @@ class AdsController extends Controller
      */
     public function show($category, $section, Ad $ad)
     {
+        $ad->increment('views');
+
         return view('ads.show', compact('ad'));
     }
 

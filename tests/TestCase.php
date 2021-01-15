@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Ad;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -20,5 +21,22 @@ abstract class TestCase extends BaseTestCase
         $this->actingAs($user);
 
         return $this;
+    }
+
+    /**
+     * Whip up an ad for testing purposes.
+     *
+     * @param  array  $overrides
+     * @return Http Response
+     */
+    public function postAd($overrides = [])
+    {
+        $this->signIn();
+
+        $ad = make('App\Ad', $overrides);
+
+        $this->postJson(route('create_ad'), $ad->toArray());
+
+        return Ad::whereTitle($ad->title)->first();
     }
 }

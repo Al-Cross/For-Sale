@@ -37,7 +37,12 @@
 
 		        <h4 class="h5 mb-4 text-black">Description</h4>
 		        <p>{{ $ad->description }}</p>
+		        <hr>
 
+		        <div class="d-flex justify-content-between">
+		        	<small>Added on: {{ $ad->created_at->format("h:s, d F Y") }}</small>
+		        	<small>Visits: {{ $ad->views }}</small>
+		        </div>
 			    @include('partials._message-form')
 		    </div>
 
