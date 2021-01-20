@@ -13,7 +13,19 @@ class AdSeeder extends Seeder
     public function run()
     {
         for ($i=1; $i <= 31; $i++) {
-            factory(Ad::class)->create(['section_id' => $i]);
+            factory(Ad::class)->create(['section_id' => $i, 'type' => 'private', 'featured' => true]);
+        }
+
+        for ($i=1; $i <= 31; $i++) {
+            factory(Ad::class)->create(['section_id' => $i, 'type' => 'private', 'featured' => false]);
+        }
+
+        for ($i=1; $i <= 31; $i++) {
+            factory(Ad::class)->create(['section_id' => $i, 'type' => 'business', 'featured' => true]);
+        }
+
+        for ($i=1; $i <= 31; $i++) {
+            factory(Ad::class)->create(['section_id' => $i, 'type' => 'business', 'featured' => false]);
         }
     }
 }

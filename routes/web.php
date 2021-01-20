@@ -64,6 +64,7 @@ Route::post('/favourite', 'ObservedAdsController@store');
 Route::delete('/unfavourite', 'ObservedAdsController@destroy');
 Route::get('/register/confirm', 'Api\RegisterConfirmationController@index');
 Route::get('/getlocation', 'AdsController@findLocation');
+Route::get('/user-ads/{user:name}', 'UsersController@show')->name('user_ads');
 Route::get('/{category:slug}', 'SectionsController@index');
 Route::get('/{category:slug}/{section:slug}', 'SectionsController@show')->name('section');
 Route::get('/{category:slug}/{section:slug}/{ad:slug}', 'AdsController@show')->name('show_ad');

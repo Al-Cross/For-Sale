@@ -39,16 +39,21 @@ class UserDashboardTest extends TestCase
     /**
      * @test
      */
-    public function users_can_edit_their_name_and_email()
+    public function users_can_edit_their_profile_details()
     {
         $this->signIn();
 
         $this->patch(
-            route('profile_update'),
-            ['name' => 'John Dean', 'email' => 'johndoe@gmail.com']
+            route('profile_update'), [
+                'name' => 'John Dean',
+                'email' => 'johndoe@gmail.com',
+                'address' => 'My address',
+                'phone' => '01239345659',
+                'about' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            ]
         );
 
-        $this->assertDatabaseHas('users', ['name' => 'John Dean']);
+        $this->assertDatabaseHas('users', ['name' => 'John Dean', 'address' => 'My address']);
     }
     /**
      * @test

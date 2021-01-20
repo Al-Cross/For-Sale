@@ -29,9 +29,7 @@ class AppServiceProvider extends ServiceProvider
             'App\Http\Composers\Error403Composer');
 
         \View::composer(['partials.header', 'welcome'], function ($view) {
-            $categories = \Cache::rememberForever('categories', function() {
-                return Category::withCount('ads')->get();
-            });
+            $categories = Category::withCount('ads')->get();
 
             $view->with('categories', $categories);
         });

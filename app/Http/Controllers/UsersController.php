@@ -38,6 +38,20 @@ class UsersController extends Controller
     }
 
     /**
+     * Fetch all ads of the given user.
+     *
+     * @param User $user The creator of the ads
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show(User $user)
+    {
+        $userAds = Ad::where('user_id', $user->id)->latest()->get();
+
+        return view('users.ads', compact('userAds', 'user'));
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @return \Illuminate\Http\Response
@@ -63,12 +77,18 @@ class UsersController extends Controller
         $validated = $request->validate([
             'name' => ['string', 'max:255'],
             'email' => ['string', 'email', 'max:255',
-                Rule::unique('users')->ignore($user->id)]
+                Rule::unique('users')->ignore($user->id)],
+            'address' => 'string',
+            'phone' => 'string',
+            'about' => 'string'
         ]);
 
         $user->update([
             'name' => $validated['name'],
-            'email' => $validated['email']
+            'email' => $validated['email'],
+            'address' => $validated['address'],
+            'phone' => $validated['phone'],
+            'about' => $validated['about']
         ]);
     }
 

@@ -5237,14 +5237,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           filteredFeatured: ''
         },
         sortOrder: 'newFirst',
-        empty: false
+        empty: false,
+        indexedCategories: {},
+        categories: []
       }),
       timeout: '',
       isLoading: false,
       query: new URL(location.href).searchParams.get('searchTerm'),
-      city: new URL(location.href).searchParams.get('city'),
-      indexedCategories: {},
-      categories: []
+      city: new URL(location.href).searchParams.get('city')
     };
   },
   created: function created() {
@@ -5267,43 +5267,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     groupBy: function groupBy() {
-      var _this = this;
-
-      for (var attribute in this.indexedCategories) {
-        delete this.indexedCategories[attribute];
-      }
-
       var allAds = _objectSpread(_objectSpread({}, this["private"]), this.business);
 
-      this.categories = [];
       allAds = Object.values(allAds);
-      allAds.forEach(function (ad) {
-        if (!_this.indexedCategories[ad.section.category.id]) {
-          _this.indexedCategories[ad.section.category.id] = {
-            id: ad.section.category.id,
-            name: ad.section.category.name,
-            ads: []
-          };
-
-          _this.categories.push(_this.indexedCategories[ad.section.category.id]);
-        }
-
-        _this.indexedCategories[ad.section.category.id].ads.push(ad);
-      });
+      this.filter.groupBy(allAds);
     },
     loading: function loading(expression1, expression2) {
-      var _this2 = this;
+      var _this = this;
 
       clearTimeout(this.timeout);
       this.isLoading = true;
       this.timeout = setTimeout(function () {
         if (expression1 == undefined) {
-          _this2.minimumPrice();
+          _this.minimumPrice();
         }
 
         expression1;
         expression2;
-        _this2.isLoading = false;
+        _this.isLoading = false;
       }, 1000);
     },
     stoppedTyping: function stoppedTyping() {
@@ -5335,7 +5316,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return this.filter.empty = true;
       }
 
-      this.filter.sortFilter(filteredAds, filteredFeatured, this.filter.sortOrder);
+      this.filter.sortFilter(filteredAds, filteredFeatured);
     },
     reset: function reset() {
       this.filter[this.filter.collections.filteredAds] = null;
@@ -71122,7 +71103,7 @@ var render = function() {
               _c(
                 "span",
                 { staticClass: "text-size-sm" },
-                _vm._l(_vm.categories, function(category) {
+                _vm._l(_vm.filter.categories, function(category) {
                   return _c(
                     "a",
                     {
@@ -71792,7 +71773,7 @@ var render = function() {
               { staticClass: "lh-content" },
               [
                 _c("span", { staticClass: "category" }, [
-                  _vm._v(_vm._s(feature.condition))
+                  _vm._v(_vm._s(feature.section.category.name))
                 ]),
                 _c("br"),
                 _vm._v(" "),
@@ -84079,11 +84060,15 @@ var AdFilters = /*#__PURE__*/function () {
   function AdFilters(data) {
     _classCallCheck(this, AdFilters);
 
-    Object.assign(this, data);
-    this.privateFeatured = this.assign(data["private"], true);
-    this.businessFeatured = this.assign(data.business, true);
-    this.privateAds = this.assign(data["private"], false);
-    this.businessAds = this.assign(data.business, false);
+    if (data["private"]) {
+      Object.assign(this, data);
+      this.privateFeatured = this.assign(data["private"], true);
+      this.businessFeatured = this.assign(data.business, true);
+      this.privateAds = this.assign(data["private"], false);
+      this.businessAds = this.assign(data.business, false);
+    } else {
+      Object.assign(this, data);
+    }
   }
 
   _createClass(AdFilters, [{
@@ -84104,16 +84089,40 @@ var AdFilters = /*#__PURE__*/function () {
       });
     }
   }, {
+    key: "groupBy",
+    value: function groupBy(values) {
+      var _this = this;
+
+      for (var attribute in this.indexedCategories) {
+        delete this.indexedCategories[attribute];
+      }
+
+      this.categories = [];
+      values.forEach(function (ad) {
+        if (!_this.indexedCategories[ad.section.category.id]) {
+          _this.indexedCategories[ad.section.category.id] = {
+            id: ad.section.category.id,
+            name: ad.section.category.name,
+            ads: []
+          };
+
+          _this.categories.push(_this.indexedCategories[ad.section.category.id]);
+        }
+
+        _this.indexedCategories[ad.section.category.id].ads.push(ad);
+      });
+    }
+  }, {
     key: "sortFilter",
-    value: function sortFilter(collection, featuredCollection, sortOrder) {
-      if (sortOrder === 'ascending') {
+    value: function sortFilter(collection, featuredCollection) {
+      if (this.sortOrder === 'ascending') {
         collection.sort(function (ad1, ad2) {
           return ad1.price - ad2.price;
         });
         featuredCollection.sort(function (feature1, feature2) {
           return feature1.price - feature2.price;
         });
-      } else if (sortOrder === 'descending') {
+      } else if (this.sortOrder === 'descending') {
         collection.sort(function (ad1, ad2) {
           return ad2.price - ad1.price;
         });
@@ -84122,10 +84131,10 @@ var AdFilters = /*#__PURE__*/function () {
         });
       } else {
         collection.sort(function (ad1, ad2) {
-          return new Date(ad1.created_at) - new Date(ad2.created_at);
+          return ad1.created_at > ad2.created_at ? -1 : ad1.created_at < ad2.created_at ? 1 : 0;
         });
         featuredCollection.sort(function (feature1, feature2) {
-          return new Date(feature1.created_at) - new Date(feature2.created_at);
+          return feature1.created_at > feature2.created_at ? -1 : feature1.created_at < feature2.created_at ? 1 : 0;
         });
       }
 
@@ -84134,6 +84143,16 @@ var AdFilters = /*#__PURE__*/function () {
       } else {
         this.empty = false;
       }
+    }
+  }, {
+    key: "filterCategory",
+    value: function filterCategory(category, normalCollection, featuredCollection) {
+      this.filteredNormal = normalCollection.filter(function (ad) {
+        return ad.section.category.id == category.id;
+      });
+      this.filteredFeatured = featuredCollection.filter(function (feature) {
+        return feature.section.category.id == category.id;
+      });
     }
   }]);
 

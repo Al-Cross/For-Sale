@@ -54,7 +54,7 @@
 		        			<img src="{{ asset('/storage/' . $ad->owner->avatar) }}" width="150" height="150" class="mr-2 rounded">
 			        		<small class="font-weight-bold">{{ $ad->owner->name }}</small>
 		        		</div>
-		        		<a href="#" class="btn btn-dark rounded mt-3">User Ads</a>
+		        		<a href="{{ route('user_ads', $ad->owner->name) }}" class="btn btn-dark rounded mt-3">User Ads</a>
 		        		<a href="#message-form" class="btn btn-dark rounded mt-3">Send Message</a>
 		        	</div>
 		        </div>

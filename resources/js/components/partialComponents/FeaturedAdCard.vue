@@ -9,7 +9,7 @@
 		            </a>
 		            <span class="badge badge-info rounded">FEATURED</span>
 		            <div class="lh-content">
-		                <span class="category">{{ feature.condition }}</span><br>
+		                <span class="category">{{ feature.section.category.name }}</span><br>
 		                <span class="listings-single">€{{ feature.price }}</span>
 	                    <favourite :ad="feature" @deleted="reemit(index)" :key="feature.id"></favourite>
 		                <h3><a :href="'/' + feature.section.category.slug + '/' + feature.section.slug + '/' + feature.slug">

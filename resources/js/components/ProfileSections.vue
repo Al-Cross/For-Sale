@@ -7,24 +7,57 @@
 	    			aria-expanded="false">Edit Profile</button>
 	    	<div class="dropdown-menu w-100 p-4">
 	    		<form @submit.prevent="submit('profileForm')">
-	        		<div class="form-group">
-	        			<label for="name">Name:</label><br>
-	        			<input type="text"
-	        					name="name"
-	        					v-model="profileForm.name"
-	        					:class="profileForm.errors.name ? 'border-danger bg-gray w-50 rounded' : 'bg-gray border w-50 rounded'"
-	        					@focus="empty('name')"
-	        					required>
-	        			<small class="text-danger" v-if="profileForm.errors.name" v-text="profileForm.errors.name[0]"></small>
-	        		</div>
-	        		<div class="form-group">
-	        			<label for="email">Email Address:</label><br>
-	        			<input type="email"
-	        					name="email"
-	        					@focus="empty('email')"
-	        					v-model="profileForm.email"
-	        					:class="profileForm.errors.email ? 'border-danger bg-gray w-50 rounded' : 'bg-gray border w-50 rounded'">
-	        			<small class="text-danger" v-if="profileForm.errors.email" v-text="profileForm.errors.email[0]"></small>
+	        		<div class="form-row">
+	        			<div class="col">
+	        				<div class="form-group">
+			        			<label for="name">Name:</label><br>
+			        			<input type="text"
+			        					name="name"
+			        					v-model="profileForm.name"
+			        					:class="profileForm.errors.name ? 'border-danger bg-gray w-75 rounded' : 'bg-gray border w-75 rounded'"
+			        					@focus="empty('name')"
+			        					required>
+			        			<small class="text-danger" v-if="profileForm.errors.name" v-text="profileForm.errors.name[0]"></small>
+			        		</div>
+			        		<div class="form-group">
+			        			<label for="email">Email Address:</label><br>
+			        			<input type="email"
+			        					name="email"
+			        					@focus="empty('email')"
+			        					v-model="profileForm.email"
+			        					:class="profileForm.errors.email ? 'border-danger bg-gray w-75 rounded' : 'bg-gray border w-75 rounded'">
+			        			<small class="text-danger" v-if="profileForm.errors.email" v-text="profileForm.errors.email[0]"></small>
+			        		</div>
+			        		<div class="form-group">
+			        			<label for="address">Address:</label><br>
+			        			<input type="text"
+			        					name="address"
+			        					@focus="empty('address')"
+			        					v-model="profileForm.address"
+			        					:class="profileForm.errors.address ? 'border-danger bg-gray w-75 rounded' : 'bg-gray border w-75 rounded'">
+			        			<small class="text-danger" v-if="profileForm.errors.address" v-text="profileForm.errors.address[0]"></small>
+			        		</div>
+			        		<div class="form-group">
+			        			<label for="phone">Phone Number:</label><br>
+			        			<input type="text"
+			        					name="phone"
+			        					@focus="empty('phone')"
+			        					v-model="profileForm.phone"
+			        					:class="profileForm.errors.phone ? 'border-danger bg-gray w-75 rounded' : 'bg-gray border w-75 rounded'">
+			        			<small class="text-danger" v-if="profileForm.errors.phone" v-text="profileForm.errors.phone[0]"></small>
+			        		</div>
+	        			</div>
+		        		<div class="col">
+		        			<div class="form-group">
+			        			<label for="about">About Me:</label><br>
+			        			<textarea name="about"
+			        					rows="8"
+			        					@focus="empty('about')"
+			        					v-model="profileForm.about"
+			        					:class="profileForm.errors.about ? 'border-danger bg-gray w-100 rounded' : 'bg-gray border w-100 rounded'"></textarea>
+			        			<small class="text-danger" v-if="profileForm.errors.about" v-text="profileForm.errors.about[0]"></small>
+			        		</div>
+		        		</div>
 	        		</div>
 	        		<button class="btn btn-primary rounded">Edit</button>
 	        	</form>
@@ -125,6 +158,9 @@ export default {
 			profileForm: new FormHandling({
 				name: this.user.name,
 				email: this.user.email,
+				address: this.user.address,
+				phone: this.user.phone,
+				about: this.user.about,
 				endpoint: '/myaccount/settings/update'
 			}),
 			passwordForm: new FormHandling({

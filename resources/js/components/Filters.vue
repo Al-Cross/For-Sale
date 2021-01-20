@@ -36,7 +36,7 @@
 			<div v-if="!section" class="mt-2">
 				<span class="text-size-sm">
 					<a :href="'/search?searchTerm=' + query + '&city=' + city + '&categorySearch=' + category.id"
-						v-for="category in categories"
+						v-for="category in filter.categories"
 						class="mr-1"
 					>
 						{{ category.name }}
@@ -101,14 +101,14 @@ export default {
 					filteredFeatured: ''
 				},
 				sortOrder: 'newFirst',
-				empty: false
+				empty: false,
+				indexedCategories: {},
+				categories: []
 			}),
 			timeout: '',
 			isLoading: false,
 			query: new URL(location.href).searchParams.get('searchTerm'),
-			city: new URL(location.href).searchParams.get('city'),
-			indexedCategories: {},
-			categories: []
+			city: new URL(location.href).searchParams.get('city')
 		};
 	},
 
@@ -135,24 +135,10 @@ export default {
 		},
 
 		groupBy() {
-			for (var attribute in this.indexedCategories) delete this.indexedCategories[attribute];
 			var allAds = {...this.private, ...this.business};
-			this.categories = [];
-
 			allAds = Object.values(allAds);
 
-			allAds.forEach(ad => {
-				if (!this.indexedCategories[ad.section.category.id]) {
-					this.indexedCategories[ad.section.category.id] = {
-						id: ad.section.category.id,
-						name: ad.section.category.name,
-						ads: []
-					};
-					this.categories.push(this.indexedCategories[ad.section.category.id]);
-				}
-
-				this.indexedCategories[ad.section.category.id].ads.push(ad);
-			});
+			this.filter.groupBy(allAds);
 		},
 
 		loading(expression1, expression2) {
@@ -218,7 +204,7 @@ export default {
 				return this.filter.empty = true;
 			}
 
-			this.filter.sortFilter(filteredAds, filteredFeatured, this.filter.sortOrder);
+			this.filter.sortFilter(filteredAds, filteredFeatured);
 		},
 
 		reset() {
