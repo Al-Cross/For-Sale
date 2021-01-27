@@ -105,7 +105,9 @@ class AdsController extends Controller
     {
         $ad->increment('views');
 
-        return view('ads.show', compact('ad'));
+        $otherAds = $ad->owner->ads()->where('id', '!=', $ad->id)->limit(4)->get();
+
+        return view('ads.show', compact('ad', 'otherAds'));
     }
 
     /**
@@ -131,18 +133,20 @@ class AdsController extends Controller
     public function update(Request $request, Ad $ad)
     {
         $this->authorize('update', $ad);
+        $oldPrice = (int) $ad->price;
 
-        $data = $request->validate([
-            'city' => ['required', 'exists:cities'],
-            'title' => ['required', 'string'],
-            'description' => ['required', 'min:10'],
-            'price' => ['required', 'numeric'],
-            'type' => ['required', 'string', 'in:private,business'],
-            'condition' => ['required', 'string', 'in:new,used'],
-            'delivery' => ['required', 'string', 'in:seller,buyer,personal handover'],
-            'image' => 'array',
-            'image.*' => ['image', 'mimes:jpeg,jpg,png']
-        ],
+        $data = $request->validate(
+            [
+                'city' => ['required', 'exists:cities'],
+                'title' => ['required', 'string'],
+                'description' => ['required', 'min:10'],
+                'price' => ['required', 'numeric'],
+                'type' => ['required', 'string', 'in:private,business'],
+                'condition' => ['required', 'string', 'in:new,used'],
+                'delivery' => ['required', 'string', 'in:seller,buyer,personal handover'],
+                'image' => 'array',
+                'image.*' => ['image', 'mimes:jpeg,jpg,png']
+            ],
             [
                 'city.exists' => 'We do not operate in the selected city.'
             ]
@@ -160,6 +164,10 @@ class AdsController extends Controller
             'condition' => $data['condition'],
             'delivery' => $data['delivery']
         ]);
+
+        $ad->observed->map(function($observed) use ($ad, $oldPrice) {
+            $observed->lowerPriceNotification($ad, $oldPrice);
+        });
 
         if (request()->has('image')) {
             $this->saveImages($ad->id, request()->file('image'));

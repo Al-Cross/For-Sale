@@ -32,4 +32,20 @@ class ViewUsersAdsTest extends TestCase
             ->assertSee($viewedUser->about)
             ->assertSee($viewedUser->phone);
     }
+    /**
+     * @test
+     */
+    public function other_ads_of_the_user_section()
+    {
+        $creator = create('App\User');
+        $ad = create('App\Ad', ['user_id' => $creator->id]);
+        $additionalAd = create('App\Ad',
+            ['user_id' => $creator->id, 'title' => 'My title']
+        );
+
+        $this->get(route('show_ad', [
+            $ad->section->category->slug, $ad->section->slug, $ad->slug
+            ]
+        ))->assertSee($additionalAd->title);
+    }
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+/**
+ * Handle the ad packages and upgrading the status of the user.
+ */
 class AddAdsController extends Controller
 {
     /**

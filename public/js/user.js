@@ -4963,21 +4963,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['errors'],
+  props: ['errors', 'selectedCity'],
   data: function data() {
     return {
-      query: new URL(location.href).searchParams.get('city'),
+      query: this.prefill(),
       results: [],
       displayResults: false,
       validationMessage: false
     };
   },
   mounted: function mounted() {
-    if (Object.keys(this.errors).length !== 0) {
-      this.validationMessage = this.errors.city[0];
+    if (!this.selectedCity) {
+      if (Object.keys(this.errors).length !== 0) {
+        this.validationMessage = this.errors.city[0];
+      }
     }
 
-    document.getElementById('distance').disabled = true;
+    if (this.query == '') {
+      document.getElementById('distance').disabled = true;
+    }
   },
   methods: {
     autoComplete: function autoComplete() {
@@ -4992,6 +4996,7 @@ __webpack_require__.r(__webpack_exports__);
           _this.results = response.data;
           _this.displayResults = true;
         });
+        document.getElementById('distance').disabled = false;
       } else {
         document.getElementById('distance').disabled = true;
       }
@@ -5000,6 +5005,9 @@ __webpack_require__.r(__webpack_exports__);
       this.query = city;
       this.displayResults = false;
       document.getElementById('distance').disabled = false;
+    },
+    prefill: function prefill() {
+      return this.selectedCity ? this.selectedCity : new URL(location.href).searchParams.get('city');
     }
   }
 });
@@ -5404,6 +5412,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -5415,17 +5426,18 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
   created: function created() {
     var _this = this;
 
-    if (window.location.pathname == '/myaccount/messages') {
-      this.notifications = [];
-    } else {
-      axios.get('/myaccount/notifications').then(function (response) {
-        return _this.notifications = response.data;
-      });
-    }
+    axios.get('/myaccount/notifications').then(function (response) {
+      return _this.notifications = response.data;
+    });
   },
   methods: {
     markAsRead: function markAsRead(notification) {
       axios["delete"]("/myaccount/".concat(notification.id));
+    },
+    markAllAsRead: function markAllAsRead() {
+      if (this.notifications.length > 0) {
+        axios["delete"]('/myaccount/mark-all').then(this.notifications = []);
+      }
     },
     time: function time(created_at) {
       return 'Received ' + moment(created_at).fromNow();
@@ -5666,6 +5678,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -5687,6 +5717,7 @@ __webpack_require__.r(__webpack_exports__);
       }),
       checkbox: new _FormHandling_js__WEBPACK_IMPORTED_MODULE_0__["default"]({
         newMessage: this.user.notification_settings.new_message,
+        loweredPrice: this.user.notification_settings.lowered_price,
         endpoint: '/myaccount/settings/notifications'
       }),
       deleteProfile: new _FormHandling_js__WEBPACK_IMPORTED_MODULE_0__["default"]({
@@ -5698,18 +5729,16 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     submit: function submit(formType) {
       if (formType != 'deleteProfile') {
-        this[formType].patch(this[formType].endpoint);
-        this.feedback(this[formType]);
+        var response = this[formType].patch(this[formType].endpoint);
+        response["catch"](function (error) {
+          flash('Oops, something went wrong! Try again!', 'danger');
+        }).then(function (message) {
+          flash(message[0]);
+        });
       } else if (formType == 'deleteProfile') {
         this[formType].post(this[formType].endpoint);
         window.location.href = '/myaccount/settings/email-sent';
       }
-    },
-    feedback: function feedback(form) {
-      setTimeout(function () {
-        if (Object.keys(form.errors).length !== 0) return;
-        flash('Your new profile data has been saved.');
-      }, 500);
     },
     empty: function empty(fieldName) {
       this.profileForm[fieldName] = '';
@@ -17861,7 +17890,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n*.icon-blue {color: #0088cc}\n*.icon-red {color: white}\n#bell {\n    text-align: center;\n    vertical-align: middle;\n    position: relative;\n}\n.circle:after{\n    content:attr(data-count);\n    position: fixed;\n    background: red;\n    height:1rem;\n    left: 60%;\n    top:0.7rem;\n    width:1rem;\n    text-align: center;\n    line-height: 1rem;;\n    font-size: 0.5rem;\n    border-radius: 50%;\n    color:white;\n    border:1px;\n}\n.circle[data-count=\"0\"]:after{ display : none;\n}\n.app-notification {\n    opacity: 0.8;\n    max-height: 220px;\n    min-width: 270px;\n    overflow-y: auto;\n    border-bottom: dashed;\n}\n.app-notification__title {\n  padding: 8px 20px;\n  text-align: left;\n  background-color: rgba(0, 150, 136, 0.4);\n  color: #333;\n}\n.app-notification__footer {\n  padding: 8px 20px;\n  text-align: center;\n  background-color: #eee;\n}\n.app-notification__content {\n  max-height: 220px;\n}\n.app-notification__content::-webkit-scrollbar {\n  width: 6px;\n}\n.app-notification__content::-webkit-scrollbar-thumb {\n  background: rgba(0, 0, 0, 0.2);\n}\n.app-notification__item {\n  display: flex;\n  padding: 8px 20px;\n  color: inherit;\n  border-bottom: 1px solid #ddd;\n  transition: background-color 0.3s ease;\n}\n.app-notification__item:focus, .app-notification__item:hover {\n  color: inherit;\n  text-decoration: none;\n  background-color: #e0e0e0;\n}\n.app-notification__message,\n.app-notification__meta {\n  margin-bottom: 0;\n  font-size: 15px;\n}\n.app-notification__icon {\n  padding-right: 10px;\n}\n.app-notification__message {\n  line-height: 1.2;\n}\n", ""]);
+exports.push([module.i, "\n*.icon-blue {color: #0088cc}\n*.icon-red {color: white}\n#bell {\n    text-align: center;\n    vertical-align: middle;\n    position: relative;\n}\n.circle:after{\n    content:attr(data-count);\n    position: fixed;\n    background: red;\n    height:1rem;\n    left: 60%;\n    top:0.7rem;\n    width:1rem;\n    text-align: center;\n    line-height: 1rem;;\n    font-size: 0.5rem;\n    border-radius: 50%;\n    color:white;\n    border:1px;\n}\n.circle[data-count=\"0\"]:after{ display : none;\n}\n.app-notification {\n    opacity: 0.8;\n    max-height: 220px;\n    min-width: 270px;\n    overflow-y: auto;\n    border-bottom: dashed;\n}\n.app-notification__title {\n  padding: 8px 20px;\n  text-align: left;\n  background-color: rgba(0, 150, 136, 0.4);\n  color: #333;\n}\n.app-notification__footer {\n  padding: 8px 20px;\n  text-align: center;\n  background-color: #eee;\n}\n.app-notification__content {\n  max-height: 220px;\n}\n.app-notification__content::-webkit-scrollbar {\n  width: 6px;\n}\n.app-notification__content::-webkit-scrollbar-thumb {\n  background: rgba(0, 0, 0, 0.2);\n}\n.app-notification__item {\n  display: flex;\n  padding: 8px 20px;\n  color: inherit;\n  border-bottom: 1px solid #ddd;\n  transition: background-color 0.3s ease;\n}\n.app-notification__item:focus, .app-notification__item:hover {\n  color: inherit;\n  text-decoration: none;\n  background-color: #e0e0e0;\n}\n.app-notification__message,\n.app-notification__meta {\n  margin-bottom: 0;\n  font-size: 15px;\n}\n.app-notification__icon {\n  padding-right: 10px;\n}\n.app-notification__message {\n  line-height: 1.2;\n}\n.text-xs {\n  font-size: 12px;\n}\n", ""]);
 
 // exports
 
@@ -71923,13 +71952,31 @@ var render = function() {
             ])
           : _vm._e(),
         _vm._v(" "),
+        _vm.notifications.length > 0
+          ? _c(
+              "li",
+              { staticClass: "app-notification__title font-weight-bold" },
+              [
+                _c(
+                  "a",
+                  {
+                    staticClass: "text-black",
+                    attrs: { href: "#" },
+                    on: { click: _vm.markAllAsRead }
+                  },
+                  [_vm._v("Mark All As Read")]
+                )
+              ]
+            )
+          : _vm._e(),
+        _vm._v(" "),
         _vm._l(_vm.notifications, function(notification) {
           return _c("div", { staticClass: "app-notification__content" }, [
             _c("li", [
               _c(
                 "a",
                 {
-                  staticClass: "app-notification__item",
+                  staticClass: "app-notification__item d-flex",
                   attrs: { href: notification.data.link },
                   on: {
                     click: function($event) {
@@ -71942,13 +71989,13 @@ var render = function() {
                   _vm._v(" "),
                   _c("div", [
                     _c("p", {
-                      staticClass: "app-notification__message",
+                      staticClass: "app-notification__message font-weight-bold",
                       domProps: {
                         textContent: _vm._s(notification.data.message)
                       }
                     }),
                     _vm._v(" "),
-                    _c("p", { staticClass: "app-notification__meta" }, [
+                    _c("p", { staticClass: "app-notification__meta text-xs" }, [
                       _vm._v(_vm._s(_vm.time(notification.created_at)))
                     ])
                   ])
@@ -72462,71 +72509,156 @@ var render = function() {
             }
           },
           [
-            _c("div", { staticClass: "form-group" }, [
-              _c(
-                "label",
-                { staticClass: "mr-custom", attrs: { for: "new-message" } },
-                [_vm._v("New Messages")]
-              ),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.checkbox.newMessage,
-                    expression: "checkbox.newMessage"
-                  }
-                ],
-                attrs: { type: "checkbox", name: "notifications" },
-                domProps: {
-                  checked: Array.isArray(_vm.checkbox.newMessage)
-                    ? _vm._i(_vm.checkbox.newMessage, null) > -1
-                    : _vm.checkbox.newMessage
-                },
-                on: {
-                  change: function($event) {
-                    var $$a = _vm.checkbox.newMessage,
-                      $$el = $event.target,
-                      $$c = $$el.checked ? true : false
-                    if (Array.isArray($$a)) {
-                      var $$v = null,
-                        $$i = _vm._i($$a, $$v)
-                      if ($$el.checked) {
-                        $$i < 0 &&
-                          _vm.$set(
-                            _vm.checkbox,
-                            "newMessage",
-                            $$a.concat([$$v])
-                          )
-                      } else {
-                        $$i > -1 &&
-                          _vm.$set(
-                            _vm.checkbox,
-                            "newMessage",
-                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                          )
-                      }
-                    } else {
-                      _vm.$set(_vm.checkbox, "newMessage", $$c)
-                    }
-                  }
-                }
-              }),
-              _c("br"),
-              _vm._v(" "),
-              _c("small", [
-                _vm._v("Notifications by email about new messages on your ads")
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c(
+                    "label",
+                    { staticClass: "mr-custom", attrs: { for: "new-message" } },
+                    [_vm._v("New Messages")]
+                  ),
+                  _vm._v(" "),
+                  _c("small", [
+                    _vm._v(
+                      "Notifications by email about new messages on your ads"
+                    )
+                  ]),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm.checkbox.errors.newMessage
+                    ? _c("small", {
+                        staticClass: "text-danger",
+                        domProps: {
+                          textContent: _vm._s(_vm.checkbox.errors.newMessage[0])
+                        }
+                      })
+                    : _vm._e()
+                ])
               ]),
               _vm._v(" "),
-              _vm.checkbox.errors.newMessage
-                ? _c("small", {
-                    staticClass: "text-danger",
-                    domProps: {
-                      textContent: _vm._s(_vm.checkbox.errors.newMessage[0])
+              _c("div", { staticClass: "col" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.checkbox.newMessage,
+                      expression: "checkbox.newMessage"
                     }
-                  })
-                : _vm._e()
+                  ],
+                  attrs: { type: "checkbox", name: "notifications" },
+                  domProps: {
+                    checked: Array.isArray(_vm.checkbox.newMessage)
+                      ? _vm._i(_vm.checkbox.newMessage, null) > -1
+                      : _vm.checkbox.newMessage
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.checkbox.newMessage,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = null,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 &&
+                            _vm.$set(
+                              _vm.checkbox,
+                              "newMessage",
+                              $$a.concat([$$v])
+                            )
+                        } else {
+                          $$i > -1 &&
+                            _vm.$set(
+                              _vm.checkbox,
+                              "newMessage",
+                              $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                            )
+                        }
+                      } else {
+                        _vm.$set(_vm.checkbox, "newMessage", $$c)
+                      }
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c(
+                    "label",
+                    { staticClass: "mr-custom", attrs: { for: "lower-price" } },
+                    [_vm._v("Lower Prices")]
+                  ),
+                  _vm._v(" "),
+                  _c("small", [
+                    _vm._v(
+                      "Notifications by email about lowered prices on observed ads."
+                    )
+                  ]),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm.checkbox.errors.loweredPrice
+                    ? _c("small", {
+                        staticClass: "text-danger",
+                        domProps: {
+                          textContent: _vm._s(
+                            _vm.checkbox.errors.loweredPrice[0]
+                          )
+                        }
+                      })
+                    : _vm._e()
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.checkbox.loweredPrice,
+                      expression: "checkbox.loweredPrice"
+                    }
+                  ],
+                  attrs: { type: "checkbox", name: "notifications" },
+                  domProps: {
+                    checked: Array.isArray(_vm.checkbox.loweredPrice)
+                      ? _vm._i(_vm.checkbox.loweredPrice, null) > -1
+                      : _vm.checkbox.loweredPrice
+                  },
+                  on: {
+                    change: function($event) {
+                      var $$a = _vm.checkbox.loweredPrice,
+                        $$el = $event.target,
+                        $$c = $$el.checked ? true : false
+                      if (Array.isArray($$a)) {
+                        var $$v = null,
+                          $$i = _vm._i($$a, $$v)
+                        if ($$el.checked) {
+                          $$i < 0 &&
+                            _vm.$set(
+                              _vm.checkbox,
+                              "loweredPrice",
+                              $$a.concat([$$v])
+                            )
+                        } else {
+                          $$i > -1 &&
+                            _vm.$set(
+                              _vm.checkbox,
+                              "loweredPrice",
+                              $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                            )
+                        }
+                      } else {
+                        _vm.$set(_vm.checkbox, "loweredPrice", $$c)
+                      }
+                    }
+                  }
+                })
+              ])
             ]),
             _vm._v(" "),
             _c(
@@ -85707,7 +85839,7 @@ var FormHandling = /*#__PURE__*/function () {
   }, {
     key: "patch",
     value: function patch(endpoint) {
-      this.submit(endpoint, 'patch');
+      return this.submit(endpoint, 'patch');
     }
   }, {
     key: "delete",
@@ -85727,7 +85859,7 @@ var FormHandling = /*#__PURE__*/function () {
       this.errors = {}; // Flush the errors
 
       this.reset();
-      return response;
+      return response.data;
     }
   }, {
     key: "onFail",

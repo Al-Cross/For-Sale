@@ -85,14 +85,18 @@ class UserDashboardTest extends TestCase
             'password_confirmation' => 'MyPassword'
         ]);
 
-        $this->assertDatabaseHas('notification_settings', ['new_message' => true]);
+        $this->assertDatabaseHas('notification_settings',
+            ['new_message' => true, 'lowered_price' => true]
+        );
 
         $this->patch(
             '/myaccount/settings/notifications',
-            ['newMessage' => false]
+            ['newMessage' => false, 'loweredPrice' => false]
         );
 
-        $this->assertDatabaseHas('notification_settings', ['new_message' => false]);
+        $this->assertDatabaseHas('notification_settings',
+            ['new_message' => false, 'lowered_price' => false]
+        );
         $this->assertFalse(auth()->user()->notificationSettings->new_message);
     }
     /**

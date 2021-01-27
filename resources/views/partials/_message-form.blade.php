@@ -4,6 +4,22 @@
 
 		<div class="form-group-row">
 			<div class="col-md-12">
+				<div class="d-flex justify-content-between">
+					<div class="p-2 mb-2">
+	        			<img src="{{ asset('/storage/' . $ad->owner->avatar) }}" width="100" height="100" class="mr-2 rounded">
+		        		<span class="font-weight-bold alert">{{ $ad->owner->name }}</span>
+	        		</div>
+						<i class="fas fa-phone-square-alt fa-2x pt-4 mr-3"></i>
+
+					<div class="pt-4">
+						<div id="dummy">
+							<span>(XX) XXXXXXX</span>
+							<button type="button" class="btn btn-primary rounded" onclick="show();">Show</button>
+						</div>
+						<span id="phone" class="font-weight-bold">{{ $ad->owner->phone }}</span>
+					</div>
+				</div>
+
 				<label for="subject">Subject</label>
 				<input type="text"
 						name="subject"

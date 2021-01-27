@@ -19,7 +19,7 @@ class AdSearch
     {
         $query = static::applyDecoratorsFromRequest($filters, (new Ad)->newQuery());
 
-        return $query;
+        return $query->get();
     }
 
     /**
@@ -39,7 +39,7 @@ class AdSearch
             }
         }
 
-        return $query->all();
+        return $query;
     }
 
     /**

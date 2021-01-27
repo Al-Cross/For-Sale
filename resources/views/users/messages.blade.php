@@ -24,7 +24,7 @@
             <tabs>
                 <tab name="Inbox" :selected="true">
                     @forelse($inbox as $message)
-                        <div class="flex p-2 border-success bg-white rounded mb-4 mt-2">
+                        <div class="flex p-3 border-success bg-white rounded mb-4 mt-2">
                             <div class="d-flex justify-content-between align-items-end border-bottom rounded mb-4 card-header">
                                 <h6 class="font-weight-bold">
                                     @if ($message->message->ad)
@@ -48,7 +48,7 @@
                                 </form>
                             </div>
                             <h6 class="font-weight-bold mb-4">{{ $message->message->subject }}</h6>
-                            <p class="text-xs">{{ $message->message->body }}</p>
+                            <p>{{ $message->message->body }}</p>
                             <div class="border-top mb-4">
                                 <reply :parentmessage="{{ json_encode($message->message) }}" class="mt-3"></reply>
                             </div>
@@ -60,7 +60,7 @@
 
                 <tab name="Sent">
                     @forelse($sent as $message)
-                        <div class="flex p-2 border-success bg-white rounded mb-4 mt-2">
+                        <div class="flex p-3 border-success bg-white rounded mb-4 mt-2">
                             <div class="d-flex justify-content-between align-items-end border-bottom rounded mb-4 card-header">
                                 <h6 class="font-weight-bold">
                                     @if ($message->message->ad)
@@ -84,7 +84,7 @@
                                 </form>
                             </div>
                             <h6 class="font-weight-bold mb-4">{{ $message->message->subject }}</h6>
-                            <p class="text-xs">{{ $message->message->body }}</p>
+                            <p>{{ $message->message->body }}</p>
                             <div class="border-top mb-4"></div>
                         </div>
                     @empty
@@ -94,7 +94,7 @@
 
                  <tab name="Archived">
                     @forelse($archived as $message)
-                        <div class="flex p-2 border-success bg-white rounded mb-4 mt-2">
+                        <div class="flex p-3 border-success bg-white rounded mb-4 mt-2">
                             <div class="d-flex justify-content-between align-items-end border-bottom rounded mb-4 card-header">
                                 <h6 class="font-weight-bold">
                                     @if ($message->message->ad)
@@ -112,7 +112,7 @@
                                 </form>
                             </div>
                             <h6 class="font-weight-bold mb-4">{{ $message->message->subject }}</h6>
-                            <p class="text-xs">{{ $message->message->body }}</p>
+                            <p>{{ $message->message->body }}</p>
                             @if($message->message->creator_id != Auth::id())
                                 <div class="border-top mb-4">
                                     <reply :parentmessage="{{ json_encode($message->message) }}" class="mt-3"></reply>

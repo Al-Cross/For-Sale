@@ -21,14 +21,40 @@ class CategorySearch implements Filter
         if ($value != null) {
             $category = Category::where('id', $value)->first();
 
-            $matchedAds = $builder->get();
-            $builder = $matchedAds->filter(function ($ad) use ($category) {
-                return $category->hasAd($ad);
-            });
+            (new self)->removeBindings($builder);
+
+            $builder->inCategory($category->id);
 
             return $builder;
         }
 
-        return $builder->paginate(20);
+        return $builder;
+    }
+
+    /**
+     * Remove the bindings added in previous filters.
+     * If Distance filter has been applied, the dummy boolean binding has to be removed.
+     * If SearchTerm and City filters have been used,
+     * the function checks for the existence of their bindings and removes them.
+     *
+     * @param Builder $builder $builder
+     *
+     * @return void
+     */
+    private function removeBindings($builder)
+    {
+        $bindings = $builder->getBindings();
+        if (gettype(end($bindings)) != 'boolean') {
+            if (gettype(end($bindings)) === 'integer') {
+                array_pop($bindings);
+            }
+            if (gettype(end($bindings)) === 'string') {
+                array_pop($bindings);
+            }
+            $builder->setBindings($bindings);
+        } else {
+            array_pop($bindings);
+            $builder->setBindings($bindings);
+        }
     }
 }

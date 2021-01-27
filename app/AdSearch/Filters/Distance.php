@@ -36,7 +36,8 @@ class Distance implements Filter
             $builder = $attributes['searchInput']
                 ? Ad::whereIn('city_id', $cities)
                     ->search($attributes['searchInput'], null, null, true)
-                : Ad::whereIn('city_id', $cities);
+                    ->addBinding(true)
+                : Ad::whereIn('city_id', $cities)->addBinding(true);
 
             return $builder;
         }

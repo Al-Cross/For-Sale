@@ -25,6 +25,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         NewMessageReceived::class => [
             SendNewMessageNotification::class
+        ],
+        LoweredPrice::class => [
+            SendLoweredPriceEmail::class
         ]
     ];
 

@@ -25,14 +25,16 @@ class NotificationsController extends Controller
     public function update(Request $request)
     {
         $value = $request->validate([
-            'newMessage' => 'boolean'
+            'newMessage' => 'boolean',
+            'loweredPrice' => 'boolean'
         ]);
 
         $request->user()->notificationSettings()->update([
-            'new_message' => $value['newMessage']
+            'new_message' => $value['newMessage'],
+            'lowered_price' => $value['loweredPrice']
         ]);
 
-        return response([], 204);
+        return response(['Your preferences have been updated!'], 201);
     }
     /**
      * Mark a notification as read.
@@ -44,5 +46,14 @@ class NotificationsController extends Controller
         $user = Auth::user();
 
         $user->notifications()->findOrFail($id)->markAsRead();
+    }
+
+    public function destroyAll()
+    {
+        $user = Auth::user();
+
+        $user->notifications->map(function($notification) {
+            $notification->markAsRead();
+        });
     }
 }

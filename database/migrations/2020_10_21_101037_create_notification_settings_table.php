@@ -17,6 +17,7 @@ class CreateNotificationSettingsTable extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->boolean('new_message')->default(true);
+            $table->boolean('lowered_price')->default(true);
             $table->timestamps();
 
             $table->foreign('user_id')

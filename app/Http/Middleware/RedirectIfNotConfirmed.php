@@ -18,7 +18,7 @@ class RedirectIfNotConfirmed
         $user = $request->user();
 
         if (! $user->confirmed) {
-            return redirect('/myaccount')
+            return back()
                 ->with('flash', 'You must first confirm your email address.');
         }
 

@@ -14,11 +14,11 @@
 </template>
 <script>
 export default {
-    props: ['errors'],
+    props: ['errors', 'selectedCity'],
 
     data() {
         return {
-            query: new URL(location.href).searchParams.get('city'),
+            query: this.prefill(),
             results: [],
             displayResults: false,
             validationMessage: false
@@ -26,10 +26,15 @@ export default {
     },
 
     mounted() {
-        if (Object.keys(this.errors).length !== 0) {
-            this.validationMessage = this.errors.city[0];
+        if (!this.selectedCity) {
+             if (Object.keys(this.errors).length !== 0) {
+                this.validationMessage = this.errors.city[0];
+            }
         }
-        document.getElementById('distance').disabled = true;
+
+        if (this.query == '') {
+            document.getElementById('distance').disabled = true;
+        }
     },
 
     methods: {
@@ -40,6 +45,8 @@ export default {
                     this.results = response.data;
                     this.displayResults = true;
                 });
+
+                document.getElementById('distance').disabled = false;
             } else {
                 document.getElementById('distance').disabled = true;
             }
@@ -49,6 +56,10 @@ export default {
             this.query = city;
             this.displayResults = false;
             document.getElementById('distance').disabled = false;
+        },
+
+        prefill() {
+            return this.selectedCity ? this.selectedCity : new URL(location.href).searchParams.get('city');
         }
     }
  };

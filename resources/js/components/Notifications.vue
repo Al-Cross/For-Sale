@@ -9,17 +9,20 @@
             <li class="app-notification__title" v-if="notifications.length == 0">
                 <p>No new notifications.</p>
             </li>
+            <li class="app-notification__title font-weight-bold" v-if="notifications.length > 0">
+                <a href="#" class="text-black" @click="markAllAsRead">Mark All As Read</a>
+            </li>
             <div class="app-notification__content" v-for="notification in notifications">
                 <li>
-                    <a class="app-notification__item" :href="notification.data.link" @click="markAsRead(notification)">
+                    <a class="app-notification__item d-flex" :href="notification.data.link" @click="markAsRead(notification)">
                         <span class="app-notification__icon">
                             <span class="fa-stack fa-lg">
                                 <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
                             </span>
                         </span>
                         <div>
-                            <p class="app-notification__message" v-text="notification.data.message"></p>
-                            <p class="app-notification__meta">{{ time(notification.created_at) }}</p>
+                            <p class="app-notification__message font-weight-bold" v-text="notification.data.message"></p>
+                            <p class="app-notification__meta text-xs">{{ time(notification.created_at) }}</p>
                         </div>
                     </a>
                 </li>
@@ -37,18 +40,21 @@ export default {
 	},
 
 	created() {
-        if (window.location.pathname == '/myaccount/messages') {
-           this.notifications = [];
-        } else {
-             axios.get('/myaccount/notifications')
-                .then(response => this.notifications = response.data);
-        }
+         axios.get('/myaccount/notifications')
+            .then(response => this.notifications = response.data);
 	},
 
 	methods: {
 		markAsRead(notification) {
 			axios.delete(`/myaccount/${notification.id}`);
 		},
+
+        markAllAsRead() {
+            if (this.notifications.length > 0) {
+                axios.delete('/myaccount/mark-all')
+                .then(this.notifications = []);
+            }
+        },
 
         time(created_at) {
             return 'Received ' + moment(created_at).fromNow();
@@ -145,5 +151,9 @@ export default {
 
     .app-notification__message {
       line-height: 1.2;
+    }
+
+    .text-xs {
+      font-size: 12px;
     }
 </style>

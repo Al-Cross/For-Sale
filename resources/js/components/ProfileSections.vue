@@ -102,11 +102,29 @@
 	    			aria-expanded="false">Notifications</button>
 	    	<div class="dropdown-menu w-100 p-4">
 	    		<form @submit.prevent="submit('checkbox')">
-	    			<div class="form-group">
-    					<label for="new-message" class="mr-custom">New Messages</label>
-    					<input type="checkbox" name="notifications" v-model="checkbox.newMessage"><br>
-	    				<small>Notifications by email about new messages on your ads</small>
-	        			<small class="text-danger" v-if="checkbox.errors.newMessage" v-text="checkbox.errors.newMessage[0]"></small>
+	    			<div class="row">
+	    				<div class="col">
+	    					<div class="form-group">
+		    					<label for="new-message" class="mr-custom">New Messages</label>
+			    				<small>Notifications by email about new messages on your ads</small><br>
+			        			<small class="text-danger" v-if="checkbox.errors.newMessage" v-text="checkbox.errors.newMessage[0]"></small>
+			    			</div>
+	    				</div>
+	    				<div class="col">
+		    				<input type="checkbox" name="notifications" v-model="checkbox.newMessage">
+	    				</div>
+	    			</div>
+	    			<div class="row">
+	    				<div class="col">
+	    					<div class="form-group">
+		    					<label for="lower-price" class="mr-custom">Lower Prices</label>
+			    				<small>Notifications by email about lowered prices on observed ads.</small><br>
+			        			<small class="text-danger" v-if="checkbox.errors.loweredPrice" v-text="checkbox.errors.loweredPrice[0]"></small>
+			    			</div>
+	    				</div>
+	    				<div class="col">
+							<input type="checkbox" name="notifications" v-model="checkbox.loweredPrice">
+	    				</div>
 	    			</div>
 	    			<button type="submit" class="btn btn-primary rounded">Save</button>
 	    		</form>
@@ -170,6 +188,7 @@ export default {
 			}),
 			checkbox: new FormHandling({
 				newMessage: this.user.notification_settings.new_message,
+				loweredPrice: this.user.notification_settings.lowered_price,
 				endpoint: '/myaccount/settings/notifications'
 			}),
 			deleteProfile: new FormHandling({
@@ -182,21 +201,19 @@ export default {
 	methods: {
 		submit(formType) {
 			if (formType != 'deleteProfile') {
-				this[formType].patch(this[formType].endpoint);
+				var response = this[formType].patch(this[formType].endpoint);
 
-				this.feedback(this[formType]);
+				response.catch((error) => {
+					flash('Oops, something went wrong! Try again!', 'danger');
+				})
+				.then((message) => {
+					flash(message[0]);
+				});
 			} else if (formType == 'deleteProfile') {
 				this[formType].post(this[formType].endpoint);
 
 				window.location.href = '/myaccount/settings/email-sent';
 			}
-		},
-
-		feedback(form) {
-			setTimeout(() => {
-				if (Object.keys(form.errors).length !== 0) return;
-				flash('Your new profile data has been saved.');
-			}, 500);
 		},
 
 		empty(fieldName) {

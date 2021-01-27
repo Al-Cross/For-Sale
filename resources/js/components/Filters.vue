@@ -47,7 +47,7 @@
 		</div>
 		<div class="lds-hourglass mt-5" v-if="isLoading"></div>
 		<tabs @active="toggleCollections" v-show="!isLoading">
-			<tab name="Private" :selected="true">
+			<tab name="Private" :selected="filter.privateAds.length > 0 ? true : false">
 				<featured-ad-card :ads="filter.filteredFeaturedPrivate ? filter.filteredFeaturedPrivate : filter.privateFeatured">
 				</featured-ad-card>
 
@@ -57,7 +57,7 @@
 					</div>
 				</div>
 			</tab>
-			<tab name="Business">
+			<tab name="Business" :selected="filter.privateAds.length == 0 ? true : false">
 				<featured-ad-card :ads="filter.filteredFeaturedBusiness ? filter.filteredFeaturedBusiness : filter.businessFeatured">
 				</featured-ad-card>
 
@@ -115,6 +115,9 @@ export default {
 	created() {
 		if (! this.section) {
 			this.groupBy();
+		}
+		if (this.filter.business.length == 0) {
+			this.filter.empty = true;
 		}
 	},
 

@@ -53,6 +53,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
     Route::delete('/messages/{message}/delete-received', 'MessagesController@destroyReceived')->name('delete-from-inbox');
     Route::delete('/messages/{message}/delete-sent', 'MessagesController@destroySent')->name('delete-from-sent');
     Route::delete('/messages/{message}/delete-archived', 'ArchiveController@destroyMessage')->name('delete-from-archived');
+    Route::delete('/mark-all', 'NotificationsController@destroyAll');
     Route::delete('/{notification}', 'NotificationsController@destroy')->name('destroy-notif');
     Route::delete('/settings/{user}/logos/delete', 'ImageUploadsController@destroy')->middleware('must-be-confirmed');
     Route::delete('/images/{image}/delete', 'ImageUploadsController@deleteAdImage')->name('delete_ad_image');

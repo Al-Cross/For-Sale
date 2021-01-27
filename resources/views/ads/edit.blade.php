@@ -112,7 +112,7 @@
                                     id="radioBusiness"
                                     value="business"
                                     autofocus
-                                    {{ $ad->delivery === 'business' ? 'checked' : '' }}><label for="radioBusiness">Business</label>
+                                    {{ $ad->type === 'business' ? 'checked' : '' }}><label for="radioBusiness">Business</label>
                         </div>
                         @error('type')
                             <span class="invalid-feedback" role="alert">
@@ -190,7 +190,7 @@
                 <div class="form-group row">
                     <div class="col-md-12">
                         <label for="city">City</label>
-                        <autocomplete style="z-index: 1000;"></autocomplete>
+                        <autocomplete :errors="{{ $errors }}" :selected-city="'{{ $ad->city->city }}'" style="z-index: 1000;"></autocomplete>
                     </div>
                 </div>
                 <br>

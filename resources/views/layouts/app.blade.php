@@ -26,5 +26,6 @@
 
     <script src="{{ asset('frontend/js/main.js') }}"></script>
     @include('partials._scripts')
+    @yield('scripts')
 </body>
 </html>

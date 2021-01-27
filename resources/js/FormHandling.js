@@ -23,7 +23,7 @@ class FormHandling {
 	}
 
 	patch(endpoint) {
-		this.submit(endpoint, 'patch');
+		return this.submit(endpoint, 'patch');
 	}
 
 	delete(endpoint) {
@@ -42,7 +42,7 @@ class FormHandling {
 
 		this.reset();
 
-		return response;
+		return response.data;
 	}
 
 	onFail(error) {

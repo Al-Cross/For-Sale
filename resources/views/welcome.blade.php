@@ -141,7 +141,11 @@
 
                 <div class="row mt-5">
                     @foreach($ads as $ad)
-                       <x-ad-card :ad="$ad"></x-ad-card>
+                        <div class="col-lg-6">
+                            <div class="d-block d-md-flex listing vertical">
+                               <x-ad-card :ad="$ad"></x-ad-card>
+                           </div>
+                       </div>
                     @endforeach
                 </div>
                 {{ $ads->links() }}

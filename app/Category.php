@@ -29,15 +29,4 @@ class Category extends Model
     {
         return $this->hasManyThrough(Ad::class, Section::class);
     }
-
-     /**
-     * Check if the category contains the given ad.
-     *
-     * @param  App\Ad  $ad
-     * @return boolean
-     */
-    public function hasAd($ad)
-    {
-        return $this->ads->contains($ad);
-    }
 }

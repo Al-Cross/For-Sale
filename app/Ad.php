@@ -15,7 +15,7 @@ class Ad extends Model
         'archived' => 'boolean',
         'featured' => 'boolean'
     ];
-    protected $with = ['section', 'section.category:id,name,slug', 'images', 'city:id,city'];
+    protected $with = ['section', 'observed', 'section.category:id,name,slug', 'images', 'city:id,city'];
     /**
      * Searchable rules.
      *
@@ -52,6 +52,7 @@ class Ad extends Model
             $builder->with('observed');
         });
     }
+
     /**
      * The URL to the resource.
      *
@@ -217,6 +218,21 @@ class Ad extends Model
     public function scopeFeatured($query)
     {
         return $query->where('featured', true);
+    }
+
+    /**
+     * Scope a query to check if the ad belongs to a category.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $categoryId
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeInCategory($query, $categoryId)
+    {
+        return $query->whereHas('section.category', function($q) use ($categoryId) {
+            $q->where('id', $categoryId);
+        });
     }
 
     /**

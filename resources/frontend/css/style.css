@@ -1762,3 +1762,7 @@ h1, h2, h3, h4, h5,
     color: #000;
     font-weight: bold;
 }
+
+.text-xs {
+  font-size: 12px;
+}

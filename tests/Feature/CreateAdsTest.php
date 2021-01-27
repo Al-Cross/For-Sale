@@ -35,7 +35,6 @@ class CreateAdsTest extends TestCase
         $ad = make('App\Ad');
 
         $this->post(route('create_ad'), $ad->toArray())
-            ->assertRedirect(route('profile'))
             ->assertSessionHas('flash', 'You must first confirm your email address.');
     }
     /**
