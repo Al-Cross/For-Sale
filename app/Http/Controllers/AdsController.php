@@ -78,13 +78,14 @@ class AdsController extends Controller
             'user_id' => auth()->id(),
             'city_id' => $city_id,
             'title' => $data['title'],
-            'slug' => Str::slug($data['title']),
             'description' => $data['description'],
             'price' => $data['price'],
             'type' => $data['type'],
             'condition' => $data['condition'],
             'delivery' => $data['delivery']
         ]);
+
+        $ad->createSlug($data['title']);
 
         auth()->user()->updateAdLimit();
 

@@ -19,3 +19,4 @@ mix.js('resources/js/app.js', 'public/js')
 mix.js('resources/js/user.js', 'public/js')
 	.sass('resources/frontend/scss/animate-buttons.scss', 'public/css');
 
+mix.js('resources/js/tooltip.js', 'public/js');

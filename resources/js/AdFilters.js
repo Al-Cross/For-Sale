@@ -27,6 +27,35 @@ class AdFilters {
 		});
 	}
 
+	deliveryFilter(collection, featuredCollection) {
+		if (this.delivery == 'all') {
+			this[this.collections.filteredAds] = collection;
+			this[this.collections.filteredFeatured] = featuredCollection;
+
+			return;
+		}
+
+		this[this.collections.filteredAds] = collection.filter((ad) => {
+			return ad.delivery == this.delivery;
+		});
+
+		this[this.collections.filteredFeatured] = featuredCollection.filter((feature) => {
+			return feature.delivery == this.delivery;
+		});
+	}
+
+	conditionFilter(collection, featuredCollection) {
+		if (this.condition == 'any') return;
+
+		this[this.collections.filteredAds] = collection.filter((ad) => {
+			return ad.condition == this.condition;
+		});
+
+		this[this.collections.filteredFeatured] = featuredCollection.filter((feature) => {
+			return feature.condition == this.condition;
+		});
+	}
+
 	groupBy(values) {
 		for (var attribute in this.indexedCategories) delete this.indexedCategories[attribute];
 		this.categories = [];

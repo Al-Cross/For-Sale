@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Ad;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -73,6 +74,18 @@ class CreateAdsTest extends TestCase
 
         $this->postJson(route('create_ad'), $ad->toArray())
             ->assertStatus(422);
+    }
+    /**
+     * @test
+     */
+    public function an_ad_requires_a_unique_slug()
+    {
+        $this->signIn();
+        $ad = create('App\Ad', ['title' => 'Foo Title', 'slug' => 'foo-title']);
+
+        $this->postAd(['title' => 'Foo Title', 'city' => create('App\City')->city]);
+
+        $this->assertTrue(Ad::whereSlug("foo-title-$ad->id")->exists());
     }
     /**
      * @test

@@ -19,7 +19,7 @@ class CreateAdsTable extends Migration
             $table->foreignId('user_id');
             $table->foreignId('city_id');
             $table->string('title');
-            $table->string('slug');
+            $table->string('slug')->unique()->nullable();
             $table->text('description');
             $table->decimal('price', 8, 2);
             $table->enum('type', ['private', 'business']);

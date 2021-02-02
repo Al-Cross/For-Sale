@@ -10,7 +10,14 @@
 	                <div class="lh-content">
 	                    <span class="category">{{ ad.section.category.name }}</span>
 	                    <span class="listings-single">€{{ ad.price }}</span>
-	                    <favourite :ad="ad" @deleted="reemit(index)" :key="ad.id"></favourite>
+	                    <favourite v-if="signedIn" :ad="ad" @deleted="reemit(index)" :key="ad.id"></favourite>
+	                    <div v-else>
+	                    	<a href="/login" :id="'unique_' + ad.slug" class="bookmark"><span class="icon-heart"></span></a>
+					    	<span :id="'unique_' + ad.id" role="tooltip">
+						    	Log in to observe this ad
+								<div id="arrow" data-popper-arrow></div>
+						    </span>
+	                    </div>
 	                    <h3><a :href="'/' + ad.section.category.slug + '/' + ad.section.slug + '/' + ad.slug">
 		                    {{ ad.title }}
 		                </a></h3>
@@ -29,6 +36,7 @@
 
 <script>
 import pagination from '../../mixins/pagination';
+import popperTooltip from '../../PopperTooltip';
 
 export default {
 	props: ['ads'],
@@ -36,7 +44,25 @@ export default {
 	mixins: [pagination],
 
 	data() {
-		return { perPage: 20 };
+		return {
+			perPage: 20,
+			signedIn: window.App.signedIn
+		};
+	},
+
+	mounted() {
+		this.ads.forEach(ad => {
+			var button = document.querySelector(`#unique_${ad.slug}`);
+			var tooltip = document.querySelector(`#unique_${ad.id}`);
+
+			popperTooltip(button, tooltip);
+		});
+	},
+
+	watch: {
+		ads() {
+			this.pageNumber = 0;
+		}
 	},
 
 	methods: {

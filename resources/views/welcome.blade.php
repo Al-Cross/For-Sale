@@ -154,7 +154,11 @@
 
         <flash message="{{ session('flash') }}"></flash>
     </div>
-
+    <script>
+        var ads = @json($ads);
+        var featured = @json($featured);
+    </script>
+    <script type="module" src="{{ mix('/js/tooltip.js') }}"></script>
     <script src="{{ mix('/js/app.js') }}"></script>
     @include('partials.footer')
     <script src="{{ asset('frontend/js/main.js') }}"></script>

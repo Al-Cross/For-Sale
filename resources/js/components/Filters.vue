@@ -8,25 +8,38 @@
 				<span v-else>{{ section.name }}</span>
 				<small class="p-1 ml-2 mr-5 rounded" style="background-color: aliceblue;">{{ count }}</small>
 			</span>
-
+			<br>
 			Price:
 			<input type="text"
 				v-model="filter.minimum"
 				@keyup="stoppedTyping"
-				class="form-control-sm ml-1 text-center text-size-sm"
+				class="form-control-sm ml-1 mt-4 text-center text-size-sm"
 				style="width: 70px;"
 				placeholder="from">
 			<input type="text"
 				v-model="filter.maximum"
 				@keyup="stoppedTyping"
-				class="form-control-sm ml-1 mr-5 text-center text-size-sm"
+				class="form-control-sm ml-1 mr-3 text-center text-size-sm"
 				style="width: 70px;"
 				placeholder="to">
 			Sort By:
-			<select v-model="filter.sortOrder" @change="stoppedTyping" class="form-control-sm ml-2">
+			<select v-model="filter.sortOrder" @change="stoppedTyping" class="form-control-sm ml-2 mr-3">
 				<option value="newFirst">Newest</option>
 				<option value="descending">Price Descending</option>
 				<option value="ascending">Price Ascending</option>
+			</select>
+			Delivery is on:
+			<select v-model="filter.delivery" @change="stoppedTyping" class="form-control-sm ml-2 mr-3">
+				<option value="all">All</option>
+				<option value="buyer">Buyer</option>
+				<option value="seller">Seller</option>
+				<option value="personal handover">Personal Handover</option>
+			</select>
+			Condition:
+			<select v-model="filter.condition" @change="stoppedTyping" class="form-control-sm ml-2">
+				<option value="any">Any</option>
+				<option value="new">New</option>
+				<option value="used">Used</option>
 			</select>
 			<div v-if="section && section.sections" class="mt-2">
 				<a v-for="item in section.sections"
@@ -40,7 +53,7 @@
 						class="mr-1"
 					>
 						{{ category.name }}
-						<small class="p-1 ml-2 mr-5 rounded" style="background-color: aliceblue;">{{ category.ads.length }}</small>
+						<small class="p-1 ml-2 mr-5 rounded" style="background-color: aliceblue;" v-text="adsCount"></small>
 					</a>
 				</span>
 			</div>
@@ -56,6 +69,8 @@
 						<ad-card :ads="filter.filteredPrivate ? filter.filteredPrivate : filter.privateAds"></ad-card>
 					</div>
 				</div>
+
+				<div v-if="filter.empty">There are no items matching the given criteria. Try to expand the filters.</div>
 			</tab>
 			<tab name="Business" :selected="filter.privateAds.length == 0 ? true : false">
 				<featured-ad-card :ads="filter.filteredFeaturedBusiness ? filter.filteredFeaturedBusiness : filter.businessFeatured">
@@ -101,6 +116,8 @@ export default {
 					filteredFeatured: ''
 				},
 				sortOrder: 'newFirst',
+				delivery: 'all',
+				condition: 'any',
 				empty: false,
 				indexedCategories: {},
 				categories: []
@@ -108,7 +125,8 @@ export default {
 			timeout: '',
 			isLoading: false,
 			query: new URL(location.href).searchParams.get('searchTerm'),
-			city: new URL(location.href).searchParams.get('city')
+			city: new URL(location.href).searchParams.get('city'),
+			adsCount: ''
 		};
 	},
 
@@ -132,8 +150,10 @@ export default {
 				filteredFeatured: 'filteredFeatured' + tabName
 			};
 
+			this.adsFound();
+
 			if (shouldFilter) {
-				this.minimumPrice();
+				this.filterDelivery();
 			}
 		},
 
@@ -149,7 +169,7 @@ export default {
 			this.isLoading = true;
 			this.timeout = setTimeout(() => {
 				if (expression1 == undefined) {
-					this.minimumPrice();
+					this.filterDelivery();
 				}
 				expression1;
 				expression2;
@@ -161,11 +181,32 @@ export default {
 			this.loading();
 		},
 
-		minimumPrice() {
+		filterDelivery() {
+			this.filter.deliveryFilter(
+				this.filter[this.filter.collections.normalAds],
+				this.filter[this.filter.collections.featuredAds],
+			);
+
+			this.filterCondition(
+				this.filter[this.filter.collections.filteredAds],
+				this.filter[this.filter.collections.filteredFeatured]
+			);
+		},
+
+		filterCondition(filteredAds, filteredFeatured) {
+			this.filter.conditionFilter(filteredAds, filteredFeatured);
+
+			this.minimumPrice(
+				this.filter[this.filter.collections.filteredAds],
+				this.filter[this.filter.collections.filteredFeatured]
+			);
+		},
+
+		minimumPrice(filteredAds, filteredFeatured) {
 			if (this.filter.minimum) {
 				this.filter.priceFilter(
-					this.filter[this.filter.collections.normalAds],
-					this.filter[this.filter.collections.featuredAds],
+					filteredAds,
+					filteredFeatured,
 					this.filter.minimum,
 					function(adPrice, userInput) { return adPrice >= userInput }
 				);
@@ -175,11 +216,9 @@ export default {
 					this.filter[this.filter.collections.filteredFeatured]
 				);
 			} else {
-				this.reset();
-
 				this.maxPrice(
-					this.filter[this.filter.collections.normalAds],
-					this.filter[this.filter.collections.featuredAds]
+					this.filter[this.filter.collections.filteredAds],
+					this.filter[this.filter.collections.filteredFeatured]
 				);
 			}
 		},
@@ -208,11 +247,18 @@ export default {
 			}
 
 			this.filter.sortFilter(filteredAds, filteredFeatured);
+			this.adsFound();
 		},
 
-		reset() {
-			this.filter[this.filter.collections.filteredAds] = null;
-			this.filter[this.filter.collections.filteredFeatured] = null;
+		adsFound() {
+			let filteredAds = this.filter[this.filter.collections.filteredAds];
+			let filteredFeaturedAds = this.filter[this.filter.collections.filteredFeatured];
+			let originalAds = this.filter[this.filter.collections.normalAds];
+			let originalFeaturedAds = this.filter[this.filter.collections.featuredAds];
+
+			this.adsCount = filteredAds || filteredFeaturedAds
+				? filteredAds.length + filteredFeaturedAds.length
+				: originalAds.length + originalFeaturedAds.length;
 		}
 	}
 };

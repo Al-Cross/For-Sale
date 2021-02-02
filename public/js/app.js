@@ -5023,7 +5023,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _popperjs_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @popperjs/core */ "./node_modules/@popperjs/core/lib/index.js");
+/* harmony import */ var _PopperTooltip__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../PopperTooltip */ "./resources/js/PopperTooltip.js");
 //
 //
 //
@@ -5042,7 +5042,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       active: this.ad.isBeingObserved,
-      title: this.generateString()
+      title: 'unique_' + this.ad.slug
     };
   },
   computed: {
@@ -5057,44 +5057,7 @@ __webpack_require__.r(__webpack_exports__);
     var title = this.title;
     var button = document.querySelector("#unique".concat(this.ad.id));
     var tooltip = document.querySelector("#".concat(title));
-    var popperInstance = null;
-
-    function create() {
-      popperInstance = Object(_popperjs_core__WEBPACK_IMPORTED_MODULE_0__["createPopper"])(button, tooltip, {
-        modifiers: [{
-          name: 'offset',
-          options: {
-            offset: [0, 8]
-          }
-        }]
-      });
-    }
-
-    function destroy() {
-      if (popperInstance) {
-        popperInstance.destroy();
-        popperInstance = null;
-      }
-    }
-
-    function show() {
-      tooltip.setAttribute('data-show', '');
-      create();
-    }
-
-    function hide() {
-      tooltip.removeAttribute('data-show');
-      destroy();
-    }
-
-    var showEvents = ['mouseenter', 'focus'];
-    var hideEvents = ['mouseleave', 'blur'];
-    showEvents.forEach(function (event) {
-      button.addEventListener(event, show);
-    });
-    hideEvents.forEach(function (event) {
-      button.addEventListener(event, hide);
-    });
+    Object(_PopperTooltip__WEBPACK_IMPORTED_MODULE_0__["default"])(button, tooltip);
   },
   methods: {
     toggle: function toggle() {
@@ -5115,10 +5078,6 @@ __webpack_require__.r(__webpack_exports__);
       }).then(flash('The selected ad is no longer observed.'));
       this.active = false;
       this.$emit('deleted');
-    },
-    generateString: function generateString() {
-      // Adding +1 to Math.random() prevents the rare case where the expression in concat() returns an empty string
-      return 'unique_' + this.ad.title.replace(/[ ]+/g, '').concat((Math.random() + 1).toString(36).substring(7));
     }
   }
 });
@@ -5143,6 +5102,21 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5245,6 +5219,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           filteredFeatured: ''
         },
         sortOrder: 'newFirst',
+        delivery: 'all',
+        condition: 'any',
         empty: false,
         indexedCategories: {},
         categories: []
@@ -5252,7 +5228,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       timeout: '',
       isLoading: false,
       query: new URL(location.href).searchParams.get('searchTerm'),
-      city: new URL(location.href).searchParams.get('city')
+      city: new URL(location.href).searchParams.get('city'),
+      adsCount: ''
     };
   },
   created: function created() {
@@ -5273,9 +5250,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         filteredAds: 'filtered' + tabName,
         filteredFeatured: 'filteredFeatured' + tabName
       };
+      this.adsFound();
 
       if (shouldFilter) {
-        this.minimumPrice();
+        this.filterDelivery();
       }
     },
     groupBy: function groupBy() {
@@ -5291,7 +5269,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.isLoading = true;
       this.timeout = setTimeout(function () {
         if (expression1 == undefined) {
-          _this.minimumPrice();
+          _this.filterDelivery();
         }
 
         expression1;
@@ -5302,15 +5280,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     stoppedTyping: function stoppedTyping() {
       this.loading();
     },
-    minimumPrice: function minimumPrice() {
+    filterDelivery: function filterDelivery() {
+      this.filter.deliveryFilter(this.filter[this.filter.collections.normalAds], this.filter[this.filter.collections.featuredAds]);
+      this.filterCondition(this.filter[this.filter.collections.filteredAds], this.filter[this.filter.collections.filteredFeatured]);
+    },
+    filterCondition: function filterCondition(filteredAds, filteredFeatured) {
+      this.filter.conditionFilter(filteredAds, filteredFeatured);
+      this.minimumPrice(this.filter[this.filter.collections.filteredAds], this.filter[this.filter.collections.filteredFeatured]);
+    },
+    minimumPrice: function minimumPrice(filteredAds, filteredFeatured) {
       if (this.filter.minimum) {
-        this.filter.priceFilter(this.filter[this.filter.collections.normalAds], this.filter[this.filter.collections.featuredAds], this.filter.minimum, function (adPrice, userInput) {
+        this.filter.priceFilter(filteredAds, filteredFeatured, this.filter.minimum, function (adPrice, userInput) {
           return adPrice >= userInput;
         });
         this.maxPrice(this.filter[this.filter.collections.filteredAds], this.filter[this.filter.collections.filteredFeatured]);
       } else {
-        this.reset();
-        this.maxPrice(this.filter[this.filter.collections.normalAds], this.filter[this.filter.collections.featuredAds]);
+        this.maxPrice(this.filter[this.filter.collections.filteredAds], this.filter[this.filter.collections.filteredFeatured]);
       }
     },
     maxPrice: function maxPrice(filteredAds, filteredFeatured) {
@@ -5329,10 +5314,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.filter.sortFilter(filteredAds, filteredFeatured);
+      this.adsFound();
     },
-    reset: function reset() {
-      this.filter[this.filter.collections.filteredAds] = null;
-      this.filter[this.filter.collections.filteredFeatured] = null;
+    adsFound: function adsFound() {
+      var filteredAds = this.filter[this.filter.collections.filteredAds];
+      var filteredFeaturedAds = this.filter[this.filter.collections.filteredFeatured];
+      var originalAds = this.filter[this.filter.collections.normalAds];
+      var originalFeaturedAds = this.filter[this.filter.collections.featuredAds];
+      this.adsCount = filteredAds || filteredFeaturedAds ? filteredAds.length + filteredFeaturedAds.length : originalAds.length + originalFeaturedAds.length;
     }
   }
 });
@@ -5741,6 +5730,14 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins_pagination__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mixins/pagination */ "./resources/js/mixins/pagination.js");
+/* harmony import */ var _PopperTooltip__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../PopperTooltip */ "./resources/js/PopperTooltip.js");
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5771,13 +5768,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['ads'],
   mixins: [_mixins_pagination__WEBPACK_IMPORTED_MODULE_0__["default"]],
   data: function data() {
     return {
-      perPage: 20
+      perPage: 20,
+      signedIn: window.App.signedIn
     };
+  },
+  mounted: function mounted() {
+    this.ads.forEach(function (ad) {
+      var button = document.querySelector("#unique_".concat(ad.slug));
+      var tooltip = document.querySelector("#unique_".concat(ad.id));
+      Object(_PopperTooltip__WEBPACK_IMPORTED_MODULE_1__["default"])(button, tooltip);
+    });
+  },
+  watch: {
+    ads: function ads() {
+      this.pageNumber = 0;
+    }
   },
   methods: {
     mainImage: function mainImage(images) {
@@ -5801,6 +5812,14 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins_pagination__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mixins/pagination */ "./resources/js/mixins/pagination.js");
+/* harmony import */ var _PopperTooltip__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../PopperTooltip */ "./resources/js/PopperTooltip.js");
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5831,13 +5850,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['ads'],
   mixins: [_mixins_pagination__WEBPACK_IMPORTED_MODULE_0__["default"]],
   data: function data() {
     return {
-      perPage: 5
+      perPage: 5,
+      signedIn: window.App.signedIn
     };
+  },
+  mounted: function mounted() {
+    this.paginatedData.forEach(function (ad) {
+      var button = document.querySelector("#unique_".concat(ad.slug));
+      var tooltip = document.querySelector("#unique_".concat(ad.id));
+      Object(_PopperTooltip__WEBPACK_IMPORTED_MODULE_1__["default"])(button, tooltip);
+    });
+  },
+  watch: {
+    ads: function ads() {
+      this.pageNumber = 0;
+    }
   },
   methods: {
     mainImage: function mainImage(images) {
@@ -17356,7 +17389,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.filled {\n\t\tposition: absolute;\n\t\ttop: 20px;\n\t    right: 20px;\n\t    width: 30px;\n\t    height: 30px;\n\t    border-radius: 50%;\n\t    display: inline-block;\n\t    background: rgba(255, 255, 255, 0.3);\n\t    transition: .3s all ease;\n\t\tbackground: #f23a2e;\n\t\tfont-size: 16px;\n}\nspan[id^='unique_'] {\n\t\tdisplay: none;\n        background: #333;\n        color: white;\n        font-weight: bold;\n        padding: 4px 8px;\n        font-size: 13px;\n        border-radius: 4px;\n        z-index: 1000;\n}\nspan[id^='unique_'][data-show] {\n\t  display: block;\n}\n#arrow,\n\t#arrow::before {\n\t  position: absolute;\n\t  width: 8px;\n\t  height: 8px;\n\t  z-index: -1;\n}\n#arrow::before {\n\t  content: '';\n\t  transform: rotate(45deg);\n\t  background: #333;\n}\nspan[id^='unique_'][data-popper-placement^='top'] > #arrow {\n\t  bottom: -4px;\n}\nspan[id^='unique_'][data-popper-placement^='bottom'] > #arrow {\n\t  top: -4px;\n}\nspan[id^='unique_'][data-popper-placement^='left'] > #arrow {\n\t  right: -4px;\n}\nspan[id^='unique_'][data-popper-placement^='right'] > #arrow {\n\t  left: -4px;\n}\n", ""]);
+exports.push([module.i, "\n.filled {\n\tposition: absolute;\n\ttop: 20px;\n    right: 20px;\n    width: 30px;\n    height: 30px;\n    border-radius: 50%;\n    display: inline-block;\n    background: rgba(255, 255, 255, 0.3);\n    transition: .3s all ease;\n\tbackground: #f23a2e;\n\tfont-size: 16px;\n}\n", ""]);
 
 // exports
 
@@ -71001,7 +71034,9 @@ var render = function() {
               )
             ])
           : _vm._e(),
-        _vm._v("\n\n\t\tPrice:\n\t\t"),
+        _vm._v(" "),
+        _c("br"),
+        _vm._v("\n\t\tPrice:\n\t\t"),
         _c("input", {
           directives: [
             {
@@ -71011,7 +71046,7 @@ var render = function() {
               expression: "filter.minimum"
             }
           ],
-          staticClass: "form-control-sm ml-1 text-center text-size-sm",
+          staticClass: "form-control-sm ml-1 mt-4 text-center text-size-sm",
           staticStyle: { width: "70px" },
           attrs: { type: "text", placeholder: "from" },
           domProps: { value: _vm.filter.minimum },
@@ -71035,7 +71070,7 @@ var render = function() {
               expression: "filter.maximum"
             }
           ],
-          staticClass: "form-control-sm ml-1 mr-5 text-center text-size-sm",
+          staticClass: "form-control-sm ml-1 mr-3 text-center text-size-sm",
           staticStyle: { width: "70px" },
           attrs: { type: "text", placeholder: "to" },
           domProps: { value: _vm.filter.maximum },
@@ -71061,7 +71096,7 @@ var render = function() {
                 expression: "filter.sortOrder"
               }
             ],
-            staticClass: "form-control-sm ml-2",
+            staticClass: "form-control-sm ml-2 mr-3",
             on: {
               change: [
                 function($event) {
@@ -71093,6 +71128,94 @@ var render = function() {
             _c("option", { attrs: { value: "ascending" } }, [
               _vm._v("Price Ascending")
             ])
+          ]
+        ),
+        _vm._v("\n\t\tDelivery is on:\n\t\t"),
+        _c(
+          "select",
+          {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filter.delivery,
+                expression: "filter.delivery"
+              }
+            ],
+            staticClass: "form-control-sm ml-2 mr-3",
+            on: {
+              change: [
+                function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.$set(
+                    _vm.filter,
+                    "delivery",
+                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                  )
+                },
+                _vm.stoppedTyping
+              ]
+            }
+          },
+          [
+            _c("option", { attrs: { value: "all" } }, [_vm._v("All")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "buyer" } }, [_vm._v("Buyer")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "seller" } }, [_vm._v("Seller")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "personal handover" } }, [
+              _vm._v("Personal Handover")
+            ])
+          ]
+        ),
+        _vm._v("\n\t\tCondition:\n\t\t"),
+        _c(
+          "select",
+          {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filter.condition,
+                expression: "filter.condition"
+              }
+            ],
+            staticClass: "form-control-sm ml-2",
+            on: {
+              change: [
+                function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.$set(
+                    _vm.filter,
+                    "condition",
+                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                  )
+                },
+                _vm.stoppedTyping
+              ]
+            }
+          },
+          [
+            _c("option", { attrs: { value: "any" } }, [_vm._v("Any")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "new" } }, [_vm._v("New")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "used" } }, [_vm._v("Used")])
           ]
         ),
         _vm._v(" "),
@@ -71138,14 +71261,11 @@ var render = function() {
                       _vm._v(
                         "\n\t\t\t\t\t" + _vm._s(category.name) + "\n\t\t\t\t\t"
                       ),
-                      _c(
-                        "small",
-                        {
-                          staticClass: "p-1 ml-2 mr-5 rounded",
-                          staticStyle: { "background-color": "aliceblue" }
-                        },
-                        [_vm._v(_vm._s(category.ads.length))]
-                      )
+                      _c("small", {
+                        staticClass: "p-1 ml-2 mr-5 rounded",
+                        staticStyle: { "background-color": "aliceblue" },
+                        domProps: { textContent: _vm._s(_vm.adsCount) }
+                      })
                     ]
                   )
                 }),
@@ -71205,7 +71325,15 @@ var render = function() {
                   ],
                   1
                 )
-              ])
+              ]),
+              _vm._v(" "),
+              _vm.filter.empty
+                ? _c("div", [
+                    _vm._v(
+                      "There are no items matching the given criteria. Try to expand the filters."
+                    )
+                  ])
+                : _vm._e()
             ],
             1
           ),
@@ -71676,15 +71804,39 @@ var render = function() {
                     _vm._v("€" + _vm._s(ad.price))
                   ]),
                   _vm._v(" "),
-                  _c("favourite", {
-                    key: ad.id,
-                    attrs: { ad: ad },
-                    on: {
-                      deleted: function($event) {
-                        return _vm.reemit(index)
-                      }
-                    }
-                  }),
+                  _vm.signedIn
+                    ? _c("favourite", {
+                        key: ad.id,
+                        attrs: { ad: ad },
+                        on: {
+                          deleted: function($event) {
+                            return _vm.reemit(index)
+                          }
+                        }
+                      })
+                    : _c("div", [
+                        _c(
+                          "a",
+                          {
+                            staticClass: "bookmark",
+                            attrs: { href: "/login", id: "unique_" + ad.slug }
+                          },
+                          [_c("span", { staticClass: "icon-heart" })]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "span",
+                          { attrs: { id: "unique_" + ad.id, role: "tooltip" } },
+                          [
+                            _vm._v(
+                              "\n\t\t\t\t\t    \tLog in to observe this ad\n\t\t\t\t\t\t\t"
+                            ),
+                            _c("div", {
+                              attrs: { id: "arrow", "data-popper-arrow": "" }
+                            })
+                          ]
+                        )
+                      ]),
                   _vm._v(" "),
                   _c("h3", [
                     _c(
@@ -71825,15 +71977,44 @@ var render = function() {
                   _vm._v("€" + _vm._s(feature.price))
                 ]),
                 _vm._v(" "),
-                _c("favourite", {
-                  key: feature.id,
-                  attrs: { ad: feature },
-                  on: {
-                    deleted: function($event) {
-                      return _vm.reemit(index)
-                    }
-                  }
-                }),
+                _vm.signedIn
+                  ? _c("favourite", {
+                      key: feature.id,
+                      attrs: { ad: feature },
+                      on: {
+                        deleted: function($event) {
+                          return _vm.reemit(index)
+                        }
+                      }
+                    })
+                  : _c("div", [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "bookmark",
+                          attrs: {
+                            href: "/login",
+                            id: "unique_" + feature.slug
+                          }
+                        },
+                        [_c("span", { staticClass: "icon-heart" })]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "span",
+                        {
+                          attrs: { id: "unique_" + feature.id, role: "tooltip" }
+                        },
+                        [
+                          _vm._v(
+                            "\n\t\t\t\t\t    \tLog in to observe this ad\n\t\t\t\t\t\t\t"
+                          ),
+                          _c("div", {
+                            attrs: { id: "arrow", "data-popper-arrow": "" }
+                          })
+                        ]
+                      )
+                    ]),
                 _vm._v(" "),
                 _c("h3", [
                   _c(
@@ -84133,9 +84314,40 @@ var AdFilters = /*#__PURE__*/function () {
       });
     }
   }, {
+    key: "deliveryFilter",
+    value: function deliveryFilter(collection, featuredCollection) {
+      var _this = this;
+
+      if (this.delivery == 'all') {
+        this[this.collections.filteredAds] = collection;
+        this[this.collections.filteredFeatured] = featuredCollection;
+        return;
+      }
+
+      this[this.collections.filteredAds] = collection.filter(function (ad) {
+        return ad.delivery == _this.delivery;
+      });
+      this[this.collections.filteredFeatured] = featuredCollection.filter(function (feature) {
+        return feature.delivery == _this.delivery;
+      });
+    }
+  }, {
+    key: "conditionFilter",
+    value: function conditionFilter(collection, featuredCollection) {
+      var _this2 = this;
+
+      if (this.condition == 'any') return;
+      this[this.collections.filteredAds] = collection.filter(function (ad) {
+        return ad.condition == _this2.condition;
+      });
+      this[this.collections.filteredFeatured] = featuredCollection.filter(function (feature) {
+        return feature.condition == _this2.condition;
+      });
+    }
+  }, {
     key: "groupBy",
     value: function groupBy(values) {
-      var _this = this;
+      var _this3 = this;
 
       for (var attribute in this.indexedCategories) {
         delete this.indexedCategories[attribute];
@@ -84143,17 +84355,17 @@ var AdFilters = /*#__PURE__*/function () {
 
       this.categories = [];
       values.forEach(function (ad) {
-        if (!_this.indexedCategories[ad.section.category.id]) {
-          _this.indexedCategories[ad.section.category.id] = {
+        if (!_this3.indexedCategories[ad.section.category.id]) {
+          _this3.indexedCategories[ad.section.category.id] = {
             id: ad.section.category.id,
             name: ad.section.category.name,
             ads: []
           };
 
-          _this.categories.push(_this.indexedCategories[ad.section.category.id]);
+          _this3.categories.push(_this3.indexedCategories[ad.section.category.id]);
         }
 
-        _this.indexedCategories[ad.section.category.id].ads.push(ad);
+        _this3.indexedCategories[ad.section.category.id].ads.push(ad);
       });
     }
   }, {
@@ -84204,6 +84416,63 @@ var AdFilters = /*#__PURE__*/function () {
 }();
 
 /* harmony default export */ __webpack_exports__["default"] = (AdFilters);
+
+/***/ }),
+
+/***/ "./resources/js/PopperTooltip.js":
+/*!***************************************!*\
+  !*** ./resources/js/PopperTooltip.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _popperjs_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @popperjs/core */ "./node_modules/@popperjs/core/lib/index.js");
+
+
+function popperTooltip(button, tooltip) {
+  var popperInstance = null;
+
+  function create() {
+    popperInstance = Object(_popperjs_core__WEBPACK_IMPORTED_MODULE_0__["createPopper"])(button, tooltip, {
+      modifiers: [{
+        name: 'offset',
+        options: {
+          offset: [0, 8]
+        }
+      }]
+    });
+  }
+
+  function destroy() {
+    if (popperInstance) {
+      popperInstance.destroy();
+      popperInstance = null;
+    }
+  }
+
+  function show() {
+    tooltip.setAttribute('data-show', '');
+    create();
+  }
+
+  function hide() {
+    tooltip.removeAttribute('data-show');
+    destroy();
+  }
+
+  var showEvents = ['mouseenter', 'focus'];
+  var hideEvents = ['mouseleave', 'blur'];
+  showEvents.forEach(function (event) {
+    button.addEventListener(event, show);
+  });
+  hideEvents.forEach(function (event) {
+    button.addEventListener(event, hide);
+  });
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (popperTooltip);
 
 /***/ }),
 

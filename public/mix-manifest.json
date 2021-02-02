@@ -2,5 +2,6 @@
     "/js/app.js": "/js/app.js",
     "/css/bootstrap.css": "/css/bootstrap.css",
     "/css/animate-buttons.css": "/css/animate-buttons.css",
+    "/js/tooltip.js": "/js/tooltip.js",
     "/js/user.js": "/js/user.js"
 }

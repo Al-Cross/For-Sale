@@ -42,6 +42,7 @@
 		        <div class="d-flex justify-content-between">
 		        	<small>Added on: {{ $ad->created_at->format("h:s, d F Y") }}</small>
 		        	<small>Visits: {{ $ad->views }}</small>
+		        	<small>Ad ID: {{ $ad->id }}</small>
 		        </div>
 		        @if(Auth::user() != $ad->owner)
 				    @include('partials._message-form')
@@ -71,6 +72,8 @@
 
 @section('scripts')
 <script>
+	document.documentElement.scrollTop = 0;
+
 	var phone = document.getElementById('phone');
 	phone.style = 'display: none';
 

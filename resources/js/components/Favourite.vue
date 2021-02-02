@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { createPopper } from '@popperjs/core';
+import popperTooltip from '../PopperTooltip';
 
 export default {
 	props: ['ad'],
@@ -19,7 +19,7 @@ export default {
 	data() {
 		return {
 			active: this.ad.isBeingObserved,
-			title: this.generateString()
+			title: 'unique_' + this.ad.slug
 		};
 	},
 
@@ -38,48 +38,7 @@ export default {
 		var button = document.querySelector(`#unique${this.ad.id}`);
 		var tooltip = document.querySelector(`#${title}`);
 
-		let popperInstance = null;
-
-	    function create() {
-	        popperInstance = createPopper(button, tooltip, {
-	          modifiers: [
-	            {
-	              name: 'offset',
-	              options: {
-	                offset: [0, 8],
-	              },
-	            },
-	          ],
-	        });
-	    }
-
-	    function destroy() {
-	        if (popperInstance) {
-	          popperInstance.destroy();
-	          popperInstance = null;
-	        }
-	    }
-
-	    function show() {
-	        tooltip.setAttribute('data-show', '');
-	        create();
-	    }
-
-	    function hide() {
-	        tooltip.removeAttribute('data-show');
-	        destroy();
-	    }
-
-	    const showEvents = ['mouseenter', 'focus'];
-	    const hideEvents = ['mouseleave', 'blur'];
-
-	    showEvents.forEach(event => {
-	        button.addEventListener(event, show);
-	    });
-
-	    hideEvents.forEach(event => {
-	        button.addEventListener(event, hide);
-	      });
+		popperTooltip(button, tooltip);
 	},
 
 	methods: {
@@ -101,11 +60,6 @@ export default {
 			this.active = false;
 
 			this.$emit('deleted');
-		},
-
-		generateString() {
-			// Adding +1 to Math.random() prevents the rare case where the expression in concat() returns an empty string
-			return 'unique_' + this.ad.title.replace(/[ ]+/g, '').concat((Math.random() + 1).toString(36).substring(7));
 		}
 	}
 };
@@ -126,45 +80,5 @@ export default {
 	    transition: .3s all ease;
 		background: #f23a2e;
 		font-size: 16px;
-	}
-	span[id^='unique_'] {
-		display: none;
-        background: #333;
-        color: white;
-        font-weight: bold;
-        padding: 4px 8px;
-        font-size: 13px;
-        border-radius: 4px;
-        z-index: 1000;
-    }
-    span[id^='unique_'][data-show] {
-	  display: block;
-	}
-    #arrow,
-	#arrow::before {
-	  position: absolute;
-	  width: 8px;
-	  height: 8px;
-	  z-index: -1;
-	}
-	#arrow::before {
-	  content: '';
-	  transform: rotate(45deg);
-	  background: #333;
-	}
-	span[id^='unique_'][data-popper-placement^='top'] > #arrow {
-	  bottom: -4px;
-	}
-
-	span[id^='unique_'][data-popper-placement^='bottom'] > #arrow {
-	  top: -4px;
-	}
-
-	span[id^='unique_'][data-popper-placement^='left'] > #arrow {
-	  right: -4px;
-	}
-
-	span[id^='unique_'][data-popper-placement^='right'] > #arrow {
-	  left: -4px;
 	}
 </style>

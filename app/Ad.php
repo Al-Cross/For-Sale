@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Nicolaslopezj\Searchable\SearchableTrait;
@@ -253,5 +254,19 @@ class Ad extends Model
     public function getIsBeingObservedAttribute()
     {
         return $this->isBeingObserved();
+    }
+
+    /**
+     * Create the slug for the ad.
+     *
+     * @param string $value The title of the ad
+     *
+     * @return void
+     */
+    public function createSlug($value)
+    {
+        $slug = Str::slug($value . "-" . $this->id);
+        $this->slug = $slug;
+        $this->save();
     }
 }
