@@ -1,7 +1,7 @@
     <footer class="site-footer">
         <div class="container">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-6">
                             <h2 class="footer-heading mb-4">About</h2>
@@ -25,20 +25,6 @@
                             <a href="#" class="pl-3 pr-3"><span class="icon-linkedin"></span></a>
                           </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <form action="#" method="post">
-                            <div class="input-group mb-3">
-                                <input type="text"
-                                        class="form-control border-secondary text-white bg-transparent"
-                                        placeholder="Search products..."
-                                        aria-label="Enter Email"
-                                        aria-describedby="button-addon2">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary text-white" type="button" id="button-addon2">Search</button>
-                                </div>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>
