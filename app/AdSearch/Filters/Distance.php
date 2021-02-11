@@ -35,7 +35,7 @@ class Distance implements Filter
 
             $builder = $attributes['searchInput']
                 ? Ad::whereIn('city_id', $cities)
-                    ->search($attributes['searchInput'], null, null, true)
+                    ->search($attributes['searchInput'], null, null, true) // full text matches only
                     ->addBinding(true)
                 : Ad::whereIn('city_id', $cities)->addBinding(true);
 
@@ -45,6 +45,14 @@ class Distance implements Filter
         return $builder;
     }
 
+    /**
+     * Fetch the bindings from the query.
+     *
+     * @param Builder $query
+     * @param int $distance
+     *
+     * @return Illuminate\Support\Collection
+     */
     private function getAttributes($query, $distance)
     {
         $distance = $distance * 1000;

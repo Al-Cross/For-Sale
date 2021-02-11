@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="category">
         <div class="row align-items-stretch no-gutters d-md-flex justify-content-center">
             <div class="col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-3 d-block" v-for="category in categories">
                 <div>
@@ -12,13 +12,25 @@
             </div>
         </div>
         <div v-if="showTable">
-            <table id="category" class="w-100">
+            <table class="w-100">
                 <thead>See all in > <a :href="'/' + category.slug" v-text="category.name"></a></thead>
                 <hr>
                 <tbody class="d-md-flex justify-content-between">
-                    <tr v-for="section in sections">
-                        <td><a :href="'/' + category.slug + '/' + section.slug" v-text="'>' + section.name"></a></td>
-                    </tr>
+                    <div class="col">
+                        <tr v-for="section in sliced[0]">
+                            <td class="pb-2"><a :href="'/' + category.slug + '/' + section.slug" v-text="'>' + section.name"></a></td>
+                        </tr>
+                    </div>
+                    <div class="col">
+                        <tr v-for="section in sliced[1]">
+                            <td class="pb-2"><a :href="'/' + category.slug + '/' + section.slug" v-text="'>' + section.name"></a></td>
+                        </tr>
+                    </div>
+                     <div class="col">
+                        <tr v-for="section in sliced[2]">
+                            <td class="pb-2"><a :href="'/' + category.slug + '/' + section.slug" v-text="'>' + section.name"></a></td>
+                        </tr>
+                    </div>
                 </tbody>
             </table>
         </div>
@@ -33,8 +45,24 @@ export default {
         return {
             sections: {},
             category: {},
-            showTable: false
+            showTable: false,
+            sliced: [[], [], []]
         };
+    },
+
+    watch: {
+        sections() {
+            this.sliced = [[], [], []];
+            var itemsInArray = Math.ceil(this.sections.length / 3);
+
+            for (var subArray = 0; subArray < 3; subArray++) {
+                for (var i = 0; i < itemsInArray; i++) {
+                    let value = Object.values(this.sections)[i + subArray * itemsInArray];
+                    if(!value) continue;
+                    this.sliced[subArray].push(value);
+                }
+            }
+        }
     },
 
     methods: {
@@ -42,10 +70,11 @@ export default {
             axios.get('/', {
                 params: {"id": category.id}
             })
-            .then(response => this.sections = response.data);
-
-            this.category = category;
-            this.showTable = true;
+            .then(response => {
+                this.sections = response.data;
+                this.showTable = true;
+                this.category = category;
+            });
         },
 
         setIcon(name) {

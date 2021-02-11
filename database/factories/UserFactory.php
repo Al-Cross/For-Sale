@@ -43,3 +43,7 @@ $factory->state(User::class, 'unconfirmed', function () {
 $factory->afterCreating(User::class, function($user, $faker) {
     $user->balance()->create();
 });
+
+$factory->afterCreating(User::class, function($user, $faker) {
+    $user->notificationSettings()->create();
+});

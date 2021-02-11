@@ -10,6 +10,18 @@ use Illuminate\Http\Request;
 class AddAdsController extends Controller
 {
     /**
+     * Display the resource for membership upgrade.
+     *
+     * @return Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $balance = auth()->user()->balance->getBalance();
+
+        return view('users.upgrade', compact('balance'));
+    }
+
+    /**
      * Upgrade the user to advanced membership.
      *
      * @return Illuminate\Http\Response
@@ -42,7 +54,7 @@ class AddAdsController extends Controller
 
         if (! $result) {
             return back()
-                ->with('flash', 'Unsufficient funds. First load your account.', 'danger');
+                ->with('flash', 'Unsufficient funds. First load your account.');
         }
 
         return redirect(route('profile'))

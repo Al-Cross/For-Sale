@@ -25,10 +25,12 @@ class CategorySearch implements Filter
 
             $builder->inCategory($category->id);
 
-            return $builder;
+            return $builder->excludeArchived();
         }
 
-        return $builder;
+        (new self)->removeBindings($builder);
+
+        return $builder->excludeArchived();
     }
 
     /**

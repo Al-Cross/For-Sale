@@ -32,6 +32,8 @@ class ObservedAdsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request  $request
+     *
+     * @return void
      */
     public function store(Request $request)
     {
@@ -45,6 +47,8 @@ class ObservedAdsController extends Controller
      * Remove the specified resource from storage.
      *
      * @param \Illuminate\Http\Request  $request
+     *
+     * @return void
      */
     public function destroy(Request $request)
     {

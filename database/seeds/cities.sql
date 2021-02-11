@@ -333,7 +333,7 @@ INSERT INTO cities VALUES
     ("0", "Hofheim", "50.090194", "8.449297", NULL, "Germany", "DE", "Hofheim", "minor", "", "", "2020-08-20", "2020-08-20"),
     ("0", "Ebersberg", "48.077878", "11.964944", NULL, "Germany", "DE", "Ebersberg", "minor", "", "", "2020-08-20", "2020-08-20"),
     ("0", "Prenzlau", "53.316246", "13.862611", NULL, "Germany", "DE", "Prenzlau", "minor", "", "", "2020-08-20", "2020-08-20"),
-    ("0", "Bad Toelz", "Toelz, 47.760761", "11.56301", NULL, "Germany", "DE", "Bad Toelz", "minor", "", "", "2020-08-20", "2020-08-20"),
+    ("0", "Bad Toelz", "47.760761", "11.56301", NULL, "Germany", "DE", "Bad Toelz", "minor", "", "", "2020-08-20", "2020-08-20"),
     ("0", "Parchim", "53.42718", "11.849164", NULL, "Germany", "DE", "Parchim", "minor", "", "", "2020-08-20", "2020-08-20"),
     ("0", "Luckenwalde", "52.090293", "13.167717", NULL, "Germany", "DE", "Luckenwalde", "minor", "", "", "2020-08-20", "2020-08-20"),
     ("0", "Bernburg", "51.794638", "11.740096", NULL, "Germany", "DE", "Bernburg", "minor", "", "", "2020-08-20", "2020-08-20"),

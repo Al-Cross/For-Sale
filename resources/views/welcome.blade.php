@@ -4,6 +4,11 @@
     <title>Find Anything</title>
 
     @include('partials._head')
+    <script>
+        function reposition() {
+            window.localStorage.setItem('sendMeTo', 'pagination');
+        }
+    </script>
 </head>
 <body>
     <div class="site-wrap" id="app">
@@ -65,6 +70,13 @@
                                         </li>
                                     @endif
                                 @endauth
+                            @endif
+                            @if (Auth::check() && Auth::user()->type !== 'basic')
+                                <li>
+                                    <a href="#" class="cta">
+                                        <span class="bg-primary text-white rounded">{{ strtoupper(Auth::user()->type) }}</span>
+                                    </a>
+                                </li>
                             @endif
                             <li><a href="{{ route('new_ad') }}" class="cta"><span class="bg-primary text-white rounded">+ Post an Ad</span></a></li>
                         </ul>
@@ -139,7 +151,7 @@
                     </div>
                 </div>
 
-                <div class="row mt-5">
+                <div class="row mt-5" id="normal-ads">
                     @foreach($ads as $ad)
                         <div class="col-lg-6">
                             <div class="d-block d-md-flex listing vertical">
@@ -148,7 +160,7 @@
                        </div>
                     @endforeach
                 </div>
-                {{ $ads->links() }}
+                <span onclick="reposition()">{{ $ads->links() }}</span>
             </div>
         </div>
 
@@ -157,6 +169,12 @@
     <script>
         var ads = @json($ads);
         var featured = @json($featured);
+        var item = localStorage.getItem('sendMeTo');
+
+        if (item) {
+            window.scrollTo(0, 1550);
+            window.localStorage.removeItem('sendMeTo');
+        }
     </script>
     <script type="module" src="{{ mix('/js/tooltip.js') }}"></script>
     <script src="{{ mix('/js/app.js') }}"></script>

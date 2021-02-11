@@ -53,28 +53,6 @@ class PaymentsController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param int  $amount
@@ -87,20 +65,11 @@ class PaymentsController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
-    /**
      * Add to the user's account.
-     * @param  int $amount
-     * @param  App\User $user
+     *
+     * @param int $amount
+     * @param App\User $user
+     *
      * @return Stripe\PaymentIntent
      */
     public function increaseBalance($amount, $user)

@@ -18,18 +18,21 @@
 								<div id="arrow" data-popper-arrow></div>
 						    </span>
 	                    </div>
-	                    <h3><a :href="'/' + ad.section.category.slug + '/' + ad.section.slug + '/' + ad.slug">
+	                    <h3 style="height: 39px;"><a :href="'/' + ad.section.category.slug + '/' + ad.section.slug + '/' + ad.slug">
 		                    {{ ad.title }}
 		                </a></h3>
 	                    <address>{{ ad.city.city }}</address>
 	                </div>
 	            </div>
 			</div>
-			<div v-if="ads.length > perPage">
-				<button :disabled="pageNumber === 0" @click="prevPage" class="btn btn-sm btn-primary rounded">Previous</button>
-				<button v-for="index in pageCount" @click="indexing(index)" class="btn btn-sm btn-primary rounded mr-1" v-text="index"></button>
-				<button :disabled="pageNumber >= pageCount - 1" @click="nextPage" class="btn btn-sm btn-primary rounded">Next</button>
-			</div>
+		</div>
+		<div v-if="ads.length > perPage">
+			<button :disabled="pageNumber === 0" @click="prevPage" class="btn btn-sm btn-primary rounded">Previous</button>
+			<button v-for="index in pageCount"
+					@click="indexing(index)"
+					:class="'btn btn-sm btn-primary rounded mr-1' + onPage(index)"
+					v-text="index"></button>
+			<button :disabled="pageNumber >= pageCount - 1" @click="nextPage" class="btn btn-sm btn-primary rounded">Next</button>
 		</div>
 	</div>
 </template>
@@ -51,7 +54,7 @@ export default {
 	},
 
 	mounted() {
-		this.ads.forEach(ad => {
+		this.paginatedData.forEach(ad => {
 			var button = document.querySelector(`#unique_${ad.slug}`);
 			var tooltip = document.querySelector(`#unique_${ad.id}`);
 

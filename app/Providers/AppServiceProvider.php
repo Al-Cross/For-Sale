@@ -25,8 +25,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        \View::composer(['errors::403', 'users.messages', 'users.settings'],
-            'App\Http\Composers\Error403Composer');
+        \View::composer(['users.messages', 'users.settings'], function ($view) {
+            $balance = auth()->user()->balance->getBalance();
+
+            $view->with('balance', $balance);
+        });
 
         \View::composer('welcome', function ($view) {
             $categories = Category::withCount('ads')->get();

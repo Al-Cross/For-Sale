@@ -143,7 +143,7 @@ class User extends \TCG\Voyager\Models\User
      * @param string $type  The desired membership type
      * @param int    $price The deductible price of the membership
      *
-     * @return Illuminate\Http\Response
+     * @return boolean
      */
     public function upgrade($type, $price)
     {

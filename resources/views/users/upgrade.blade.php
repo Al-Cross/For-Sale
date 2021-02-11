@@ -20,7 +20,7 @@
 				  <div class="pricing-table">
 				    <h2 class="pricing-table__header">- ADVANCED -</h2>
 				    <h3 class="pricing-table__price">{{ config('for-sale.currency')}}30</h3>
-				    <a class="pricing-table__button" href="{{route('3_additional_ads') }}">
+				    <a class="pricing-table__button" href="{{route('advanced_upgrade') }}">
 				      Buy Now!
 				    </a>
 				    <ul class="pricing-table__list">
@@ -33,7 +33,7 @@
 				  <div class="pricing-table featured-table">
 				    <h2 class="pricing-table__header">- PREMIUM -</h2>
 				    <h3 class="pricing-table__price">{{ config('for-sale.currency')}}80</h3>
-				    <a class="pricing-table__button" href="{{ route('10_additional_ads') }}">
+				    <a class="pricing-table__button" href="{{ route('premium_upgrade') }}">
 				      Buy Now!
 				    </a>
 				    <ul class="pricing-table__list">

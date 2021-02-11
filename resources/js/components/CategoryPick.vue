@@ -1,7 +1,8 @@
 <template>
 	<div>
 		<modal name="category-pick" classes="p-2 rounded-lg" height="auto">
-		 	<span class="font-weight-bold">Categories</span>
+		 	<span class="font-weight-bold mr-5">Categories</span>
+		 	<span class="font-weight-bold ml-5">Sections</span>
 		 	<hr>
 		 	<div class="container">
 		 		<div class="row">
@@ -20,9 +21,9 @@
 		 		</div>
 		 	</div>
 	    </modal>
-	    <span v-text="category"></span>
-	    <span v-text="section"></span>
-	    <input type="text" class="" id="section_id" name="section_id" :value="section_id" required>
+	    <span class="text-primary" v-text="category"></span>
+	    <span class="text-primary" v-text="section"></span>
+	    <input type="text" class="" id="section_id" name="section_id" v-model="section_id" required>
 	</div>
 </template>
 

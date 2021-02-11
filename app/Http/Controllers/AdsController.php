@@ -10,6 +10,7 @@ use App\Category;
 use App\AdSearch\AdSearch;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Requests\AdRequest;
 
 class AdsController extends Controller
 {
@@ -20,8 +21,9 @@ class AdsController extends Controller
      */
     public function index()
     {
-        $ads = Ad::excludeFeatured()->latest()->paginate(20);
-        $featured = Ad::featured()->get();
+        $ads = Ad::excludeFeatured()->excludeArchived()->latest()->paginate(20);
+        $featured = Ad::featured()->excludeArchived()->get();
+        $featured = $featured->shuffle();
 
         if (request()->wantsJson()) {
             $section = Section::where('category_id', '=', request()->id)->get();
@@ -51,24 +53,9 @@ class AdsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AdRequest $request)
     {
-        $data = $request->validate([
-            'section_id' => 'required',
-            'city' => ['required', 'exists:cities'],
-            'title' => ['required', 'string'],
-            'description' => ['required', 'min:10'],
-            'price' => ['required', 'numeric'],
-            'type' => ['required', 'string', 'in:private,business'],
-            'condition' => ['required', 'string', 'in:new,used'],
-            'delivery' => ['required', 'string', 'in:seller,buyer,personal handover'],
-            'image' => 'array',
-            'image.*' => ['image', 'mimes:jpeg,jpg,png']
-        ],
-            [
-                'city.exists' => 'We do not operate in the selected city.'
-            ]
-        );
+        $data = $request->validated();
 
         $city_id = City::whereCity($data['city'])->firstOrFail()->id;
 
@@ -106,7 +93,10 @@ class AdsController extends Controller
     {
         $ad->increment('views');
 
-        $otherAds = $ad->owner->ads()->where('id', '!=', $ad->id)->limit(4)->get();
+        $otherAds = $ad->owner->ads()->where('id', '!=', $ad->id)
+            ->excludeArchived()
+            ->limit(4)
+            ->get();
 
         return view('ads.show', compact('ad', 'otherAds'));
     }
@@ -131,27 +121,13 @@ class AdsController extends Controller
      * @param  App\Ad  $ad
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Ad $ad)
+    public function update(AdRequest $request, Ad $ad)
     {
         $this->authorize('update', $ad);
+
         $oldPrice = (int) $ad->price;
 
-        $data = $request->validate(
-            [
-                'city' => ['required', 'exists:cities'],
-                'title' => ['required', 'string'],
-                'description' => ['required', 'min:10'],
-                'price' => ['required', 'numeric'],
-                'type' => ['required', 'string', 'in:private,business'],
-                'condition' => ['required', 'string', 'in:new,used'],
-                'delivery' => ['required', 'string', 'in:seller,buyer,personal handover'],
-                'image' => 'array',
-                'image.*' => ['image', 'mimes:jpeg,jpg,png']
-            ],
-            [
-                'city.exists' => 'We do not operate in the selected city.'
-            ]
-        );
+        $data = $request->validated();
 
         $city_id = City::whereCity($data['city'])->firstOrFail()->id;
 
@@ -175,8 +151,11 @@ class AdsController extends Controller
         }
 
         return redirect(
-            route('show_ad', [$ad->section->category->slug, $ad->section->slug, $ad->slug]))
-                ->with('flash', 'Your ad has been successfully updated!');
+            route('show_ad',
+                [$ad->section->category->slug, $ad->section->slug, $ad->slug]
+            )
+        )
+            ->with('flash', 'Your ad has been successfully updated!');
     }
 
     /**

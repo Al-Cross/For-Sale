@@ -20,7 +20,7 @@ class AddAdsTest extends TestCase
         $this->signIn($user = create('App\User'));
         create('App\Ad', ['user_id' => $user->id], 3);
 
-        $this->get(route('3_additional_ads'))
+        $this->get(route('advanced_upgrade'))
             ->assertSessionHas('flash', 'Unsufficient funds. First load your account.');
 
         $this->assertEquals('basic', $user->type);
@@ -34,7 +34,7 @@ class AddAdsTest extends TestCase
     	create('App\Ad', ['user_id' => $user->id], 3);
     	$user->balance()->update(['amount' => '3000']);
 
-    	$this->get(route('3_additional_ads'))
+    	$this->get(route('advanced_upgrade'))
     		->assertSessionHas('flash', 'You can now post three additional ads!');
 
     	$this->get(route('new_ad'))
@@ -49,7 +49,7 @@ class AddAdsTest extends TestCase
         $this->signIn($user = create('App\User'));
         $user->balance()->update(['amount' => '3000']);
 
-        $this->get(route('3_additional_ads'));
+        $this->get(route('advanced_upgrade'));
 
     	$this->assertEquals('advanced', $user->type);
     }
@@ -62,7 +62,7 @@ class AddAdsTest extends TestCase
         create('App\Ad', ['user_id' => $user->id], 3);
         $user->balance()->update(['amount' => '8000']);
 
-        $this->get(route('10_additional_ads'))
+        $this->get(route('premium_upgrade'))
             ->assertSessionHas('flash', 'You can now post ten additional ads!');
 
         $this->get(route('new_ad'))
@@ -91,8 +91,8 @@ class AddAdsTest extends TestCase
         $this->signIn($user = create('App\User'));
         $user->balance()->update(['amount' => '11000']);
 
-        $this->get(route('3_additional_ads'));
-        $this->get(route('10_additional_ads'));
+        $this->get(route('advanced_upgrade'));
+        $this->get(route('premium_upgrade'));
 
         $this->assertEquals(17, $user->ad_limit);
         $this->assertEquals(0, $user->balance->getBalance());

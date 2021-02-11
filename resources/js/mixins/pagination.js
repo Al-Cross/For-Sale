@@ -23,10 +23,21 @@ export default {
 	methods: {
 		prevPage() {
 			this.pageNumber--;
+			window.scrollTo(0, 300);
 		},
 
 		nextPage() {
 			this.pageNumber++;
+			window.scrollTo(0, 300);
+		},
+
+		indexing(page) {
+			this.pageNumber = page - 1;
+			window.scrollTo(0, 1400);
+		},
+
+		onPage(page) {
+			return this.pageNumber == page - 1 ? ' bg-light' : '';
 		}
 	}
 };

@@ -32,14 +32,14 @@ export default {
             }
         }
 
-        if (this.query == '') {
+        if (!this.query) {
             document.getElementById('distance').disabled = true;
         }
     },
 
     methods: {
         autoComplete(){
-            if(this.query.length > 2){
+            if(this.query.length > 2) {
                 axios.get('/getlocation',{params: {location: this.query}})
                 .then(response => {
                     this.results = response.data;

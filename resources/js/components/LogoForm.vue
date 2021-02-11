@@ -69,9 +69,11 @@ export default {
 		},
 
 		removeImage() {
-			axios.delete(`/myaccount/settings/${this.user.id}/logos/delete`)
-				.then(this.avatar = 'users/default.png')
-				.then(() => flash('Image deleted!'));
+			if (this.user.avatar !== 'users/default.png') {
+				axios.delete(`/myaccount/settings/${this.user.id}/logos/delete`)
+					.then(this.avatar = '/storage/users/default.png')
+					.then(() => flash('Image deleted!'));
+			}
 		}
 	}
 };

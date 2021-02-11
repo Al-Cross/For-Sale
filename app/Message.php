@@ -10,6 +10,7 @@ class Message extends Model
 {
     /**
      * Prevents mass-assignment exception.
+     *
      * @var array
      */
     protected $guarded = [];

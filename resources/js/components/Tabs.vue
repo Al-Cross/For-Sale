@@ -44,11 +44,12 @@ export default {
 
 	mounted() {
 		this.tabs.forEach((tab, index) => {
-			window.localStorage.setItem('activeTab', window.location.hash);
 			let activeTab = window.localStorage.getItem('activeTab');
-			if (activeTab) {
+			let notInAccount = window.location.pathname.indexOf('/myaccount') == -1;
+			let notInUserAds = window.location.pathname.indexOf('/user-ads') == -1;
+
+			if (activeTab && notInAccount && notInUserAds) {
 				tab.isActive = (tab.href.includes(activeTab));
-				window.localStorage.removeItem('activeTab');
 			}
 
 			if (tab.isActive) {
@@ -57,6 +58,8 @@ export default {
 				return this.currentIndex = index;
 			}
 		});
+
+		window.localStorage.removeItem('activeTab');
 	},
 
 	methods: {
@@ -64,6 +67,8 @@ export default {
 			this.tabs.forEach(tab => {
 				tab.isActive = (tab.name == selectedTab.name);
 			});
+
+			window.localStorage.setItem('activeTab', selectedTab.href);
 
 			this.$emit('active', selectedTab.name, true);
 		},

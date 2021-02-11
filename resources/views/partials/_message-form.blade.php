@@ -1,5 +1,5 @@
 <div id="message-form" class="card mt-5 bg-light">
-	<form action="{{ route('send') }}" method="POST">
+	<form action="{{ route('send', '#message-form') }}" method="POST">
 		@csrf
 
 		<div class="form-group-row">
@@ -16,7 +16,7 @@
 							<span>(XX) XXXXXXX</span>
 							<button type="button" class="btn btn-primary rounded" onclick="show();">Show</button>
 						</div>
-						<span id="phone" class="font-weight-bold">{{ $ad->owner->phone }}</span>
+						<span id="phone" class="font-weight-bold">{{ $ad->owner->phone ? $ad->owner->phone : 'No phone number provided' }}</span>
 					</div>
 				</div>
 
@@ -41,7 +41,7 @@
 				<label for="body">Your Message</label>
 				<textarea name="body"
 						rows="10"
-						class="form-control @error('subject') is-invalid @enderror rounded-lg"
+						class="form-control @error('body') is-invalid @enderror rounded-lg"
 						required
 						autofocus
 				>{{ old('body') }}</textarea>

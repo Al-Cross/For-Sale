@@ -20,6 +20,8 @@ class EmailConfirmationsController extends Controller
 
     /**
      * Send a confirmation email for profile deletion.
+     *
+     * @return void
      */
     public function destroy()
     {

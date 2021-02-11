@@ -111,7 +111,7 @@ class CreateAdsTest extends TestCase
             ->assertStatus(403);
 
         $this->patch(route('update_ad', $ad->id), [])
-            ->assertStatus(403);
+            ->assertStatus(302);
     }
     /**
      * @test
@@ -132,7 +132,8 @@ class CreateAdsTest extends TestCase
     {
         $this->signIn();
         $ad = create('App\Ad', ['user_id' => auth()->id()]);
-        $city = create('App\City');
+
+        $city = create('App\City', ['city' => 'Dresden']);
 
         $this->patch(route('update_ad', $ad->id), [
             'title' => 'Changed',

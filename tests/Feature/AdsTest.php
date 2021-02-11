@@ -59,6 +59,20 @@ class AdsTest extends TestCase
     /**
      * @test
      */
+    public function archived_ads_are_not_displayed_anywhere()
+    {
+        $this->signIn();
+        $ad = $this->postAd(['city' => create('App\City')->city]);
+
+        $this->patch(route('archive-ad', $ad->id));
+
+        $this->get('/')->assertDontSee($ad->title);
+        $this->get(route('user_ads', auth()->user()->name))
+            ->assertDontSee($ad->title);
+    }
+    /**
+     * @test
+     */
     public function users_may_delete_ad_images()
     {
         $this->signIn();
@@ -130,6 +144,21 @@ class AdsTest extends TestCase
             ->assertSessionHas('flash', 'Ad has been activated!');
 
         $this->assertFalse($ad->fresh()->archived);
+    }
+    /**
+     * @test
+     */
+    public function users_cannot_reactivate_archived_ads_if_limit_is_reached()
+    {
+        $this->signIn($john = create('App\User', ['name' => 'John Doe']));
+        $ad = create('App\Ad', ['archived' => true, 'user_id' => $john->id]);
+        $john->ad_limit = 0;
+        $john->save();
+
+        $this->patch(route('activate-ad', $ad->id))
+            ->assertSessionHas('flash', 'Posting limit has been reached! Free up or buy additional slots.');
+
+        $this->assertTrue($ad->fresh()->archived);
     }
     /**
      * @test

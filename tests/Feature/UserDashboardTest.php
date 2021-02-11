@@ -164,4 +164,17 @@ class UserDashboardTest extends TestCase
         $this->assertDatabaseMissing('users', ['id' => auth()->id()]);
         $this->assertDatabaseMissing('ads', ['id' => $ad->id]);
     }
+    /**
+     * @test
+     */
+    public function show_if_the_authenticated_user_is_online()
+    {
+        $john = create('App\User');
+
+        $this->assertFalse(\Cache::has('user-is-online-' . $john->id));
+
+        $this->signIn($john);
+        $this->get('/');
+        $this->assertTrue(\Cache::has('user-is-online-' . $john->id));
+    }
 }

@@ -160,6 +160,7 @@ class Ad extends Model
             'archived' => false,
             'created_at' => Carbon::now()
         ]);
+
         $this->owner->updateAdLimit();
     }
 
@@ -219,6 +220,18 @@ class Ad extends Model
     public function scopeFeatured($query)
     {
         return $query->where('featured', true);
+    }
+
+     /**
+     * Scope a query to remove archived ads.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeExcludeArchived($query)
+    {
+        return $query->where('archived', false);
     }
 
     /**

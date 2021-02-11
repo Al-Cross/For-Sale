@@ -11,7 +11,7 @@ class SectionsController extends Controller
     /**
      * Display a listing of all the ads in a category.
      * The collection uses macros to filter the results.
-     * Take a look at AppServiceProvider for more info.
+     * Take a look at AppServiceProvider.
      *
      * @param App\Category  $category
      *
@@ -33,7 +33,7 @@ class SectionsController extends Controller
     /**
      * Display a listing of all the ads in a section.
      * The collection uses macros to filter the results.
-     * Take a look at AppServiceProvider for more info.
+     * Take a look at AppServiceProvider.
      *
      * @param App\Category  $category
      * @param App\Section $section

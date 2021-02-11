@@ -30,7 +30,9 @@
                 @csrf
 
 
-                <a href="" @click.prevent="$modal.show('category-pick')">Click to pick a category</a>
+                <a href="" @click.prevent="$modal.show('category-pick')" style="font-size: 25px;">
+                    <div class="bg-light">Click to pick a category</div>
+                </a>
                 <category-pick :categories="{{ json_encode($categories) }}"></category-pick>
 
                 <div class="form-group row">
@@ -192,7 +194,7 @@
                 <div class="form-group row">
                     <div class="col-md-12">
                         <label for="city">City</label>
-                        <autocomplete style="z-index: 1000;"></autocomplete>
+                        <autocomplete :errors="{{ $errors }}" style="z-index: 1000;"></autocomplete>
                     </div>
                 </div>
                 <br>

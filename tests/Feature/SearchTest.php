@@ -16,11 +16,11 @@ class SearchTest extends TestCase
     public function users_can_search_ads()
     {
         $query = 'interesting';
-        $ads = create('App\Ad', ['title' => "Some {$query} ad"], 2);
+        $ad = create('App\Ad', ['title' => "Some {$query} ad"]);
         $adNotInquery = create('App\Ad');
 
         $this->get("/search?query={$query}")
-            ->assertSee($query)
+            ->assertSee($ad->title)
             ->assertDontSee($adNotInquery);
     }
     /**

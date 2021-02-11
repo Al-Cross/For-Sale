@@ -16,7 +16,8 @@ class AddMoneyToAccountTest extends TestCase
         $this->signIn();
 
         $this->get('/myaccount/wallet/load-account')
-            ->assertSee('Choose the sum you would like to load');
+            ->assertSee('Choose the sum you would like to load')
+            ->assertStatus(200);
     }
     /**
      * @test

@@ -40,13 +40,16 @@ class UsersController extends Controller
     /**
      * Fetch all ads of the given user.
      *
-     * @param User $user The creator of the ads
+     * @param App\User $user The creator of the ads
      *
      * @return \Illuminate\Http\Response
      */
     public function show(User $user)
     {
-        $userAds = Ad::where('user_id', $user->id)->latest()->get();
+        $userAds = Ad::where('user_id', $user->id)
+            ->excludeArchived()
+            ->latest()
+            ->get();
 
         return view('users.ads', compact('userAds', 'user'));
     }
@@ -67,7 +70,8 @@ class UsersController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request $request
+     * @param Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
@@ -78,9 +82,9 @@ class UsersController extends Controller
             'name' => ['string', 'max:255'],
             'email' => ['string', 'email', 'max:255',
                 Rule::unique('users')->ignore($user->id)],
-            'address' => 'string',
-            'phone' => 'string',
-            'about' => 'string'
+            'address' => ['string', 'nullable'],
+            'phone' => ['string', 'nullable'],
+            'about' => ['string', 'nullable']
         ]);
 
         $user->update([
@@ -90,12 +94,15 @@ class UsersController extends Controller
             'phone' => $validated['phone'],
             'about' => $validated['about']
         ]);
+
+        return response(['Profile was successfully updated!'], 201);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  App\User  $user
+     * @param App\User  $user
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)
@@ -108,7 +115,8 @@ class UsersController extends Controller
     /**
      * Update the user's password in storage.
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function updatePassword(Request $request)

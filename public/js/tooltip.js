@@ -3194,16 +3194,21 @@ function popperTooltip(button, tooltip) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _PopperTooltip_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PopperTooltip.js */ "./resources/js/PopperTooltip.js");
 
-ads.data.forEach(function (ad) {
-  var button = document.querySelector("#unique_".concat(ad.slug));
-  var tooltip = document.querySelector("#unique_".concat(ad.id));
+
+if (typeof ads !== 'undefined') {
+  ads.data.forEach(function (ad) {
+    var button = document.querySelector("#unique_".concat(ad.slug));
+    var tooltip = document.querySelector("#unique_".concat(ad.id));
+    Object(_PopperTooltip_js__WEBPACK_IMPORTED_MODULE_0__["default"])(button, tooltip);
+  });
+  featured.forEach(function (feature) {
+    var button = document.querySelector("#unique_".concat(feature.slug));
+    var tooltip = document.querySelector("#unique_".concat(feature.id));
+    return Object(_PopperTooltip_js__WEBPACK_IMPORTED_MODULE_0__["default"])(button, tooltip);
+  });
+} else {
   Object(_PopperTooltip_js__WEBPACK_IMPORTED_MODULE_0__["default"])(button, tooltip);
-});
-featured.forEach(function (feature) {
-  var button = document.querySelector("#unique_".concat(feature.slug));
-  var tooltip = document.querySelector("#unique_".concat(feature.id));
-  Object(_PopperTooltip_js__WEBPACK_IMPORTED_MODULE_0__["default"])(button, tooltip);
-});
+}
 
 /***/ }),
 

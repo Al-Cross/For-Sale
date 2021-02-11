@@ -12,7 +12,8 @@ class ImageUploadsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request  $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, User $user)
@@ -45,7 +46,7 @@ class ImageUploadsController extends Controller
     }
 
     /**
-     * Remove the ad associated image from storage.
+     * Remove the ad-associated image from storage.
      *
      * @param  App\Image  $image
      * @return \Illuminate\Http\Response

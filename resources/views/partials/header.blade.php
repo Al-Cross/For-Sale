@@ -9,27 +9,23 @@
     </div>
 
     <header class="site-navbar container bg-white h-40" role="banner" style="background-image: url({{ asset('frontend/images/hero_2.jpg') }});">
-
-      <!-- <div class="container"> -->
-        <div class="row d-flex justify-content-center">
-            <div class="col-6 col-xl-2">
+        <div class="row">
+            <div class="col-4 col-xl-2">
                 <h1 class="mb-0 site-logo">
                     <a href="/" class="text-black mb-0">For<span class="text-primary">Sale</span></a>
                 </h1>
             </div>
-            <div class="col-12 col-md-10 d-none d-xl-block">
-                <nav class="site-navigation position-relative text-right" role="navigation">
-                    <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
+            <div class="col-12 col-md-10 d-xl-block">
+                <nav class="site-navigation position-relative" role="navigation">
+                    <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block d-lg-table">
                         @if (Route::has('login'))
                             @auth
                                 <li class="login">
                                     <a href="/observed"><span class="pl-xl-4"></span>Favourites</a>
                                 </li>
-
                                 <li>
                                     <notifications></notifications>
                                 </li>
-
                                 <li class="ml-xl-3 login">
                                     <a href="{{ route('profile') }}"><span class="border-left pl-xl-4"></span>My Profile</a>
                                 </li>
@@ -45,6 +41,13 @@
                                         @csrf
                                     </form>
                                 </li>
+                                 @if (Auth::check() && Auth::user()->type !== 'basic')
+                                    <li>
+                                        <a href="#" class="cta">
+                                            <span class="bg-primary text-white rounded">{{ strtoupper(Auth::user()->type) }}</span>
+                                        </a>
+                                    </li>
+                                @endif
                             @else
                                 <li class="ml-xl-3 login">
                                     <a href="{{ route('login') }}">Login</a>

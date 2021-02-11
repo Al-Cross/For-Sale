@@ -1807,3 +1807,35 @@ span[id^='unique_'] {
   span[id^='unique_'][data-popper-placement^='right'] > #arrow {
     left: -4px;
   }
+}
+
+.status-dot {
+    position: relative;
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+    background: #34ff4a;
+    border-radius: 50%;
+     z-index: 2;
+}
+.status-dot:after {
+    content: "";
+    position: absolute;
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background: #34ff4a;
+    animation: pulse 2s infinite;
+    transform-origin: center center;
+}
+.status-page-link {
+    font-size: 16px;
+    border-bottom: 1px solid #efeff4;
+    border-top: 1px solid #efeff4;
+}
+.status-page-link {
+    border: 0;
+    box-shadow: none;
+    outline: 0;
+    display: block;
+}

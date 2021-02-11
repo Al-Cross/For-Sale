@@ -4979,7 +4979,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
 
-    if (this.query == '') {
+    if (!this.query) {
       document.getElementById('distance').disabled = true;
     }
   },
@@ -5096,12 +5096,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _AdFilters_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../AdFilters.js */ "./resources/js/AdFilters.js");
 /* harmony import */ var _partialComponents_FeaturedAdCard_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./partialComponents/FeaturedAdCard.vue */ "./resources/js/components/partialComponents/FeaturedAdCard.vue");
 /* harmony import */ var _partialComponents_AdCard_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./partialComponents/AdCard.vue */ "./resources/js/components/partialComponents/AdCard.vue");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+//
+//
+//
+//
 //
 //
 //
@@ -5222,6 +5222,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         delivery: 'all',
         condition: 'any',
         empty: false,
+        emptyBusiness: false,
         indexedCategories: {},
         categories: []
       }),
@@ -5229,16 +5230,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       isLoading: false,
       query: new URL(location.href).searchParams.get('searchTerm'),
       city: new URL(location.href).searchParams.get('city'),
+      distance: parseInt(new URL(location.href).searchParams.get('distance')) || '',
       adsCount: ''
     };
   },
   created: function created() {
-    if (!this.section) {
-      this.groupBy();
-    }
-
     if (this.filter.business.length == 0) {
-      this.filter.empty = true;
+      this.filter.emptyBusiness = true;
+    }
+  },
+  computed: {
+    tabOnPageLoad: function tabOnPageLoad() {
+      if (_typeof(this["private"]) === 'object') {
+        return Object.keys(this["private"]).length > 0 ? true : false;
+      }
+
+      return this["private"].length > 0 ? true : false;
+    },
+    tabName: function tabName() {
+      return this.filter.collections.normalAds === 'privateAds' ? 'private ads' : 'business ads';
     }
   },
   methods: {
@@ -5250,30 +5260,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         filteredAds: 'filtered' + tabName,
         filteredFeatured: 'filteredFeatured' + tabName
       };
+
+      if (!this.section) {
+        this.groupBy(name);
+      }
+
       this.adsFound();
 
       if (shouldFilter) {
         this.filterDelivery();
       }
     },
-    groupBy: function groupBy() {
-      var allAds = _objectSpread(_objectSpread({}, this["private"]), this.business);
-
-      allAds = Object.values(allAds);
-      this.filter.groupBy(allAds);
+    groupBy: function groupBy(tab) {
+      var adsInTab = Object.values(this[tab]);
+      this.filter.groupBy(adsInTab);
     },
-    loading: function loading(expression1, expression2) {
+    loading: function loading() {
       var _this = this;
 
       clearTimeout(this.timeout);
       this.isLoading = true;
       this.timeout = setTimeout(function () {
-        if (expression1 == undefined) {
-          _this.filterDelivery();
-        }
+        _this.filterDelivery();
 
-        expression1;
-        expression2;
         _this.isLoading = false;
       }, 1000);
     },
@@ -5309,12 +5318,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     sortingOrder: function sortingOrder(filteredAds, filteredFeatured) {
-      if (!filteredAds && !filteredFeatured) {
+      var filteredAll = filteredAds.concat(filteredFeatured);
+
+      if (!filteredAll) {
         return this.filter.empty = true;
       }
 
       this.filter.sortFilter(filteredAds, filteredFeatured);
       this.adsFound();
+      filteredAll = Object.values(filteredAll);
+      this.filter.groupBy(filteredAll);
     },
     adsFound: function adsFound() {
       var filteredAds = this.filter[this.filter.collections.filteredAds];
@@ -5499,14 +5512,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['categories'],
   data: function data() {
     return {
       sections: {},
       category: {},
-      showTable: false
+      showTable: false,
+      sliced: [[], [], []]
     };
+  },
+  watch: {
+    sections: function sections() {
+      this.sliced = [[], [], []];
+      var itemsInArray = Math.ceil(this.sections.length / 3);
+
+      for (var subArray = 0; subArray < 3; subArray++) {
+        for (var i = 0; i < itemsInArray; i++) {
+          var value = Object.values(this.sections)[i + subArray * itemsInArray];
+          if (!value) continue;
+          this.sliced[subArray].push(value);
+        }
+      }
+    }
   },
   methods: {
     fillTable: function fillTable(category) {
@@ -5517,10 +5557,10 @@ __webpack_require__.r(__webpack_exports__);
           "id": category.id
         }
       }).then(function (response) {
-        return _this.sections = response.data;
+        _this.sections = response.data;
+        _this.showTable = true;
+        _this.category = category;
       });
-      this.category = category;
-      this.showTable = true;
     },
     setIcon: function setIcon(name) {
       var icon;
@@ -5657,12 +5697,12 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     this.tabs.forEach(function (tab, index) {
-      window.localStorage.setItem('activeTab', window.location.hash);
       var activeTab = window.localStorage.getItem('activeTab');
+      var notInAccount = window.location.pathname.indexOf('/myaccount') == -1;
+      var notInUserAds = window.location.pathname.indexOf('/user-ads') == -1;
 
-      if (activeTab) {
+      if (activeTab && notInAccount && notInUserAds) {
         tab.isActive = tab.href.includes(activeTab);
-        window.localStorage.removeItem('activeTab');
       }
 
       if (tab.isActive) {
@@ -5671,12 +5711,14 @@ __webpack_require__.r(__webpack_exports__);
         return _this.currentIndex = index;
       }
     });
+    window.localStorage.removeItem('activeTab');
   },
   methods: {
     selectTab: function selectTab(selectedTab) {
       this.tabs.forEach(function (tab) {
         tab.isActive = tab.name == selectedTab.name;
       });
+      window.localStorage.setItem('activeTab', selectedTab.href);
       this.$emit('active', selectedTab.name, true);
     },
     switchTabs: function switchTabs(event) {
@@ -5767,6 +5809,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -5779,7 +5824,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    this.ads.forEach(function (ad) {
+    this.paginatedData.forEach(function (ad) {
       var button = document.querySelector("#unique_".concat(ad.slug));
       var tooltip = document.querySelector("#unique_".concat(ad.id));
       Object(_PopperTooltip__WEBPACK_IMPORTED_MODULE_1__["default"])(button, tooltip);
@@ -17446,7 +17491,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n*.icon-blue {color: #0088cc}\n*.icon-red {color: white}\n#bell {\n    text-align: center;\n    vertical-align: middle;\n    position: relative;\n}\n.circle:after{\n    content:attr(data-count);\n    position: fixed;\n    background: red;\n    height:1rem;\n    left: 60%;\n    top:0.7rem;\n    width:1rem;\n    text-align: center;\n    line-height: 1rem;;\n    font-size: 0.5rem;\n    border-radius: 50%;\n    color:white;\n    border:1px;\n}\n.circle[data-count=\"0\"]:after{ display : none;\n}\n.app-notification {\n    opacity: 0.8;\n    max-height: 220px;\n    min-width: 270px;\n    overflow-y: auto;\n    border-bottom: dashed;\n}\n.app-notification__title {\n  padding: 8px 20px;\n  text-align: left;\n  background-color: rgba(0, 150, 136, 0.4);\n  color: #333;\n}\n.app-notification__footer {\n  padding: 8px 20px;\n  text-align: center;\n  background-color: #eee;\n}\n.app-notification__content {\n  max-height: 220px;\n}\n.app-notification__content::-webkit-scrollbar {\n  width: 6px;\n}\n.app-notification__content::-webkit-scrollbar-thumb {\n  background: rgba(0, 0, 0, 0.2);\n}\n.app-notification__item {\n  display: flex;\n  padding: 8px 20px;\n  color: inherit;\n  border-bottom: 1px solid #ddd;\n  transition: background-color 0.3s ease;\n}\n.app-notification__item:focus, .app-notification__item:hover {\n  color: inherit;\n  text-decoration: none;\n  background-color: #e0e0e0;\n}\n.app-notification__message,\n.app-notification__meta {\n  margin-bottom: 0;\n  font-size: 15px;\n}\n.app-notification__icon {\n  padding-right: 10px;\n}\n.app-notification__message {\n  line-height: 1.2;\n}\n.text-xs {\n  font-size: 12px;\n}\n", ""]);
+exports.push([module.i, "\n*.icon-blue {color: #0088cc}\n*.icon-red {color: white}\n#bell {\n\ttext-align: center;\n\tvertical-align: middle;\n\tposition: relative;\n}\n.circle:after{\n\tcontent:attr(data-count);\n\tposition: absolute;\n\tbackground: red;\n\theight: 1rem;\n\ttop: -1.5rem;\n\twidth: 1rem;\n\ttext-align: center;\n\tline-height: 1rem;;\n\tfont-size: 0.5rem;\n\tborder-radius: 50%;\n\tcolor:white;\n\tborder:1px;\n}\n.circle[data-count=\"0\"]:after{ display : none;\n}\n.app-notification {\n\topacity: 0.8;\n\tmax-height: 220px;\n\tmin-width: 270px;\n\toverflow-y: auto;\n\tborder-bottom: dashed;\n}\n.app-notification__title {\n  padding: 8px 20px;\n  text-align: left;\n  background-color: rgba(0, 150, 136, 0.4);\n  color: #333;\n}\n.app-notification__footer {\n  padding: 8px 20px;\n  text-align: center;\n  background-color: #eee;\n}\n.app-notification__content {\n  max-height: 220px;\n}\n.app-notification__content::-webkit-scrollbar {\n  width: 6px;\n}\n.app-notification__content::-webkit-scrollbar-thumb {\n  background: rgba(0, 0, 0, 0.2);\n}\n.app-notification__item {\n  display: flex;\n  padding: 8px 20px;\n  color: inherit;\n  border-bottom: 1px solid #ddd;\n  transition: background-color 0.3s ease;\n}\n.app-notification__item:focus, .app-notification__item:hover {\n  color: inherit;\n  text-decoration: none;\n  background-color: #e0e0e0;\n}\n.app-notification__message,\n.app-notification__meta {\n  margin-bottom: 0;\n  font-size: 15px;\n}\n.app-notification__icon {\n  padding-right: 10px;\n}\n.app-notification__message {\n  line-height: 1.2;\n}\n.text-xs {\n  font-size: 12px;\n}\n", ""]);
 
 // exports
 
@@ -71242,34 +71287,54 @@ var render = function() {
               _c(
                 "span",
                 { staticClass: "text-size-sm" },
-                _vm._l(_vm.filter.categories, function(category) {
-                  return _c(
-                    "a",
-                    {
-                      staticClass: "mr-1",
-                      attrs: {
-                        href:
-                          "/search?searchTerm=" +
-                          _vm.query +
-                          "&city=" +
-                          _vm.city +
-                          "&categorySearch=" +
-                          category.id
-                      }
-                    },
-                    [
-                      _vm._v(
-                        "\n\t\t\t\t\t" + _vm._s(category.name) + "\n\t\t\t\t\t"
-                      ),
-                      _c("small", {
-                        staticClass: "p-1 ml-2 mr-5 rounded",
-                        staticStyle: { "background-color": "aliceblue" },
-                        domProps: { textContent: _vm._s(_vm.adsCount) }
-                      })
-                    ]
-                  )
-                }),
-                0
+                [
+                  _c("small", { staticClass: "text-primary mr-5" }, [
+                    _vm._v(
+                      "\n\t\t\t\t\tAll " + _vm._s(_vm.tabName) + "\n\t\t\t\t\t"
+                    ),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "p-1 ml-2 rounded",
+                        staticStyle: { "background-color": "aliceblue" }
+                      },
+                      [_vm._v(_vm._s(_vm.adsCount))]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm._l(_vm.filter.categories, function(category) {
+                    return _c(
+                      "a",
+                      {
+                        staticClass: "mr-1",
+                        attrs: {
+                          href:
+                            "/search?searchTerm=" +
+                            _vm.query +
+                            "&city=" +
+                            _vm.city +
+                            "&distance=" +
+                            _vm.distance +
+                            "&categorySearch=" +
+                            category.id
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n\t\t\t\t\t" +
+                            _vm._s(category.name) +
+                            "\n\t\t\t\t\t"
+                        ),
+                        _c("small", {
+                          staticClass: "p-1 ml-2 mr-5 rounded",
+                          staticStyle: { "background-color": "aliceblue" },
+                          domProps: { textContent: _vm._s(category.ads.length) }
+                        })
+                      ]
+                    )
+                  })
+                ],
+                2
               )
             ])
           : _vm._e()
@@ -71295,12 +71360,7 @@ var render = function() {
         [
           _c(
             "tab",
-            {
-              attrs: {
-                name: "Private",
-                selected: _vm.filter.privateAds.length > 0 ? true : false
-              }
-            },
+            { attrs: { name: "Private", selected: _vm.tabOnPageLoad } },
             [
               _c("featured-ad-card", {
                 attrs: {
@@ -71340,12 +71400,7 @@ var render = function() {
           _vm._v(" "),
           _c(
             "tab",
-            {
-              attrs: {
-                name: "Business",
-                selected: _vm.filter.privateAds.length == 0 ? true : false
-              }
-            },
+            { attrs: { name: "Business", selected: !_vm.tabOnPageLoad } },
             [
               _c("featured-ad-card", {
                 attrs: {
@@ -71372,7 +71427,7 @@ var render = function() {
                 )
               ]),
               _vm._v(" "),
-              _vm.filter.empty
+              _vm.filter.empty || _vm.filter.emptyBusiness
                 ? _c("div", [
                     _vm._v(
                       "There are no items matching the given criteria. Try to expand the filters."
@@ -71457,7 +71512,7 @@ var render = function() {
       },
       [
         _c("span", { staticClass: "border-left pl-xl-4" }),
-        _vm._v("\n            Notifications\n            "),
+        _vm._v("\n\t\tNotifications\n\t\t"),
         _c("i", {
           staticClass: "fas icon-red circle",
           attrs: { id: "bell", "data-count": _vm.notifications.length }
@@ -71565,7 +71620,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
+  return _c("div", { attrs: { id: "category" } }, [
     _c(
       "div",
       {
@@ -71614,7 +71669,7 @@ var render = function() {
     _vm._v(" "),
     _vm.showTable
       ? _c("div", [
-          _c("table", { staticClass: "w-100", attrs: { id: "category" } }, [
+          _c("table", { staticClass: "w-100" }, [
             _c("thead", [
               _vm._v("See all in > "),
               _c("a", {
@@ -71625,23 +71680,61 @@ var render = function() {
             _vm._v(" "),
             _c("hr"),
             _vm._v(" "),
-            _c(
-              "tbody",
-              { staticClass: "d-md-flex justify-content-between" },
-              _vm._l(_vm.sections, function(section) {
-                return _c("tr", [
-                  _c("td", [
-                    _c("a", {
-                      attrs: {
-                        href: "/" + _vm.category.slug + "/" + section.slug
-                      },
-                      domProps: { textContent: _vm._s(">" + section.name) }
-                    })
+            _c("tbody", { staticClass: "d-md-flex justify-content-between" }, [
+              _c(
+                "div",
+                { staticClass: "col" },
+                _vm._l(_vm.sliced[0], function(section) {
+                  return _c("tr", [
+                    _c("td", { staticClass: "pb-2" }, [
+                      _c("a", {
+                        attrs: {
+                          href: "/" + _vm.category.slug + "/" + section.slug
+                        },
+                        domProps: { textContent: _vm._s(">" + section.name) }
+                      })
+                    ])
                   ])
-                ])
-              }),
-              0
-            )
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col" },
+                _vm._l(_vm.sliced[1], function(section) {
+                  return _c("tr", [
+                    _c("td", { staticClass: "pb-2" }, [
+                      _c("a", {
+                        attrs: {
+                          href: "/" + _vm.category.slug + "/" + section.slug
+                        },
+                        domProps: { textContent: _vm._s(">" + section.name) }
+                      })
+                    ])
+                  ])
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col" },
+                _vm._l(_vm.sliced[2], function(section) {
+                  return _c("tr", [
+                    _c("td", { staticClass: "pb-2" }, [
+                      _c("a", {
+                        attrs: {
+                          href: "/" + _vm.category.slug + "/" + section.slug
+                        },
+                        domProps: { textContent: _vm._s(">" + section.name) }
+                      })
+                    ])
+                  ])
+                }),
+                0
+              )
+            ])
           ])
         ])
       : _vm._e()
@@ -71771,147 +71864,146 @@ var render = function() {
     _c(
       "div",
       { staticClass: "row" },
-      [
-        _vm._l(_vm.paginatedData, function(ad, index) {
-          return _c("div", { key: index, staticClass: "col-lg-6" }, [
-            _c("div", { staticClass: "d-block d-md-flex listing vertical" }, [
-              _c("a", {
-                staticClass: "img d-block",
-                style: {
-                  "background-image":
-                    "url(/storage/" + _vm.mainImage(ad.images) + ")"
-                },
-                attrs: {
-                  href:
-                    "/" +
-                    ad.section.category.slug +
-                    "/" +
-                    ad.section.slug +
-                    "/" +
-                    ad.slug
-                }
-              }),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "lh-content" },
-                [
-                  _c("span", { staticClass: "category" }, [
-                    _vm._v(_vm._s(ad.section.category.name))
-                  ]),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "listings-single" }, [
-                    _vm._v("€" + _vm._s(ad.price))
-                  ]),
-                  _vm._v(" "),
-                  _vm.signedIn
-                    ? _c("favourite", {
-                        key: ad.id,
-                        attrs: { ad: ad },
-                        on: {
-                          deleted: function($event) {
-                            return _vm.reemit(index)
-                          }
-                        }
-                      })
-                    : _c("div", [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "bookmark",
-                            attrs: { href: "/login", id: "unique_" + ad.slug }
-                          },
-                          [_c("span", { staticClass: "icon-heart" })]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "span",
-                          { attrs: { id: "unique_" + ad.id, role: "tooltip" } },
-                          [
-                            _vm._v(
-                              "\n\t\t\t\t\t    \tLog in to observe this ad\n\t\t\t\t\t\t\t"
-                            ),
-                            _c("div", {
-                              attrs: { id: "arrow", "data-popper-arrow": "" }
-                            })
-                          ]
-                        )
-                      ]),
-                  _vm._v(" "),
-                  _c("h3", [
-                    _c(
-                      "a",
-                      {
-                        attrs: {
-                          href:
-                            "/" +
-                            ad.section.category.slug +
-                            "/" +
-                            ad.section.slug +
-                            "/" +
-                            ad.slug
-                        }
-                      },
-                      [
-                        _vm._v(
-                          "\n\t                    " +
-                            _vm._s(ad.title) +
-                            "\n\t                "
-                        )
-                      ]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("address", [_vm._v(_vm._s(ad.city.city))])
-                ],
-                1
-              )
-            ])
-          ])
-        }),
-        _vm._v(" "),
-        _vm.ads.length > _vm.perPage
-          ? _c(
+      _vm._l(_vm.paginatedData, function(ad, index) {
+        return _c("div", { key: index, staticClass: "col-lg-6" }, [
+          _c("div", { staticClass: "d-block d-md-flex listing vertical" }, [
+            _c("a", {
+              staticClass: "img d-block",
+              style: {
+                "background-image":
+                  "url(/storage/" + _vm.mainImage(ad.images) + ")"
+              },
+              attrs: {
+                href:
+                  "/" +
+                  ad.section.category.slug +
+                  "/" +
+                  ad.section.slug +
+                  "/" +
+                  ad.slug
+              }
+            }),
+            _vm._v(" "),
+            _c(
               "div",
+              { staticClass: "lh-content" },
               [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-sm btn-primary rounded",
-                    attrs: { disabled: _vm.pageNumber === 0 },
-                    on: { click: _vm.prevPage }
-                  },
-                  [_vm._v("Previous")]
-                ),
+                _c("span", { staticClass: "category" }, [
+                  _vm._v(_vm._s(ad.section.category.name))
+                ]),
                 _vm._v(" "),
-                _vm._l(_vm.pageCount, function(index) {
-                  return _c("button", {
-                    staticClass: "btn btn-sm btn-primary rounded mr-1",
-                    domProps: { textContent: _vm._s(index) },
-                    on: {
-                      click: function($event) {
-                        return _vm.indexing(index)
+                _c("span", { staticClass: "listings-single" }, [
+                  _vm._v("€" + _vm._s(ad.price))
+                ]),
+                _vm._v(" "),
+                _vm.signedIn
+                  ? _c("favourite", {
+                      key: ad.id,
+                      attrs: { ad: ad },
+                      on: {
+                        deleted: function($event) {
+                          return _vm.reemit(index)
+                        }
                       }
-                    }
-                  })
-                }),
+                    })
+                  : _c("div", [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "bookmark",
+                          attrs: { href: "/login", id: "unique_" + ad.slug }
+                        },
+                        [_c("span", { staticClass: "icon-heart" })]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "span",
+                        { attrs: { id: "unique_" + ad.id, role: "tooltip" } },
+                        [
+                          _vm._v(
+                            "\n\t\t\t\t\t    \tLog in to observe this ad\n\t\t\t\t\t\t\t"
+                          ),
+                          _c("div", {
+                            attrs: { id: "arrow", "data-popper-arrow": "" }
+                          })
+                        ]
+                      )
+                    ]),
                 _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-sm btn-primary rounded",
-                    attrs: { disabled: _vm.pageNumber >= _vm.pageCount - 1 },
-                    on: { click: _vm.nextPage }
-                  },
-                  [_vm._v("Next")]
-                )
+                _c("h3", { staticStyle: { height: "39px" } }, [
+                  _c(
+                    "a",
+                    {
+                      attrs: {
+                        href:
+                          "/" +
+                          ad.section.category.slug +
+                          "/" +
+                          ad.section.slug +
+                          "/" +
+                          ad.slug
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n\t                    " +
+                          _vm._s(ad.title) +
+                          "\n\t                "
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("address", [_vm._v(_vm._s(ad.city.city))])
               ],
-              2
+              1
             )
-          : _vm._e()
-      ],
-      2
-    )
+          ])
+        ])
+      }),
+      0
+    ),
+    _vm._v(" "),
+    _vm.ads.length > _vm.perPage
+      ? _c(
+          "div",
+          [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-primary rounded",
+                attrs: { disabled: _vm.pageNumber === 0 },
+                on: { click: _vm.prevPage }
+              },
+              [_vm._v("Previous")]
+            ),
+            _vm._v(" "),
+            _vm._l(_vm.pageCount, function(index) {
+              return _c("button", {
+                class:
+                  "btn btn-sm btn-primary rounded mr-1" + _vm.onPage(index),
+                domProps: { textContent: _vm._s(index) },
+                on: {
+                  click: function($event) {
+                    return _vm.indexing(index)
+                  }
+                }
+              })
+            }),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-sm btn-primary rounded",
+                attrs: { disabled: _vm.pageNumber >= _vm.pageCount - 1 },
+                on: { click: _vm.nextPage }
+              },
+              [_vm._v("Next")]
+            )
+          ],
+          2
+        )
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -85414,9 +85506,18 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     prevPage: function prevPage() {
       this.pageNumber--;
+      window.scrollTo(0, 300);
     },
     nextPage: function nextPage() {
       this.pageNumber++;
+      window.scrollTo(0, 300);
+    },
+    indexing: function indexing(page) {
+      this.pageNumber = page - 1;
+      window.scrollTo(0, 1400);
+    },
+    onPage: function onPage(page) {
+      return this.pageNumber == page - 1 ? ' bg-light' : '';
     }
   }
 });

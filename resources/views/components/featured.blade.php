@@ -17,7 +17,7 @@
                     <div id="arrow" data-popper-arrow></div>
                 </span>
             @endauth
-            <h3><a href="{{ $ad->path() }}">{{ Str::limit($ad->title, 40) }}</a></h3>
+            <h3 style="height: 41px;"><a href="{{ $ad->path() }}">{{ Str::limit($ad->title, 40) }}</a></h3>
             <address>{{ $ad->city->city }}</address>
         </div>
     </div>

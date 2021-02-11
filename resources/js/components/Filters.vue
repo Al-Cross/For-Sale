@@ -48,19 +48,23 @@
 			</div>
 			<div v-if="!section" class="mt-2">
 				<span class="text-size-sm">
-					<a :href="'/search?searchTerm=' + query + '&city=' + city + '&categorySearch=' + category.id"
+					<small class="text-primary mr-5">
+						All {{ tabName }}
+						<span class="p-1 ml-2 rounded" style="background-color: aliceblue;">{{ adsCount }}</span>
+					</small>
+					<a :href="'/search?searchTerm=' + query + '&city=' + city + '&distance=' + distance + '&categorySearch=' + category.id"
 						v-for="category in filter.categories"
 						class="mr-1"
 					>
 						{{ category.name }}
-						<small class="p-1 ml-2 mr-5 rounded" style="background-color: aliceblue;" v-text="adsCount"></small>
+						<small class="p-1 ml-2 mr-5 rounded" style="background-color: aliceblue;" v-text="category.ads.length"></small>
 					</a>
 				</span>
 			</div>
 		</div>
 		<div class="lds-hourglass mt-5" v-if="isLoading"></div>
 		<tabs @active="toggleCollections" v-show="!isLoading">
-			<tab name="Private" :selected="filter.privateAds.length > 0 ? true : false">
+			<tab name="Private" :selected="tabOnPageLoad">
 				<featured-ad-card :ads="filter.filteredFeaturedPrivate ? filter.filteredFeaturedPrivate : filter.privateFeatured">
 				</featured-ad-card>
 
@@ -72,7 +76,7 @@
 
 				<div v-if="filter.empty">There are no items matching the given criteria. Try to expand the filters.</div>
 			</tab>
-			<tab name="Business" :selected="filter.privateAds.length == 0 ? true : false">
+			<tab name="Business" :selected="!tabOnPageLoad">
 				<featured-ad-card :ads="filter.filteredFeaturedBusiness ? filter.filteredFeaturedBusiness : filter.businessFeatured">
 				</featured-ad-card>
 
@@ -82,7 +86,7 @@
 					</div>
 				</div>
 
-				<div v-if="filter.empty">There are no items matching the given criteria. Try to expand the filters.</div>
+				<div v-if="filter.empty || filter.emptyBusiness">There are no items matching the given criteria. Try to expand the filters.</div>
 			</tab>
 		</tabs>
 	</div>
@@ -119,6 +123,7 @@ export default {
 				delivery: 'all',
 				condition: 'any',
 				empty: false,
+				emptyBusiness: false,
 				indexedCategories: {},
 				categories: []
 			}),
@@ -126,16 +131,28 @@ export default {
 			isLoading: false,
 			query: new URL(location.href).searchParams.get('searchTerm'),
 			city: new URL(location.href).searchParams.get('city'),
-			adsCount: ''
+			distance: parseInt(new URL(location.href).searchParams.get('distance')) || '',
+			adsCount: '',
 		};
 	},
 
 	created() {
-		if (! this.section) {
-			this.groupBy();
-		}
 		if (this.filter.business.length == 0) {
-			this.filter.empty = true;
+			this.filter.emptyBusiness = true;
+		}
+	},
+
+	computed: {
+		tabOnPageLoad() {
+			if (typeof this.private === 'object') {
+				return Object.keys(this.private).length > 0 ? true : false;
+			}
+
+			return this.private.length > 0 ? true : false;
+		},
+
+		tabName() {
+			return this.filter.collections.normalAds === 'privateAds' ? 'private ads' : 'business ads';
 		}
 	},
 
@@ -150,6 +167,10 @@ export default {
 				filteredFeatured: 'filteredFeatured' + tabName
 			};
 
+			if (! this.section) {
+				this.groupBy(name);
+			}
+
 			this.adsFound();
 
 			if (shouldFilter) {
@@ -157,22 +178,18 @@ export default {
 			}
 		},
 
-		groupBy() {
-			var allAds = {...this.private, ...this.business};
-			allAds = Object.values(allAds);
+		groupBy(tab) {
+			var adsInTab = Object.values(this[tab]);
 
-			this.filter.groupBy(allAds);
+			this.filter.groupBy(adsInTab);
 		},
 
-		loading(expression1, expression2) {
+		loading() {
 			clearTimeout(this.timeout);
 			this.isLoading = true;
+
 			this.timeout = setTimeout(() => {
-				if (expression1 == undefined) {
-					this.filterDelivery();
-				}
-				expression1;
-				expression2;
+				this.filterDelivery();
 				this.isLoading = false;
 			}, 1000);
 		},
@@ -242,12 +259,17 @@ export default {
 		},
 
 		sortingOrder(filteredAds, filteredFeatured) {
-			if (!filteredAds && !filteredFeatured) {
+			var filteredAll = filteredAds.concat(filteredFeatured);
+
+			if (!filteredAll) {
 				return this.filter.empty = true;
 			}
 
 			this.filter.sortFilter(filteredAds, filteredFeatured);
 			this.adsFound();
+
+			filteredAll = Object.values(filteredAll);
+			this.filter.groupBy(filteredAll);
 		},
 
 		adsFound() {

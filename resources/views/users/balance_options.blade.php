@@ -54,7 +54,7 @@
 						<span class="checkmark"></span>
 					</div>
 				</label>
-				<a href="{{ route('profile') }}">Cancel</a>
+				<a href="{{ url()->previous() }}">Cancel</a>
 				<button type="submit" class="btn btn-primary w-25 rounded-lg" style="margin-left: 210px;">
 					Continue
 					<i class="fas fa-arrow-right ml-3"></i>

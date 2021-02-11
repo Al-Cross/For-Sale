@@ -13,7 +13,8 @@ class ArchiveController extends Controller
     /**
      * Store an archived message in storage.
      *
-     * @param  App\Message $message
+     * @param App\Message $message
+     *
      * @return \Illuminate\Http\Response
      */
     public function archiveMessage(Message $message)
@@ -26,7 +27,8 @@ class ArchiveController extends Controller
     /**
      * Remove the specified archived message from storage.
      *
-     * @param  int  $id App\Message Id
+     * @param int $id The id of App\Message
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroyMessage($id)
@@ -55,23 +57,26 @@ class ArchiveController extends Controller
     /**
      * Reactivate an expired ad.
      *
-     * @param App\Ad     $ad
+     * @param App\Ad $ad
      *
      * @return \Illuminate\Http\Response
      */
     public function activateAd(Ad $ad)
     {
-        if ($ad->archived) {
+        if ($ad->archived && $ad->owner->ad_limit > 0) {
             $ad->activate();
             return back()->with('flash', 'Ad has been activated!');
         }
 
+        return back()->with('flash',
+            'Posting limit has been reached! Free up or buy additional slots.'
+        );
     }
 
     /**
      * Reactivate an exiring ad.
      *
-     * @param App\Ad     $ad
+     * @param App\Ad $ad
      *
      * @return \Illuminate\Http\Response
      */

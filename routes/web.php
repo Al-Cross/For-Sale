@@ -25,14 +25,15 @@ Route::group(['prefix' => 'admin'], function () {
 Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
     Route::get('/', 'UsersController@index')->name('profile');
     Route::get('/create', 'AdsController@create')->name('new_ad')->middleware('must-be-confirmed');
+    Route::get('/upgrade', 'AddAdsController@index')->middleware('must-be-confirmed');
     Route::post('/postad', 'AdsController@store')->name('create_ad')->middleware('must-be-confirmed');
     Route::get('/messages', 'MessagesController@index')->name('messages');
     Route::get('/notifications', 'NotificationsController@show');
     Route::get('/settings', 'UsersController@edit');
     Route::get('/{ad:slug}/edit', 'AdsController@edit')->name('edit_ad');
     Route::get('/wallet/load-account', 'PaymentsController@index');
-    Route::get('/wallet/advanced', 'AddAdsController@advanced')->name('3_additional_ads');
-    Route::get('/wallet/premium', 'AddAdsController@premium')->name('10_additional_ads');
+    Route::get('/wallet/advanced', 'AddAdsController@advanced')->name('advanced_upgrade');
+    Route::get('/wallet/premium', 'AddAdsController@premium')->name('premium_upgrade');
     Route::post('/wallet/complete-payment', 'PaymentsController@create')->name('process_payment');
     Route::get('/settings/email-sent', 'EmailConfirmationsController@index');
     Route::get('/settings/{user}/delete', 'UsersController@destroy')->name('profile_deletion');

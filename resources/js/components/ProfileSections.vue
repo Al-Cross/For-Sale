@@ -2,10 +2,11 @@
 	<div>
 		<div class="dropdown mb-3" id="1">
 	    	<button class="btn btn-info dropdown-toggle w-100"
-	    			data-toggle="dropdown"
+	    			type="button"
 	    			aria-haspopup="true"
-	    			aria-expanded="false">Edit Profile</button>
-	    	<div class="dropdown-menu w-100 p-4">
+	    			aria-expanded="false"
+	    			@click="toggleState('firstDropdown')">Edit Profile</button>
+	    	<div v-if="state[0].active" class="w-100 p-4 bg-white">
 	    		<form @submit.prevent="submit('profileForm')">
 	        		<div class="form-row">
 	        			<div class="col">
@@ -26,6 +27,7 @@
 			        					@focus="empty('email')"
 			        					v-model="profileForm.email"
 			        					:class="profileForm.errors.email ? 'border-danger bg-gray w-75 rounded' : 'bg-gray border w-75 rounded'">
+			        			<br>
 			        			<small class="text-danger" v-if="profileForm.errors.email" v-text="profileForm.errors.email[0]"></small>
 			        		</div>
 			        		<div class="form-group">
@@ -35,6 +37,7 @@
 			        					@focus="empty('address')"
 			        					v-model="profileForm.address"
 			        					:class="profileForm.errors.address ? 'border-danger bg-gray w-75 rounded' : 'bg-gray border w-75 rounded'">
+			        			<br>
 			        			<small class="text-danger" v-if="profileForm.errors.address" v-text="profileForm.errors.address[0]"></small>
 			        		</div>
 			        		<div class="form-group">
@@ -44,6 +47,7 @@
 			        					@focus="empty('phone')"
 			        					v-model="profileForm.phone"
 			        					:class="profileForm.errors.phone ? 'border-danger bg-gray w-75 rounded' : 'bg-gray border w-75 rounded'">
+			        			<br>
 			        			<small class="text-danger" v-if="profileForm.errors.phone" v-text="profileForm.errors.phone[0]"></small>
 			        		</div>
 	        			</div>
@@ -52,7 +56,6 @@
 			        			<label for="about">About Me:</label><br>
 			        			<textarea name="about"
 			        					rows="8"
-			        					@focus="empty('about')"
 			        					v-model="profileForm.about"
 			        					:class="profileForm.errors.about ? 'border-danger bg-gray w-100 rounded' : 'bg-gray border w-100 rounded'"></textarea>
 			        			<small class="text-danger" v-if="profileForm.errors.about" v-text="profileForm.errors.about[0]"></small>
@@ -66,10 +69,10 @@
 
 	    <div class="dropdown mb-3" id="2">
 	    	<button class="btn btn-info dropdown-toggle w-100"
-	    			data-toggle="dropdown"
 	    			aria-haspopup="true"
-	    			aria-expanded="false">Change Password</button>
-	    	<div class="dropdown-menu w-100 p-4">
+	    			aria-expanded="false"
+	    			@click="toggleState('secondDropdown')">Change Password</button>
+	    	<div v-if="state[1].active" class="w-100 p-4 bg-white">
 	    		<form @submit.prevent="submit('passwordForm')">
 	        		<div class="form-group">
 	        			<label for="current_password">Current Password:</label><br>
@@ -97,10 +100,10 @@
 
 	    <div class="dropdown mb-3" id="3">
 	    	<button class="btn btn-info dropdown-toggle w-100"
-	    			data-toggle="dropdown"
 	    			aria-haspopup="true"
-	    			aria-expanded="false">Notifications</button>
-	    	<div class="dropdown-menu w-100 p-4">
+	    			aria-expanded="false"
+	    			@click="toggleState('thirdDropdown')">Notifications</button>
+	    	<div v-if="state[2].active" class="w-100 p-4 bg-white">
 	    		<form @submit.prevent="submit('checkbox')">
 	    			<div class="row">
 	    				<div class="col">
@@ -133,25 +136,25 @@
 
 	    <div class="dropdown mb-3" id="4">
 	    	<button class="btn btn-info dropdown-toggle w-100"
-	    			data-toggle="dropdown"
 	    			aria-haspopup="true"
-	    			aria-expanded="false">Logo</button>
-	    	<div class="dropdown-menu w-100 p-4">
+	    			aria-expanded="false"
+	    			@click="toggleState('fourthDropDown')">Logo</button>
+	    	<div v-if="state[3].active" class="w-100 p-4 bg-white">
 	    		<logo-form :user="user"></logo-form>
 	    	</div>
 	    </div>
 
 	    <div class="dropdown mb-3" id="5">
 	    	<button class="btn btn-info dropdown-toggle w-100"
-	    			data-toggle="dropdown"
 	    			aria-haspopup="true"
-	    			aria-expanded="false">Profile Actions</button>
-	    	<div class="dropdown-menu w-100 p-4">
+	    			aria-expanded="false"
+	    			@click="toggleState('fifthDropdown')">Profile Actions</button>
+	    	<div v-if="state[4].active" class="w-100 p-4 bg-white">
 	    		<h4>Profile Removal</h4>
 	    		<p>The removal of your profile is an irreversible action that deletes all of its associated data.</p>
 	    		<form @submit.prevent="submit('deleteProfile')">
 	    			<a href="#" class="btn btn-warning" @click.prevent="$modal.show('deletion-email')">Delete Profile</a>
-	    			<modal name="deletion-email" classes="p-4 rounded-lg" height="auto" :focusTrap="true" :shiftX="0.3" :shiftY="0.2">
+	    			<modal name="deletion-email" classes="p-4 rounded-lg" height="auto" :focusTrap="true" :shiftX="0.5" :shiftY="0.2">
 	    				<h6 class="d-flex justify-content-center">Deletion of your profile must be confirmed via email.</h6><br>
 	    				<div class="d-flex justify-content-center">
 	    					<button type="button" class="btn btn-info rounded mr-3" @click="$modal.hide('deletion-email')">Cancel</button>
@@ -194,7 +197,29 @@ export default {
 			deleteProfile: new FormHandling({
 				user_id: this.user.id,
 				endpoint: '/myaccount/settings/deletion-email'
-			})
+			}),
+			state: [
+				{
+					name: 'firstDropdown',
+					active: false
+				},
+				{
+					name: 'secondDropdown',
+					active: false
+				},
+				{
+					name: 'thirdDropdown',
+					active: false
+				},
+				{
+					name: 'fourthDropDown',
+					active: false
+				},
+				{
+					name: 'fifthDropdown',
+					active: false
+				}
+			]
 		};
 	},
 
@@ -216,6 +241,16 @@ export default {
 			}
 		},
 
+		toggleState(dropdownName) {
+			this.state.forEach(dropdown => {
+				if (dropdown.name != dropdownName) {
+					dropdown.active = false;
+				} else {
+					dropdown.active ? dropdown.active = false : dropdown.active = true;
+				}
+			})
+		},
+
 		empty(fieldName) {
 			this.profileForm[fieldName] = '';
 		},
@@ -227,11 +262,7 @@ export default {
 };
 </script>
 
-<style>
-	.dropdown.show {
-		padding-bottom: 300px;
-	}
-
+<style scoped>
 	.bg-gray {
 		background: #f2f4f5;
 	}

@@ -7,7 +7,7 @@
 				<ad-card :ads="normalAds" @deleted="removeFromNormal"></ad-card>
 			</div>
 		</div>
-        <h3 v-if="normalAds.length == 0 && featuredAds.length == 0" class="font-weight-bold text-center">Nothing to observe.</h3>
+        <h3 v-if="normalAds.length == 0 && featuredAds.length == 0" class="font-weight-bold text-center">Nothing to observe</h3>
 	</div>
 </template>
 

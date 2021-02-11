@@ -83,7 +83,11 @@
 		      if (result.paymentIntent.status === 'succeeded') {
 		      	axios.post('/myaccount/wallet/fill', {result});
 
-		        flash('Your account balance has been increased!');
+		        flash('Your account balance has been increased! You are being redirected...');
+
+		        setTimeout(() => {
+			      	window.location.href = '/myaccount';
+			    }, 3000);
 		      }
 		    }
 		  });
