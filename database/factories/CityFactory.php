@@ -22,18 +22,18 @@ $trimmed = array_values($trimmed);
 for ($i=0; $i <= 364; $i++) {
     list($id[], $city[], $latitude[], $longitude[]) = explode(",", $trimmed[$i]);
 }
-$randomCity = mt_rand(0, 364);
+$randomCity = mt_rand(1, 364);
 
 $lat = trim($latitude[$randomCity], " \"");
 $long = trim($longitude[$randomCity], " \"");
 $location = new Point($lat, $long, 4326);
 
 $factory->define(City::class, function (Faker $faker) use ($city, $latitude, $longitude) {
-    $randomCity = $faker->numberBetween(0, 365);
+    $randomCity = $faker->numberBetween(1, 364);
     $city = trim($city[$randomCity], " \"");
     $lat = trim($latitude[$randomCity], " \"");
     $long = trim($longitude[$randomCity], " \"");
-    $location = new Point($lat, $long, 4326);
+
     return [
         'city' => $city,
         'latitude' => $lat,

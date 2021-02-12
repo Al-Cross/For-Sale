@@ -39,14 +39,15 @@ class ForSaleInstall extends Command
     public function handle()
     {
         $this->callSilent('storage:link');
-        $success = File::copyDirectory(public_path('frontend/images'), public_path('storage/images'));
+        $adImages = File::copyDirectory(public_path('frontend/images'), public_path('storage/images'));
+        $logos = File::copyDirectory(public_path('frontend/logos'), public_path('storage/users'));
 
-        if ($success) {
+        if ($adImages && $logos) {
             $this->info('Images successfully copied to storage folder.');
         }
 
         $this->call('migrate:fresh', ['--seed' => true]);
 
-        $this->info('Database seed successfully completed.');
+        $this->info('For Sale has been installed! Try it out!');
     }
 }
