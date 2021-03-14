@@ -54,6 +54,8 @@
 			</div>
 		</div>
 
+		<x-honeypot />
+
 		<input type="hidden" name="recipient_id" value="{{ $ad->user_id }}">
 		<input type="hidden" name="ad_id" value="{{ $ad->id }}">
 		<div class="form-group row mt-4">

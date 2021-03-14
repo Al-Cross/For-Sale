@@ -30,6 +30,8 @@ class NotificationsTest extends TestCase
             ['creator_id' => $this->john->id, 'recipient_id' => $this->jane->id]
         );
 
+        $this->withoutMiddleware(\App\Http\Middleware\Honeypot::class);
+
         $this->post(route('send'), $this->message->toArray());
         $this->persistedMessage = Message::whereSubject($this->message->subject)->first();
     }

@@ -24,6 +24,8 @@ class MessagesTest extends TestCase
             ['creator_id' => $this->john->id, 'recipient_id' => $this->jane->id]
         );
 
+        $this->withoutMiddleware(\App\Http\Middleware\Honeypot::class);
+
         $this->post(route('send'), $this->message->toArray());
         $this->id = Message::whereSubject($this->message->subject)->first()->id;
     }

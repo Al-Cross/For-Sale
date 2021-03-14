@@ -2,6 +2,7 @@
 
 return [
     'currency' => '€',
+
     'membership' => [
         'basic' => [
             'ad_limit' => 3
@@ -15,8 +16,16 @@ return [
     		'ad_limit' => 10
     	]
     ],
+
     'prices' => [
         'ad_extention' => 199,
         'featured' => 1000
-    ]
+    ],
+
+    'honeypot' => [
+        'enabled' => env('HONEYPOT_ENABLED', true),
+        'decoy_field' => 'telephone',
+        'timestamp_field' => 'timestamp',
+        'min_time' => 5
+    ],
 ];

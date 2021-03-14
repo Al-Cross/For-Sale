@@ -46,7 +46,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'myaccount'], function () {
     Route::patch('/{ad}/extend', 'ArchiveController@extend')->name('extend-ad');
     Route::patch('/{ad}/promote', 'FeaturedAdsController@index')->name('promote');
     Route::post('/settings/{user}/logos', 'ImageUploadsController@store')->middleware('must-be-confirmed');
-    Route::post('/messages/send', 'MessagesController@store')->name('send')->middleware('must-be-confirmed');
+    Route::post('/messages/send', 'MessagesController@store')->name('send')->middleware(['must-be-confirmed', 'honeypot']);
     Route::post('/messages/{message}/archive', 'ArchiveController@archiveMessage')->name('archive');
     Route::post('/wallet/fill', 'PaymentsController@store')->name('add_to_balance');
     Route::post('/settings/deletion-email', 'EmailConfirmationsController@destroy')->name('deletion_email');
