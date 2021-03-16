@@ -16,7 +16,7 @@
                 </h1>
             </div>
             <div class="col-12 col-md-10 d-xl-block">
-                <nav class="site-navigation position-relative" role="navigation">
+                <nav class="site-navigation position-relative col-form-label-sm" role="navigation">
                     <ul class="site-menu mr-auto d-none d-lg-block">
                         @if (Route::has('login'))
                             @auth

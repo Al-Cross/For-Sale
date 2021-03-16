@@ -10,7 +10,9 @@ use App\Category;
 use App\AdSearch\AdSearch;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Image as ImageCompression;
 use App\Http\Requests\AdRequest;
+use Illuminate\Support\Facades\Storage;
 
 class AdsController extends Controller
 {
@@ -22,7 +24,7 @@ class AdsController extends Controller
     public function index()
     {
         $ads = Ad::excludeFeatured()->excludeArchived()->latest()->paginate(20);
-        $featured = Ad::featured()->excludeArchived()->get();
+        $featured = Ad::featured()->excludeArchived()->take(10)->get();
         $featured = $featured->shuffle();
 
         if (request()->wantsJson()) {
@@ -219,7 +221,9 @@ class AdsController extends Controller
         $paths = [];
         foreach ($images as $image) {
             $imageName = $image->hashName();
-            $paths[] = $image->storeAs('images', $imageName);
+            $stagedImage = ImageCompression::make($image)->orientate()->stream('jpeg', 60);
+            Storage::put('/images/' . $imageName, $stagedImage);
+            $paths[] = '/images/' . $imageName;
         }
 
         foreach ($paths as $path) {
