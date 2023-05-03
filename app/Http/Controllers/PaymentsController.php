@@ -6,8 +6,7 @@ use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use Illuminate\Http\Request;
 
-class PaymentsController extends Controller
-{
+class PaymentsController extends Controller {
     /**
      * Display a listing of the resource.
      *
@@ -39,7 +38,7 @@ class PaymentsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -47,7 +46,9 @@ class PaymentsController extends Controller
         $status = $request['result']['paymentIntent']['status'];
         $amount = $request['result']['paymentIntent']['amount'];
 
-        if ($status === 'succeeded') {
+        if (!auth()->user()->balance()->exists()) {
+            auth()->user()->balance()->create(['amount' => $amount]);
+        } else {
             $this->update($amount);
         }
     }
@@ -55,7 +56,7 @@ class PaymentsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param int  $amount
+     * @param int $amount
      */
     public function update($amount)
     {
@@ -77,9 +78,9 @@ class PaymentsController extends Controller
         Stripe::setApiKey(config('services.stripe.secret'));
 
         $intent = PaymentIntent::create([
-          'amount' => $amount,
-          'currency' => 'eur',
-          'metadata' => ['user_id' => $user->id],
+            'amount' => $amount,
+            'currency' => 'eur',
+            'metadata' => ['user_id' => $user->id],
         ]);
 
         return $intent;

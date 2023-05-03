@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Builder;
 
-class UsersController extends Controller
-{
+class UsersController extends Controller {
     /**
      * Display a listing of the resource.
      *
@@ -23,17 +22,20 @@ class UsersController extends Controller
         // they received for each ad
         $userAds = Ad::where('user_id', '=', auth()->id())
             ->latest()
-            ->withCount(['messages' => function(Builder $query) {
-                    $query->where('recipient_id', '=', auth()->id());
-                }])
+            ->withCount(['messages' => function (Builder $query) {
+                $query->where('recipient_id', '=', auth()->id());
+            }])
             ->get();
+        if (! auth()->user()->balance()->exists()) {
+            auth()->user()->balance()->create(['amount' => 0]);
+        }
         $balance = auth()->user()->balance->getBalance();
         $promotionPrice = number_format(config('for-sale.prices.featured') / 100, 2);
-        $extentionPrice = number_format(config('for-sale.prices.ad_extention') / 100, 2);
+        $extensionPrice = number_format(config('for-sale.prices.ad_extension') / 100, 2);
 
         return view(
             'users.index',
-            compact('userAds', 'balance', 'promotionPrice', 'extentionPrice')
+            compact('userAds', 'balance', 'promotionPrice', 'extensionPrice')
         );
     }
 
@@ -101,7 +103,7 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param App\User  $user
+     * @param App\User $user
      *
      * @return \Illuminate\Http\Response
      */

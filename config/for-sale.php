@@ -18,7 +18,7 @@ return [
     ],
 
     'prices' => [
-        'ad_extention' => 199,
+        'ad_extension' => 199,
         'featured' => 1000
     ],
 
