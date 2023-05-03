@@ -81,13 +81,14 @@
 		    } else {
 		      // The payment has been processed!
 		      if (result.paymentIntent.status === 'succeeded') {
-		      	axios.post('/myaccount/wallet/fill', {result});
+		      	axios.post('/myaccount/wallet/fill', {result}).then(() => {
+                    flash('Your account balance has been increased! You are being redirected...');
 
-		        flash('Your account balance has been increased! You are being redirected...');
+                    setTimeout(() => {
+                        window.location.href = '/myaccount';
+                    }, 3000);
+                });
 
-		        setTimeout(() => {
-			      	window.location.href = '/myaccount';
-			    }, 3000);
 		      }
 		    }
 		  });
